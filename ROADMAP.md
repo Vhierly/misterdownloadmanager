@@ -451,6 +451,7 @@ These ship in a later version, when they're ready.
 
 ### Bugs being looked into
 
+- 🔍 A site's bot check refusing MDM's request (testfile.org, a Cloudflare challenge): the\n  message now says so ([#376](https://github.com/anefzaoui/misterdownloadmanager/issues/376)); a way to hand the download back to the browser is still to decide
 - 🔄 Crash on Windows when a screen goes away while MDM runs
   ([#335](https://github.com/anefzaoui/misterdownloadmanager/issues/335)): fix in review
 - 🔄 A duplicate prompt for a finished file that is gone

@@ -3363,6 +3363,9 @@
 #. error: a program chosen as yt-dlp or ffmpeg didn't answer as one; {name} = yt-dlp or ffmpeg
 #. {name} = a file name (keep the braces as they are)
 	this program isn't {name}	this program isn't {name}
+#. text in errors.rs
+#. why a download failed: the site's bot check (Cloudflare) lets browsers through, not programs. Alt+click: the link clicked with the Alt key held, which leaves the download to the browser
+	this site lets only browsers through; Alt+click the link	this site lets only browsers through; Alt+click the link
 #. text in a download's progress window
 	This system has no dial-up connections to hang up	This system has no dial-up connections to hang up
 #. text in errors.rs
