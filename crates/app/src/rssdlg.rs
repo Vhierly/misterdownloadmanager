@@ -12,7 +12,10 @@ use crate::rss::{Article, Rule, Store};
 use crate::winui::{self, ButtonKind, r, text};
 
 /// What the window asks of the app.
+#[derive(Debug, PartialEq, Eq)]
 pub enum Act {
+    /// The store changed: save it.
+    Saved,
     /// Fetch these feeds now (empty: all).
     Refresh(Vec<u64>),
     /// Add torrent with this article's torrent (a magnet link or a .torrent's address).
@@ -29,11 +32,6 @@ pub struct RssWindow {
     rule_feeds: winui::RowList,
     preview: winui::RowList,
     minutes: String,
-    /// The store was edited and must be written out. Reported through `saved`, not through
-    /// the window's outcome: answering `Done` for a save would make the dialog framework treat
-    /// the window as gone, and a text box's id is salted with how many times its window has
-    /// opened — so the box being typed in would lose the keys (#353).
-    dirty: bool,
 }
 
 const ROW: f32 = 20.0;
@@ -51,7 +49,6 @@ impl RssWindow {
             rule_feeds: Default::default(),
             preview: Default::default(),
             minutes: store.minutes.to_string(),
-            dirty: false,
         };
         w.feeds.selected = (!store.feeds.is_empty()).then_some(0);
         w.rules.selected = (!store.rules.is_empty()).then_some(0);
@@ -64,7 +61,11 @@ impl RssWindow {
         store: &mut Store,
         busy: &HashSet<u64>,
     ) -> Outcome<Act> {
-        window(
+        // What the app must do goes out after the window's pass, with the window still open: a
+        // dialog's `Done` means it closed, and starts its next opening afresh, its text boxes
+        // included (#353: each key typed saved the rule and took the box's focus away).
+        let mut asked = None;
+        let out = window(
             ctx,
             "rss",
             "RSS feeds",
@@ -73,8 +74,6 @@ impl RssWindow {
             winui::BG(),
             |ui, o| {
                 let p = ui.painter().clone();
-                #[cfg(test)]
-                tests::ORIGIN.with(|r| *r.borrow_mut() = Some(o));
                 let tabs = [
                     // i18n: RSS feeds window: the tab of the feeds and their articles
                     crate::i18n::mark("Feeds"),
@@ -95,7 +94,7 @@ impl RssWindow {
                 {
                     self.tab = i;
                 }
-                let act = if self.tab == 0 {
+                asked = if self.tab == 0 {
                     self.feeds_page(ui, o, store, busy)
                 } else {
                     self.rules_page(ui, o, store)
@@ -110,14 +109,16 @@ impl RssWindow {
                 )
                 .clicked();
                 if close || winui::escape_pressed(ui) {
-                    Outcome::Closed
-                } else if let Some(a) = act {
-                    Outcome::Done(a)
+                    Outcome::<()>::Closed
                 } else {
                     Outcome::Open
                 }
             },
-        )
+        );
+        match out {
+            Outcome::Closed => Outcome::Closed,
+            _ => asked.map_or(Outcome::Open, Outcome::Done),
+        }
     }
 
     fn feeds_page(
@@ -261,8 +262,9 @@ impl RssWindow {
             store.remove_feed(id);
             self.feeds.selected = (!store.feeds.is_empty()).then(|| i.min(store.feeds.len() - 1));
             self.articles = Default::default();
-            self.dirty = true;
+            act = Some(Act::Saved);
         }
+        let sel = self.feeds.selected.filter(|i| *i < store.feeds.len());
         // The selected feed's articles.
         let articles: Vec<Article> = sel
             .map(|i| store.feeds[i].articles.clone())
@@ -403,14 +405,14 @@ impl RssWindow {
             && m != store.minutes
         {
             store.minutes = m;
-            self.dirty = true;
+            act = act.or(Some(Act::Saved));
         }
         act
     }
 
     fn rules_page(&mut self, ui: &mut Ui, o: Pos2, store: &mut Store) -> Option<Act> {
         let p = ui.painter().clone();
-        let act = None;
+        let mut act = None;
         self.rules.name = crate::i18n::t("Download rules");
         let names: Vec<(String, bool)> = store
             .rules
@@ -468,7 +470,7 @@ impl RssWindow {
             let name = crate::i18n::t("New rule");
             store.rules.push(Rule::new(id, name));
             self.rules.selected = Some(store.rules.len() - 1);
-            self.dirty = true;
+            act = Some(Act::Saved);
         }
         let sel = self.rules.selected.filter(|i| *i < store.rules.len());
         let delete = winui::button(
@@ -489,8 +491,7 @@ impl RssWindow {
         {
             store.rules.remove(i);
             self.rules.selected = (!store.rules.is_empty()).then(|| i.min(store.rules.len() - 1));
-            self.dirty = true;
-            return None;
+            return Some(Act::Saved);
         }
         let Some(i) = sel else {
             text(
@@ -784,195 +785,182 @@ impl RssWindow {
                 ("rss", 3),
             );
         }
-        if changed {
-            self.dirty = true;
-        }
-        act
-    }
-
-    /// Take the store's "it was edited" mark, so the app can write it out without the window
-    /// answering `Done` for it (which would look like the window had closed, and change every
-    /// text box's id — #353).
-    pub fn saved(&mut self) -> bool {
-        std::mem::take(&mut self.dirty)
+        if changed { Some(Act::Saved) } else { act }
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use egui::Rect;
+    use crate::rss::Parsed;
+    use egui::{Event, Modifiers, PointerButton, Rect, vec2};
+    use std::cell::RefCell;
+    use std::rc::Rc;
 
-    fn main_rect(ctx: &egui::Context) {
-        ctx.data_mut(|d| {
-            d.insert_temp(
-                egui::Id::unique("mdm-main-rect"),
-                (
-                    Rect::from_min_size(Pos2::ZERO, egui::vec2(800.0, 600.0)),
-                    1.0,
-                ),
-            );
-        });
-    }
+    /// A rule's text box, typed into as one sits at the keyboard: the window opened on Download
+    /// rules, the box clicked once, then `typed` a character per frame.
+    fn typed_into(y: f32, typed: &str) -> Rule {
+        let mut store = Store::default();
+        let id = store.new_id();
+        store.rules.push(Rule::new(id, "Rule"));
+        let mut dlg = RssWindow::new(&store, true);
 
-    /// One frame of the RSS window, `events` fed to it.
-    fn frame(ctx: &egui::Context, w: &mut RssWindow, store: &mut Store, events: Vec<egui::Event>) {
-        let busy = HashSet::new();
-        EVENTS.with(|e| *e.borrow_mut() = events);
-        let evs = EVENTS.with(|e| e.borrow().clone());
-        let input = egui::RawInput {
-            screen_rect: Some(Rect::from_min_size(Pos2::ZERO, egui::vec2(900.0, 620.0))),
-            events: evs,
-            ..Default::default()
-        };
-        let mut out = ctx.run_ui(input, |ui| {
-            let _ = w.show(ui.ctx(), store, &busy);
-        });
-        out.textures_delta.clear();
-    }
-
-    /// A click at `at`: move there, press, release.
-    fn click(ctx: &egui::Context, w: &mut RssWindow, store: &mut Store, at: Pos2) {
-        frame(
-            ctx,
-            w,
-            store,
-            vec![
-                egui::Event::PointerMoved(at),
-                egui::Event::PointerButton {
-                    pos: at,
-                    button: egui::PointerButton::Primary,
-                    pressed: true,
-                    modifiers: Default::default(),
-                },
-                egui::Event::PointerButton {
-                    pos: at,
-                    button: egui::PointerButton::Primary,
-                    pressed: false,
-                    modifiers: Default::default(),
-                },
-            ],
-        );
-    }
-
-    /// The Episodes box's place on the rules page, on screen: the window's body origin plus the
-    /// box's client rect (380, 184), 360 × 22. The origin is what the page reports.
-    fn episodes_rect(ctx: &egui::Context, w: &mut RssWindow, store: &mut Store) -> Rect {
-        ORIGIN.with(|r| *r.borrow_mut() = None);
-        let busy = HashSet::new();
-        let mut out = ctx.run_ui(egui::RawInput::default(), |ui| {
-            let _ = w.show(ui.ctx(), store, &busy);
-        });
-        out.textures_delta.clear();
-        let o = ORIGIN.with(|r| *r.borrow());
-        let o = o.expect("the window's body origin");
-        Rect::from_min_size(o + egui::vec2(380.0, 184.0), egui::vec2(360.0, 22.0))
-    }
-
-    thread_local! {
-        pub(super) static ORIGIN: std::cell::RefCell<Option<Pos2>> =
-            const { std::cell::RefCell::new(None) };
-    }
-
-    // Render the dialog as its own viewport, as eframe does (not embedded in the main one):
-    // the dialog's window then has the position and size the app gave it. The frame's events
-    // go to it too, as the window system would deliver them to the window under the pointer.
-    thread_local! {
-        static EVENTS: std::cell::RefCell<Vec<egui::Event>> = const { std::cell::RefCell::new(Vec::new()) };
-        // The dialog's own viewport's focus, as its frame left it.
-        pub(super) static FOCUS: std::cell::RefCell<Option<egui::Id>> =
-            const { std::cell::RefCell::new(None) };
-        // The dialog's "how many times this window has opened" counter, part of every box's id.
-        pub(super) static OPENED: std::cell::RefCell<u64> = const { std::cell::RefCell::new(0) };
-    }
-
-    fn render() {
-        egui::Context::set_immediate_viewport_renderer(move |ctx, viewport| {
-            let info = egui::ViewportInfo {
-                inner_rect: Some(egui::Rect::from_min_size(
-                    Pos2::ZERO,
-                    egui::vec2(760.0, 500.0),
-                )),
-                outer_rect: Some(egui::Rect::from_min_size(
-                    Pos2::ZERO,
-                    egui::vec2(760.0, 500.0),
-                )),
-                ..Default::default()
-            };
-            let input = egui::RawInput {
-                viewport_id: viewport.ids.this,
-                viewports: std::iter::once((viewport.ids.this, info)).collect(),
-                screen_rect: Some(egui::Rect::from_min_size(
-                    Pos2::ZERO,
-                    egui::vec2(760.0, 500.0),
-                )),
-                events: EVENTS.with(|e| e.borrow().clone()),
-                ..Default::default()
-            };
-            let mut ui_cb = viewport.viewport_ui_cb;
-            let mut out = ctx.run_ui(input, |ui| {
-                ui_cb(ui);
-                // Inside the pass: the memory still belongs to the dialog's viewport.
-                FOCUS.with(|f| *f.borrow_mut() = ctx.memory(|m| m.focused()));
-                let opening = crate::dialogs::opening_key(ctx);
-                OPENED.with(|o| {
-                    *o.borrow_mut() = ctx.data(|d| d.get_temp::<u64>(opening)).unwrap_or(0)
-                });
+        // The dialog's window is rendered as eframe renders it: its own pass, its own input.
+        let events: Rc<RefCell<Vec<Event>>> = Rc::default();
+        {
+            let events = events.clone();
+            egui::Context::set_immediate_viewport_renderer(move |ctx, viewport| {
+                let input = egui::RawInput {
+                    viewport_id: viewport.ids.this,
+                    viewports: std::iter::once((viewport.ids.this, egui::ViewportInfo::default()))
+                        .collect(),
+                    screen_rect: Some(Rect::from_min_size(Pos2::ZERO, vec2(760.0, 560.0))),
+                    events: std::mem::take(&mut *events.borrow_mut()),
+                    ..Default::default()
+                };
+                let mut ui_cb = viewport.viewport_ui_cb;
+                let mut out = ctx.run_ui(input, |ui| ui_cb(ui));
+                out.textures_delta.clear();
             });
-            out.textures_delta.clear();
-        });
-    }
-    /// #353: the Episodes box keeps the keys while it is typed in. The window is settled first
-    /// (the embedded window's first frames size it), then a click gives the box the keys, and
-    /// each character typed goes in — the box must still have them for the next one.
-    #[test]
-    fn the_episodes_box_keeps_the_keys_while_it_is_typed_in() {
+        }
         let ctx = egui::Context::default();
         ctx.set_embed_viewports(false);
-        render();
+        let mut pass = |store: &mut Store, send: Vec<Event>| {
+            *events.borrow_mut() = send;
+            let mut out = ctx.run_ui(egui::RawInput::default(), |ui| {
+                let _ = dlg.show(ui.ctx(), store, &HashSet::new());
+            });
+            out.textures_delta.clear();
+        };
+        for _ in 0..3 {
+            pass(&mut store, Vec::new());
+        }
+        let caption = if crate::dialogs::drawn_captions() {
+            crate::winui::caption::CAPTION_H
+        } else {
+            0.0
+        };
+        let at = pos2(500.0, caption + y + 11.0);
+        let button = |pressed| Event::PointerButton {
+            pos: at,
+            button: PointerButton::Primary,
+            pressed,
+            modifiers: Modifiers::default(),
+        };
+        pass(&mut store, vec![Event::PointerMoved(at)]);
+        pass(&mut store, vec![button(true)]);
+        pass(&mut store, vec![button(false)]);
+        pass(&mut store, Vec::new());
+        for c in typed.chars() {
+            pass(&mut store, vec![Event::Text(c.to_string())]);
+            pass(&mut store, Vec::new());
+        }
+        store.rules.remove(0)
+    }
+
+    /// #353: a key typed in a box of the rule editor saves the rule, and saving isn't closing:
+    /// the box keeps the keyboard, so the next key lands in it too.
+    #[test]
+    fn typing_in_the_episodes_box_keeps_its_focus() {
+        // A partly typed filter ("1" can be read, "1x" can't) as much as a whole one.
+        assert_eq!(typed_into(184.0, "1x2-").episodes, "1x2-");
+    }
+
+    #[test]
+    fn typing_in_the_words_boxes_keeps_their_focus() {
+        assert_eq!(typed_into(102.0, "linux").must, "linux");
+        assert_eq!(typed_into(130.0, "cam").must_not, "cam");
+    }
+
+    /// #321: removing a feed in the RSS feeds window (including the last one) updates the
+    /// selection for the rest of the frame instead of indexing `store.feeds` with the old row.
+    #[test]
+    fn removing_a_feed_including_the_last_one_does_not_panic() {
+        let mut store = Store::default();
+        let first = store.add_feed("https://a.example/rss.xml").unwrap();
+        let second = store.add_feed("https://b.example/rss.xml").unwrap();
+        store.fetched(
+            first,
+            Parsed {
+                title: "First".into(),
+                articles: vec![Article {
+                    id: "1".into(),
+                    title: "One".into(),
+                    torrent: "magnet:?xt=urn:btih:1".into(),
+                    ..Default::default()
+                }],
+            },
+            100,
+        );
+        store.fetched(
+            second,
+            Parsed {
+                title: "Second".into(),
+                articles: vec![Article {
+                    id: "2".into(),
+                    title: "Two".into(),
+                    torrent: "magnet:?xt=urn:btih:2".into(),
+                    ..Default::default()
+                }],
+            },
+            100,
+        );
+
+        let ctx = egui::Context::default();
         let mut defs = egui::FontDefinitions::default();
         winui::install_fonts(&mut defs, None);
         ctx.set_fonts(defs);
-        main_rect(&ctx);
-        let mut store = Store::default();
-        store.rules.push(Rule::new(1, "Rule"));
-        let mut w = RssWindow::new(&store, true);
-        // Settle the window: its embedded frame is sized over the first frames.
-        for _ in 0..6 {
-            frame(&ctx, &mut w, &mut store, vec![]);
-        }
-        let rc = episodes_rect(&ctx, &mut w, &mut store);
-        click(&ctx, &mut w, &mut store, rc.center());
-        let focused = FOCUS.with(|f| *f.borrow());
-        let id = focused.expect("the click gave the box the keys");
-        let opened = OPENED.with(|o| *o.borrow());
-        // A quiet frame: the window has settled by now, so the box's id must not move.
-        frame(&ctx, &mut w, &mut store, vec![]);
-        assert_eq!(
-            FOCUS.with(|f| *f.borrow()),
-            Some(id),
-            "the box kept the keys across a quiet frame"
-        );
-        for c in ["1", "x", "2", ";", "1", "x", "5", "-", "8"] {
-            frame(
-                &ctx,
-                &mut w,
-                &mut store,
-                vec![egui::Event::Text(c.to_owned())],
+
+        let mut win = RssWindow::new(&store, false);
+        let busy = HashSet::new();
+        let remove_at = pos2(196.0, 424.0);
+        let click_remove = |win: &mut RssWindow, store: &mut Store| -> Option<Act> {
+            let mut run = |events: Vec<egui::Event>, store: &mut Store| -> Option<Act> {
+                let mut act = None;
+                let input = egui::RawInput {
+                    screen_rect: Some(egui::Rect::from_min_size(
+                        Pos2::ZERO,
+                        egui::vec2(760.0, 500.0),
+                    )),
+                    events,
+                    ..Default::default()
+                };
+                let mut out = ctx.run_ui(input, |ui| {
+                    act = win.feeds_page(ui, Pos2::ZERO, store, &busy);
+                });
+                out.textures_delta.clear();
+                act
+            };
+            run(vec![egui::Event::PointerMoved(remove_at)], store);
+            run(
+                vec![egui::Event::PointerButton {
+                    pos: remove_at,
+                    button: egui::PointerButton::Primary,
+                    pressed: true,
+                    modifiers: egui::Modifiers::NONE,
+                }],
+                store,
             );
-            assert_eq!(
-                FOCUS.with(|f| *f.borrow()),
-                Some(id),
-                "the box kept the keys after {c:?}"
-            );
-            assert_eq!(
-                OPENED.with(|o| *o.borrow()),
-                opened,
-                "the window is not closed by a save, so the box's id does not move ({c:?})"
-            );
-        }
-        assert_eq!(store.rules[0].episodes, "1x2;1x5-8");
-        // The window still says the store changed, so the app writes it out.
-        assert!(w.saved(), "the store's save mark is set");
+            run(
+                vec![egui::Event::PointerButton {
+                    pos: remove_at,
+                    button: egui::PointerButton::Primary,
+                    pressed: false,
+                    modifiers: egui::Modifiers::NONE,
+                }],
+                store,
+            )
+        };
+
+        // Removing the first of two feeds selects the remaining one without indexing out of bounds.
+        assert_eq!(click_remove(&mut win, &mut store), Some(Act::Saved));
+        assert_eq!(store.feeds.len(), 1);
+        assert_eq!(store.feeds[0].id, second);
+        assert_eq!(win.feeds.selected, Some(0));
+
+        // Removing the last (only) feed leaves no selection and does not panic (#321).
+        assert_eq!(click_remove(&mut win, &mut store), Some(Act::Saved));
+        assert!(store.feeds.is_empty());
+        assert_eq!(win.feeds.selected, None);
     }
 }
