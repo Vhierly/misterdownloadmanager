@@ -451,7 +451,9 @@ These ship in a later version, when they're ready.
 
 ### Bugs being looked into
 
-- 🔄 Video progress at 100 % while still downloading, and long encoded strings as file names\n  ([#344](https://github.com/anefzaoui/misterdownloadmanager/issues/344),\n  [#345](https://github.com/anefzaoui/misterdownloadmanager/issues/345)): fix in review
+- 🔄 Video progress at 100 % while still downloading, and long encoded strings as file names
+  ([#344](https://github.com/anefzaoui/misterdownloadmanager/issues/344),
+  [#345](https://github.com/anefzaoui/misterdownloadmanager/issues/345)): fix in review
 - 🔄 A duplicate prompt for a finished file that is gone
   ([#342](https://github.com/anefzaoui/misterdownloadmanager/issues/342)): fix in review
 - 🔍 A 10-second freeze of the window after a night left open
