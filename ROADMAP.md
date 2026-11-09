@@ -452,6 +452,10 @@ These ship in a later version, when they're ready.
 ### Bugs being looked into
 
 - 🔄 A download starting again by itself after Stop, when it is in a running queue\n  ([#341](https://github.com/anefzaoui/misterdownloadmanager/issues/341)): fix in review
+- 🔄 Crash on Windows when a window opens while MDM falls back from Direct3D to OpenGL
+  ([#337](https://github.com/anefzaoui/misterdownloadmanager/issues/337)): fix in review
+- 🔄 Crash on Windows when a screen goes away while MDM runs
+  ([#335](https://github.com/anefzaoui/misterdownloadmanager/issues/335)): fix in review
 - 🔄 A duplicate prompt for a finished file that is gone
   ([#342](https://github.com/anefzaoui/misterdownloadmanager/issues/342)): fix in review
 - 🔍 A 10-second freeze of the window after a night left open
