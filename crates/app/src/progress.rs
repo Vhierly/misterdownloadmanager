@@ -1227,11 +1227,7 @@ impl Progress {
                 let spec = item.torrent.as_ref();
                 let sent = spec.map_or(0, |t| t.uploaded);
                 let done = st.map_or(item.downloaded, |s| s.done);
-                let ratio = if done > 0 {
-                    crate::i18n::decimal(sent as f64 / done as f64, 2)
-                } else {
-                    crate::i18n::decimal(0.0, 2)
-                };
+                let ratio = crate::torrents::share_ratio_text(sent, done);
                 let shared = spec.map_or(0, |t| t.seeded_secs);
                 let hash = item
                     .torrent

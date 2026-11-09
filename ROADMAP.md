@@ -482,6 +482,10 @@ These ship in a later version, when they're ready.
   so a download a page starts by itself stays with Safari. Built and its relay to the helper
   checked in the sandbox Safari uses; still to check in Safari itself, signed with a Developer ID
 
+- 🔄 A torrent's peers and share ratio as columns in the download list
+  ([#357](https://github.com/anefzaoui/misterdownloadmanager/issues/357)): in review; its upload
+  speed is still to come
+
 ### Bugs being looked into
 
 - 🔄 RSS feeds: the rule boxes losing the keyboard after each key

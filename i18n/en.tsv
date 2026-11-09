@@ -4090,14 +4090,14 @@ column	File Name	File Name
 #. column title in the download list in the download list
 column	Last Try Date	Last Try Date
 #. column title in the download list in the download list
+#. column title: how many peers a torrent is connected to now (seeders and leechers)
+column	Peers	Peers
+#. column title in the download list in the download list
 #. column title: one letter for Queue (the column is narrow)
 column	Q	Q
 #. column title in the main window; column title in the download list
 #. tooltip of the narrow "Q" column's title
 column	Queue	Queue
-#. column title in the download list in the download list
-#. column title: how many peers a torrent has (its seeders)
-column	Seeders	Seeders
 #. column title in the download list in the download list
 #. column title: what a torrent has sent to peers against what it took
 column	Share ratio	Share ratio
