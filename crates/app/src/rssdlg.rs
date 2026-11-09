@@ -60,7 +60,11 @@ impl RssWindow {
         store: &mut Store,
         busy: &HashSet<u64>,
     ) -> Outcome<Act> {
-        window(
+        // What the app must do goes out after the window's pass, with the window still open: a
+        // dialog's `Done` means it closed, and starts its next opening afresh, its text boxes
+        // included (#353: each key typed saved the rule and took the box's focus away).
+        let mut asked = None;
+        let out = window(
             ctx,
             "rss",
             "RSS feeds",
@@ -89,7 +93,7 @@ impl RssWindow {
                 {
                     self.tab = i;
                 }
-                let act = if self.tab == 0 {
+                asked = if self.tab == 0 {
                     self.feeds_page(ui, o, store, busy)
                 } else {
                     self.rules_page(ui, o, store)
@@ -104,14 +108,16 @@ impl RssWindow {
                 )
                 .clicked();
                 if close || winui::escape_pressed(ui) {
-                    Outcome::Closed
-                } else if let Some(a) = act {
-                    Outcome::Done(a)
+                    Outcome::<()>::Closed
                 } else {
                     Outcome::Open
                 }
             },
-        )
+        );
+        match out {
+            Outcome::Closed => Outcome::Closed,
+            _ => asked.map_or(Outcome::Open, Outcome::Done),
+        }
     }
 
     fn feeds_page(
@@ -778,5 +784,88 @@ impl RssWindow {
             );
         }
         if changed { Some(Act::Saved) } else { act }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use egui::{Event, Modifiers, PointerButton, Rect, vec2};
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    /// A rule's text box, typed into as one sits at the keyboard: the window opened on Download
+    /// rules, the box clicked once, then `typed` a character per frame.
+    fn typed_into(y: f32, typed: &str) -> Rule {
+        let mut store = Store::default();
+        let id = store.new_id();
+        store.rules.push(Rule::new(id, "Rule"));
+        let mut dlg = RssWindow::new(&store, true);
+
+        // The dialog's window is rendered as eframe renders it: its own pass, its own input.
+        let events: Rc<RefCell<Vec<Event>>> = Rc::default();
+        {
+            let events = events.clone();
+            egui::Context::set_immediate_viewport_renderer(move |ctx, viewport| {
+                let input = egui::RawInput {
+                    viewport_id: viewport.ids.this,
+                    viewports: std::iter::once((viewport.ids.this, egui::ViewportInfo::default()))
+                        .collect(),
+                    screen_rect: Some(Rect::from_min_size(Pos2::ZERO, vec2(760.0, 560.0))),
+                    events: std::mem::take(&mut *events.borrow_mut()),
+                    ..Default::default()
+                };
+                let mut ui_cb = viewport.viewport_ui_cb;
+                let mut out = ctx.run_ui(input, |ui| ui_cb(ui));
+                out.textures_delta.clear();
+            });
+        }
+        let ctx = egui::Context::default();
+        ctx.set_embed_viewports(false);
+        let mut pass = |store: &mut Store, send: Vec<Event>| {
+            *events.borrow_mut() = send;
+            let mut out = ctx.run_ui(egui::RawInput::default(), |ui| {
+                let _ = dlg.show(ui.ctx(), store, &HashSet::new());
+            });
+            out.textures_delta.clear();
+        };
+        for _ in 0..3 {
+            pass(&mut store, Vec::new());
+        }
+        let caption = if crate::dialogs::drawn_captions() {
+            crate::winui::caption::CAPTION_H
+        } else {
+            0.0
+        };
+        let at = pos2(500.0, caption + y + 11.0);
+        let button = |pressed| Event::PointerButton {
+            pos: at,
+            button: PointerButton::Primary,
+            pressed,
+            modifiers: Modifiers::default(),
+        };
+        pass(&mut store, vec![Event::PointerMoved(at)]);
+        pass(&mut store, vec![button(true)]);
+        pass(&mut store, vec![button(false)]);
+        pass(&mut store, Vec::new());
+        for c in typed.chars() {
+            pass(&mut store, vec![Event::Text(c.to_string())]);
+            pass(&mut store, Vec::new());
+        }
+        store.rules.remove(0)
+    }
+
+    /// #353: a key typed in a box of the rule editor saves the rule, and saving isn't closing:
+    /// the box keeps the keyboard, so the next key lands in it too.
+    #[test]
+    fn typing_in_the_episodes_box_keeps_its_focus() {
+        // A partly typed filter ("1" can be read, "1x" can't) as much as a whole one.
+        assert_eq!(typed_into(184.0, "1x2-").episodes, "1x2-");
+    }
+
+    #[test]
+    fn typing_in_the_words_boxes_keeps_their_focus() {
+        assert_eq!(typed_into(102.0, "linux").must, "linux");
+        assert_eq!(typed_into(130.0, "cam").must_not, "cam");
     }
 }
