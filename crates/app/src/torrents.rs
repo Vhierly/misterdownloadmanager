@@ -1057,7 +1057,11 @@ mod tests {
         assert_eq!(share_ratio(0, 0), 0.0);
         assert_eq!(share_ratio(500, 0), 0.0, "nothing taken: no ratio");
         assert_eq!(share_ratio(500, 1000), 0.5);
-        assert_eq!(share_ratio_text(0, 0), "0.00", "as the General tab writes it");
+        assert_eq!(
+            share_ratio_text(0, 0),
+            "0.00",
+            "as the General tab writes it"
+        );
         assert_eq!(share_ratio_text(500, 1000), "0.50");
         assert_eq!(share_ratio_text(2000, 1000), "2.00");
         assert_eq!(share_ratio_text(1, 3), "0.33");
@@ -1075,7 +1079,10 @@ mod tests {
         with_old["peers"] = 9.into();
         with_old["seeders"] = 9.into();
         let loaded: TorrentSpec = serde_json::from_value(with_old).unwrap();
-        assert_eq!(loaded.peers, 0, "an old value in the file doesn't come back");
+        assert_eq!(
+            loaded.peers, 0,
+            "an old value in the file doesn't come back"
+        );
     }
 
     /// #357: with no session running, the column says nobody is connected.

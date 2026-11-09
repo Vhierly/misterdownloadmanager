@@ -1122,7 +1122,6 @@ mod tests {
         assert_eq!(time(7500.0), "2 hour(s) 5 min");
         assert_eq!(rate(12_187_628.0), "11.623 MB/sec");
     }
-
 }
 
 #[cfg(test)]
