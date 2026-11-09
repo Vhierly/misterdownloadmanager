@@ -7901,16 +7901,18 @@ impl App {
                 }
             }
         }
+        let mut save_rss = false;
         if let Some(w) = &mut self.rss_dlg {
             match w.show(ctx, &mut self.rss, &self.rss_busy) {
-                Outcome::Open => {}
+                // A save is not the window answering: it stays open, and a box being typed in
+                // must keep the keys (#353). The app writes the store out itself.
+                Outcome::Open => save_rss = w.saved(),
                 Outcome::Closed => {
                     self.rss_dlg = None;
-                    self.save_rss();
+                    save_rss = true;
                 }
-                Outcome::Done(crate::rssdlg::Act::Saved) => self.save_rss(),
                 Outcome::Done(crate::rssdlg::Act::Refresh(ids)) => {
-                    self.save_rss();
+                    save_rss = true;
                     let ids = if ids.is_empty() {
                         self.rss.feeds.iter().map(|f| f.id).collect()
                     } else {
@@ -7935,6 +7937,9 @@ impl App {
                     self.open_torrent_dialog_with(Some(link), remote, ctx);
                 }
             }
+        }
+        if save_rss {
+            self.save_rss();
         }
         if let Some(d) = &mut self.add_trackers {
             match d.show(ctx) {

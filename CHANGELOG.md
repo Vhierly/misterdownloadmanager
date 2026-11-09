@@ -7,6 +7,7 @@ Each release's notes on GitHub come from its section here (`## [X.Y.Z]`, see
 
 ### Fixed
 
+- **The Episodes box in an RSS download rule kept the keys while it is typed in** ([#353](https://github.com/anefzaoui/misterdownloadmanager/issues/353)): typing a character saved the rule, and a save looked to the window like it had answered and closed, so every text box's place in it moved and the box lost the keys after each key. The window now says the store changed without answering, and the app writes it out.
 - **Open folder** works on a torrent that is still downloading ([#354](https://github.com/anefzaoui/misterdownloadmanager/issues/354)).
 - **Alt** and **F10** open the menu bar while a button or the list has the keyboard focus, not only when nothing does ([#328](https://github.com/anefzaoui/misterdownloadmanager/issues/328)).
 - Windows: no more crash on a computer where Direct3D can't start, when a window opened during the switch to OpenGL ([#337](https://github.com/anefzaoui/misterdownloadmanager/issues/337)).
