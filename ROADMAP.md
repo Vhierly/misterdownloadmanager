@@ -448,6 +448,7 @@ These ship in a later version, when they're ready.
 
 ### Bugs being looked into
 
+- 🔄 A page that starts a download by script being saved instead of the file\n  ([#374](https://github.com/anefzaoui/misterdownloadmanager/issues/374)): fix in review
 - 🔄 A duplicate prompt for a finished file that is gone
   ([#342](https://github.com/anefzaoui/misterdownloadmanager/issues/342)): fix in review
 - 🔍 A 10-second freeze of the window after a night left open

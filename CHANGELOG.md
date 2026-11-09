@@ -11,6 +11,7 @@ Each release's notes on GitHub come from its section here (`## [X.Y.Z]`, see
 
 ### Fixed
 
+- A download that a page starts by script (a thank-you page going to the installer, as obsproject.com's does) gets the file's address, not the page's, so MDM no longer saves that page under the installer's name ([#374](https://github.com/anefzaoui/misterdownloadmanager/issues/374)). A finished download also shows what really came down when the server gives no size.
 - Adding a link again after its finished file was moved or deleted starts a new download, instead of asking about a duplicate that isn't there ([#342](https://github.com/anefzaoui/misterdownloadmanager/issues/342)).
 
 ## [0.5.1] - 2026-11-08

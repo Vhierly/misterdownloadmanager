@@ -448,10 +448,18 @@ if (ext.webRequest && ext.webRequest.onBeforeRedirect) {
   );
 }
 
+// Pages the browser loaded in a tab or frame (two minutes), by address (the listener below).
+const loadedPages = new Map();
+
 // The address a download was first asked for: the browser's own (Chromium), else the start of
-// the redirects that led to it.
+// the redirects that led to it. Chromium also counts the page a script or a meta refresh left
+// from as a download's start (#374: a thank-you page setting location.href to the installer);
+// that page isn't the file, and asking it again would save the page under the file's name.
 function firstUrl(item) {
-  if (item.finalUrl && item.finalUrl !== item.url) return item.url;
+  if (item.finalUrl && item.finalUrl !== item.url) {
+    const page = loadedPages.get(item.url);
+    return page && Date.now() - page.at < 120000 ? item.finalUrl : item.url;
+  }
   const r = redirected.get(item.url);
   return r && Date.now() - r.at < 120000 ? r.from : item.url;
 }
@@ -648,10 +656,18 @@ function sniffTab(tabId, frames) {
 if (ext.webRequest && ext.webRequest.onResponseStarted) {
   ext.webRequest.onResponseStarted.addListener(
     (d) => {
+      if (d.type === "main_frame" || d.type === "sub_frame") {
+        const type = (d.responseHeaders || []).find((h) => h.name.toLowerCase() === "content-type");
+        if (d.statusCode === 200 && type && /^\s*(text\/html|application\/xhtml)/i.test(type.value || "")) {
+          forget(loadedPages, 120000);
+          loadedPages.set(d.url, { at: Date.now() });
+        }
+        return;
+      }
       const found = mediaKind(d);
       if (found) mediaBack.then(() => (found.kind === "maybe" ? noteMaybe(d, found) : noteMedia(d, found)));
     },
-    { urls: ["<all_urls>"], types: ["xmlhttprequest", "media", "other"] },
+    { urls: ["<all_urls>"], types: ["main_frame", "sub_frame", "xmlhttprequest", "media", "other"] },
     ["responseHeaders"],
   );
 }

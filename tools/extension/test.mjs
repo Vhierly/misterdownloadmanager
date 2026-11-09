@@ -342,6 +342,20 @@ const ok = (what) => {
   ok("Chrome: taken at its name, incognito cookies, both addresses");
 }
 
+// Chrome: a page that left for the file by script (Chromium counts it as the download's start,
+// #374) isn't the address of the file.
+{
+  const { api, calls, listeners } = fakeApi({ firefox: false });
+  load(api, false);
+  const page = "https://site.test/welcome";
+  listeners.responseStarted({ type: "main_frame", tabId: 1, frameId: 0, statusCode: 200, url: page, responseHeaders: [{ name: "Content-Type", value: "text/html; charset=UTF-8" }] });
+  listeners.determining({ id: 7, url: page, finalUrl: "https://cdn.test/x.exe", filename: "x.exe" }, () => {});
+  await settle();
+  const [m] = natives(calls);
+  assert.deepEqual([m.url, m.finalUrl], ["https://cdn.test/x.exe", ""], "the file's address, not the page's");
+  ok("Chrome: a page that went to the file by script isn't the file's address");
+}
+
 // Chrome: one the app doesn't take goes on as the browser's own (its name confirmed).
 {
   const { api, calls, listeners } = fakeApi({ firefox: false, reply: { ok: false } });
