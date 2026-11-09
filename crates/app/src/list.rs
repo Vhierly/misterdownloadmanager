@@ -79,9 +79,10 @@ pub const PEERS: usize = 10;
 /// The "Share ratio" column's data slot (a torrent's sent over taken; blank otherwise).
 pub const RATIO: usize = 11;
 
-/// IDM's default column widths (and ours for Added, Source, Peers and Share ratio).
+/// IDM's default column widths (and ours for Added, room for a 12-hour clock's
+/// `Oct 28 9:05:01 AM 2026`, Source, Peers and Share ratio).
 pub const DEFAULT_WIDTHS: [f32; COLS] = [
-    150.0, 20.0, 75.0, 65.0, 75.0, 95.0, 65.0, 200.0, 125.0, 62.0, 64.0, 92.0,
+    150.0, 20.0, 75.0, 65.0, 75.0, 95.0, 65.0, 200.0, 145.0, 62.0, 64.0, 92.0,
 ];
 /// Default display order: Source first, then IDM's, a torrent's two columns after its rate, and
 /// Added after Last Try Date.

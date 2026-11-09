@@ -489,6 +489,8 @@ These ship in a later version, when they're ready.
   [#339](https://github.com/anefzaoui/misterdownloadmanager/issues/339)): yt-dlp's folder build,
   unpacked once and checked against its signed list; built and checked on macOS, still to
   confirm on a person's Mac
+- 🔄 In English, the list's dates on the system's 12- or 24-hour clock
+  ([#392](https://github.com/anefzaoui/misterdownloadmanager/issues/392)): in review
 - 🔄 Help: when an antivirus or VirusTotal flags MDM
 - 🔄 Linux, what's left ([#164](https://github.com/anefzaoui/misterdownloadmanager/issues/164)):
   screen readers (Orca) reading MDM's windows; browsers installed as a Flatpak (Firefox from
@@ -505,9 +507,12 @@ These ship in a later version, when they're ready.
 - 🔄 A torrent's peers and share ratio as columns in the download list
   ([#357](https://github.com/anefzaoui/misterdownloadmanager/issues/357)): in review; its upload
   speed is still to come
+- 🔄 Malay: a native speaker's check of the menus, toolbar and list columns: in review
 
 ### Bugs being looked into
 
+- 🔄 A file renamed to avoid a clash still showing and opening under its old name
+  ([#442](https://github.com/anefzaoui/misterdownloadmanager/issues/442)): fix in review
 - 🔄 RSS feeds: the rule boxes losing the keyboard after each key
   ([#353](https://github.com/anefzaoui/misterdownloadmanager/issues/353)): fix in review
 - 🔄 Video progress at 100 % while still downloading, and long encoded strings as file names
