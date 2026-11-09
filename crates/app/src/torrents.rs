@@ -31,6 +31,10 @@ pub struct TorrentSpec {
     /// Seconds it has spent sharing once finished, in all its runs.
     #[serde(default)]
     pub seeded_secs: u64,
+    /// Peers connected to it the last time the app looked (#357); the list's "Seeders" column.
+    /// Zero until then, and for a torrent that isn't running.
+    #[serde(default)]
+    pub seeders: u32,
     /// Its own upload limit, bytes/s (None: only Torrent settings' limit for all torrents).
     #[serde(default)]
     pub upload_limit: Option<u64>,
@@ -1066,6 +1070,7 @@ mod tests {
             folder: "f".into(),
             uploaded,
             seeded_secs,
+            seeders: 0,
             upload_limit: None,
             in_order: false,
             ends_first: true,

@@ -950,6 +950,16 @@ pub fn percent(ratio: f64) -> String {
     crate::i18n::percent(ratio, 2)
 }
 
+/// A torrent's share ratio as the list's column shows it (#357): what it sent to peers against
+/// what it took, two decimals; empty while it has taken nothing (a ratio of nothing is not a
+/// number, and the column stays blank rather than inventing one).
+pub fn share_ratio(sent: u64, done: u64) -> String {
+    if done == 0 {
+        return String::new();
+    }
+    crate::i18n::decimal(sent as f64 / done as f64, 2)
+}
+
 /// `{n} MB`-style unit text in the interface language (catalog context `unit`).
 fn unit(n: f64, decimals: usize, template: &str) -> String {
     crate::i18n::i18n().measure(crate::i18n::lang(), n, decimals, template)
@@ -1071,6 +1081,15 @@ mod tests {
         assert_eq!(time(82.0), "1 min 22 sec");
         assert_eq!(time(7500.0), "2 hour(s) 5 min");
         assert_eq!(rate(12_187_628.0), "11.623 MB/sec");
+    }
+
+    /// #357: the list's "Share ratio" column.
+    #[test]
+    fn a_torrents_share_ratio() {
+        assert_eq!(share_ratio(0, 0), "", "nothing taken: no ratio");
+        assert_eq!(share_ratio(500, 1000), "0.50");
+        assert_eq!(share_ratio(2000, 1000), "2.00");
+        assert_eq!(share_ratio(1, 3), "0.33");
     }
 }
 
