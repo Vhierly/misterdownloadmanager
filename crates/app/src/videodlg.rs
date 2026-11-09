@@ -188,7 +188,15 @@ impl VideoDialog {
     }
 
     /// The choices for a looked-up video: merged qualities when ffmpeg is there.
-    fn set_video(&mut self, v: Video) {
+    fn set_video(&mut self, mut v: Video) {
+        // No page reader for this site: the page's own title rather than a hash (#345).
+        if let Some(title) = self.context.video_title.as_deref().map(str::trim)
+            && !title.is_empty()
+            && self.page.trim() == self.from_browser
+            && mdm_tools::resolve::named_after_address(&v.title, &self.page)
+        {
+            v.title = title.to_owned();
+        }
         let merge = self.tools.get_or_insert_with(tools).2.is_some();
         let choices = mdm_tools::resolve::choices(&v, merge);
         self.chosen = 0;

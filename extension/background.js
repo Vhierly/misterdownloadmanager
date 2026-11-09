@@ -884,6 +884,17 @@ async function mediaList(tabId) {
   return out;
 }
 
+// A file's name from the tab's title when its address ends in a long hash (#345), else none: the
+// app names it from the address, as for any download.
+function titledName(url, title) {
+  const last = pathOf(url).split("/").pop() || "";
+  const dot = last.lastIndexOf(".");
+  const stem = dot > 0 ? last.slice(0, dot) : last;
+  const name = String(title || "").replace(/[\\/:*?"<>|]/g, " ").trim().slice(0, 150);
+  const hash = stem.length >= 24 && /^[A-Za-z0-9=_-]+$/.test(stem) && (stem.match(/[-_]/g) || []).length <= 2;
+  return hash && name ? `${name}${dot > 0 ? last.slice(dot) : ""}` : "";
+}
+
 // One of the tab's media, handed to the app as the popup asked: a stream to the Download video
 // window (yt-dlp), a file as a download; with the page that played it (the referrer), the cookies
 // its own server gets, and the browser's User-Agent (`native`). A protected one is never sent.
@@ -916,7 +927,7 @@ async function mediaDownload(tabId, url) {
       ...(ctx.incognito ? { private: true } : {}),
     });
   }
-  return handOff({ url: it.url, referrer: page, size: it.size, mime: it.mime, explicit: true, ...ctx });
+  return handOff({ url: it.url, referrer: page, size: it.size, mime: it.mime, explicit: true, filename: titledName(it.url, tab.title), ...ctx });
 }
 
 // ---- the hand-off ------------------------------------------------------------------------

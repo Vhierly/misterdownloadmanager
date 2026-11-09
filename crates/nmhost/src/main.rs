@@ -102,6 +102,8 @@ struct Message {
     /// the tab's media asked for it (#38).
     video: bool,
     src: Option<String>,
+    /// The page's title (`video`).
+    title: Option<String>,
     /// The button's menu: keep it off this site (a host name).
     hide_site: Option<String>,
     /// The button's menu: open its settings in Options (`page`: the toolbar button's popup asks
@@ -422,6 +424,7 @@ fn video_command(
     };
     Ok(mdm_ipc::Command {
         video_page: Some(src.unwrap_or_else(|| m.url.clone())),
+        video_title: m.title.clone().filter(|t| !t.trim().is_empty()),
         referer,
         cookies: m.cookies.clone().filter(|c| !c.is_empty()),
         cookie_jar: m.cookie_jar.clone(),
