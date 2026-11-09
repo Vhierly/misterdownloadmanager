@@ -119,6 +119,9 @@ Everything below ships together, in version 0.5.0.
 - ✅ More file types taken from the browser by default: DMG, PKG, DEB, RPM, APPIMAGE, MSIX, APPX,
   CAB, JAR, XZ, ZST, WEBM, FLAC, OPUS and others; a list never edited gains them
   ([#208](https://github.com/anefzaoui/misterdownloadmanager/issues/208))
+- ✅ Far more file types taken by default: AI models and datasets, 3D and CAD, design and camera
+  RAW, ebooks, Office, disk images and split archives; a list never edited gains them
+  ([#382](https://github.com/anefzaoui/misterdownloadmanager/issues/382))
 - ✅ Windows: Download File Info and the progress window open in front of the browser, even when
   Windows doesn't let MDM take the foreground; the keyboard stays where it was until a click
   ([#208](https://github.com/anefzaoui/misterdownloadmanager/issues/208))
@@ -452,6 +455,8 @@ These ship in a later version, when they're ready.
 ### Bugs being looked into
 
 - 🔍 A site's bot check refusing MDM's request (testfile.org, a Cloudflare challenge): the\n  message now says so ([#376](https://github.com/anefzaoui/misterdownloadmanager/issues/376)); a way to hand the download back to the browser is still to decide
+- 🔄 Alt and F10 opening the menu bar with a control focused
+  ([#328](https://github.com/anefzaoui/misterdownloadmanager/issues/328)): fix in review
 - 🔄 Crash on Windows when a window opens while MDM falls back from Direct3D to OpenGL
   ([#337](https://github.com/anefzaoui/misterdownloadmanager/issues/337)): fix in review
 - 🔄 Crash on Windows when a screen goes away while MDM runs
