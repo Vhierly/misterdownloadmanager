@@ -8,10 +8,12 @@ Each release's notes on GitHub come from its section here (`## [X.Y.Z]`, see
 ### Fixed
 
 - RSS feeds: the boxes on the **Download rules** tab (**Episodes**, **Must contain** and the others) keep the keyboard while you type, instead of losing it after each key ([#353](https://github.com/anefzaoui/misterdownloadmanager/issues/353)).
+- **Alt** and **F10** open the menu bar while a button or the list has the keyboard focus, not only when nothing does ([#328](https://github.com/anefzaoui/misterdownloadmanager/issues/328)).
 - Windows: no more crash on a computer where Direct3D can't start, when a window opened during the switch to OpenGL ([#337](https://github.com/anefzaoui/misterdownloadmanager/issues/337)).
 - Windows: no more crash when a screen is unplugged, turned off or rearranged while MDM runs ([#335](https://github.com/anefzaoui/misterdownloadmanager/issues/335)).
 ### Added
 
+- **Far more file types taken from the browser by default** ([#382](https://github.com/anefzaoui/misterdownloadmanager/issues/382)): AI models and datasets (GGUF, SAFETENSORS, CKPT, PT, ONNX, PARQUET...), 3D and CAD (GLB, FBX, OBJ, STL, BLEND, STEP...), design and camera RAW files, ebooks, Office files, disk images and split archives. A list you never edited gains them; one you edited stays yours.
 - Help: what to do when an antivirus or VirusTotal flags MDM, and how to check your copy is the real one.
 
 ### Fixed
