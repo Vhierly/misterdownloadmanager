@@ -2898,7 +2898,7 @@ impl App {
             return;
         };
         let name = mdm_engine::naming::file_name(None, &url);
-        if mdm_engine::supported(&url) && self.settings.auto_type(&name) {
+        if mdm_engine::supported(&url) && self.settings.clipboard_type(&name) {
             let cmd = ipc::Command {
                 url: Some(text),
                 ..Default::default()
@@ -6169,8 +6169,12 @@ impl App {
         // The menu bar from the keyboard: F10 or Alt pressed alone opens its first menu, Alt and a
         // menu's underlined letter that menu (Windows and Linux); on macOS, whose apps have no
         // Alt keys, Ctrl+F2 (the system's key for the menu bar).
-        if self.open_menu.is_none() && self.popup.is_none() && ctx.memory(|m| m.focused().is_none())
-        {
+        // A focused button or list (Tab, a screen reader, #328) leaves these keys to the menu bar;
+        // only a text box keeps them.
+        let typing = ctx
+            .memory(|m| m.focused())
+            .is_some_and(|id| egui::TextEdit::load_state(&ctx, id).is_some());
+        if self.open_menu.is_none() && self.popup.is_none() && !typing {
             let labels: Vec<String> = chrome::menus(ui.painter())
                 .iter()
                 .map(|(l, ..)| chrome::menu_letter(l))
