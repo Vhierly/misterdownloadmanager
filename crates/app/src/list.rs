@@ -45,8 +45,10 @@ themed! {
 
 /// Columns, by their fixed data slot in [`Row::cells`]: IDM's eight, then the user's additions:
 /// "Added" (2026-10-30: when the download was added; sorts in order of addition), "Source"
-/// (D-014: a Web or Torrent chip, first by default), and a torrent's "Upload speed", "Peers" and
-/// "Share ratio" (#357: what it sends, how many peers it has connected and what it has given back).
+/// (D-014: a Web or Torrent chip, first by default), and a torrent's "Peers" and "Share ratio"
+/// (#357: how many peers it has connected and what it has given back). "Upload speed" (#357: what
+/// it sends) is the last slot: a saved layout is indexed by slot, so it must not take a slot an
+/// older build already meant something else by.
 pub const COLS: usize = 13;
 pub const TITLES: [&str; COLS] = [
     "File Name",
@@ -65,28 +67,29 @@ pub const TITLES: [&str; COLS] = [
     "Added",
     // i18n: noun: where the download comes from (Web or Torrent)
     "Source",
-    // i18n: column title: what a torrent sends to peers, bytes per second
-    "Upload speed",
     // i18n: column title: how many peers a torrent is connected to now (seeders and leechers)
     "Peers",
     // i18n: column title: what a torrent has sent to peers against what it took
     "Share ratio",
+    // i18n: column title: what a torrent sends to peers, bytes per second
+    "Upload speed",
 ];
 /// The "Added" column's data slot.
 pub const ADDED: usize = 8;
 /// The "Source" column's data slot: its cell is "Web" or "Torrent", painted as a chip.
 pub const SOURCE: usize = 9;
-/// The "Upload speed" column's data slot (what a torrent sends; blank for anything else).
-pub const UPLOAD: usize = 10;
 /// The "Peers" column's data slot (a torrent's connected peers; blank for anything else).
-pub const PEERS: usize = 11;
+pub const PEERS: usize = 10;
 /// The "Share ratio" column's data slot (a torrent's sent over taken; blank otherwise).
-pub const RATIO: usize = 12;
+pub const RATIO: usize = 11;
+/// The "Upload speed" column's data slot (what a torrent sends; blank for anything else). The
+/// last slot, so a layout saved before it existed still means what it meant.
+pub const UPLOAD: usize = 12;
 
 /// IDM's default column widths (and ours for Added, room for a 12-hour clock's
-/// `Oct 28 9:05:01 AM 2026`, Source, Upload speed, Peers and Share ratio).
+/// `Oct 28 9:05:01 AM 2026`, Source, Peers, Share ratio and Upload speed).
 pub const DEFAULT_WIDTHS: [f32; COLS] = [
-    150.0, 20.0, 75.0, 65.0, 75.0, 95.0, 65.0, 200.0, 145.0, 62.0, 100.0, 64.0, 92.0,
+    150.0, 20.0, 75.0, 65.0, 75.0, 95.0, 65.0, 200.0, 145.0, 62.0, 64.0, 92.0, 100.0,
 ];
 /// Default display order: Source first, then IDM's, a torrent's three columns after its rate, and
 /// Added after Last Try Date.
@@ -1664,17 +1667,18 @@ mod tests {
         assert_eq!(st.order, DEFAULT_ORDER.to_vec(), "the default stands");
     }
 
-    /// The second half of #357: a layout saved with Peers and Share ratio but before Upload speed
-    /// gets it between Transfer rate and Peers, not at the end.
+    /// A layout saved by 0.5.2 (12 slots: Peers at 10, Share ratio at 11, sorted by Peers) must
+    /// keep meaning what it meant: Peers is still Peers, with its own width and its sort. Upload
+    /// speed takes the new, free slot and gets its default.
     #[test]
-    fn a_layout_saved_before_upload_speed_gets_it_after_transfer_rate() {
+    fn a_layout_saved_by_052_keeps_peers_as_peers() {
         let old = Layout {
             order: vec![SOURCE, 0, 1, 2, 3, 4, 5, PEERS, RATIO, 6, ADDED, 7],
             widths: vec![
                 150.0, 20.0, 75.0, 65.0, 75.0, 95.0, 65.0, 300.0, 145.0, 62.0, 64.0, 92.0,
             ],
             visible: vec![true; 12],
-            sort: None,
+            sort: Some((PEERS, true)),
         };
         let mut st = ListState::default();
         st.apply(old);
@@ -1683,8 +1687,18 @@ mod tests {
             [SOURCE, 0, 1, 2, 3, 4, 5, UPLOAD, PEERS, RATIO, 6, ADDED, 7]
         );
         assert_eq!(
-            st.widths[UPLOAD], 64.0,
-            "widths are per slot, so this slot's saved width stays"
+            st.widths[PEERS], 64.0,
+            "Peers keeps the width 0.5.2 saved for it"
+        );
+        assert_eq!(st.widths[RATIO], 92.0, "Share ratio keeps its own");
+        assert_eq!(
+            st.widths[UPLOAD], DEFAULT_WIDTHS[UPLOAD],
+            "the new slot gets its default"
+        );
+        assert_eq!(
+            st.sort,
+            Some((PEERS, true)),
+            "a list sorted by Peers is still sorted by Peers"
         );
         assert_eq!(st.widths[SOURCE], 62.0, "the saved widths stay");
         assert_eq!(st.widths[ADDED], 145.0);
