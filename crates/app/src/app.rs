@@ -1407,17 +1407,18 @@ impl App {
                     // i18n: where a download comes from: a web or FTP server (shown on a small colored label)
                     "Web".into()
                 },
-                // A torrent's own numbers (#357): what it sends, the peers it has, and what it
-                // gave back against what it took (as the General tab works it out).
-                it.torrent
-                    .as_ref()
-                    .map_or(String::new(), |t| model::rate(t.up_speed)),
+                // A torrent's own numbers (#357), in their slots' order (list::PEERS, RATIO, then
+                // UPLOAD, added last so saved layouts keep their meaning): the peers it has, what
+                // it gave back against what it took (as the General tab works it out), what it sends.
                 it.torrent
                     .as_ref()
                     .map_or(String::new(), |t| crate::i18n::integer(t.peers as u64)),
                 it.torrent.as_ref().map_or(String::new(), |t| {
                     crate::torrents::share_ratio_text(t.uploaded, it.downloaded)
                 }),
+                it.torrent
+                    .as_ref()
+                    .map_or(String::new(), |t| model::rate(t.up_speed)),
             ],
         }
     }
