@@ -3899,7 +3899,7 @@
 	Sites send their best quality as separate video and audio. ffmpeg puts them together into one file that plays anywhere.	Sites sturen hun beste kwaliteit als aparte video en audio. ffmpeg voegt ze samen tot één bestand dat overal kan worden afgespeeld.
 #. text in categories.rs
 #, machine
-	Sites:	Sites:
+	Sites:	Websites:
 #. text in the Link grabber window; text in a download's progress window; text in the Scheduler window; text in the Add torrent window
 #. column title: the file's size
 #. column title: file size
