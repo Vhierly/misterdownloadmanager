@@ -511,9 +511,8 @@ These ship in a later version, when they're ready.
   so a download a page starts by itself stays with Safari. Built and its relay to the helper
   checked in the sandbox Safari uses; still to check in Safari itself, signed with a Developer ID
 
-- 🔄 A torrent's peers and share ratio as columns in the download list
-  ([#357](https://github.com/anefzaoui/misterdownloadmanager/issues/357)): in review; its upload
-  speed is still to come
+- 🔄 A torrent's upload speed, peers and share ratio as columns in the download list
+  ([#357](https://github.com/anefzaoui/misterdownloadmanager/issues/357)): the last one in review
 - 🔄 The browser extension's media list naming a file after its page, as an option: in review
 - 🔄 Malay: a native speaker's check of the menus, toolbar and list columns: in review
 

@@ -45,9 +45,9 @@ themed! {
 
 /// Columns, by their fixed data slot in [`Row::cells`]: IDM's eight, then the user's additions:
 /// "Added" (2026-10-30: when the download was added; sorts in order of addition), "Source"
-/// (D-014: a Web or Torrent chip, first by default), and a torrent's "Peers" and "Share ratio"
-/// (#357: how many peers it has connected and what it has given back).
-pub const COLS: usize = 12;
+/// (D-014: a Web or Torrent chip, first by default), and a torrent's "Upload speed", "Peers" and
+/// "Share ratio" (#357: what it sends, how many peers it has connected and what it has given back).
+pub const COLS: usize = 13;
 pub const TITLES: [&str; COLS] = [
     "File Name",
     // i18n: column title: one letter for Queue (the column is narrow)
@@ -65,6 +65,8 @@ pub const TITLES: [&str; COLS] = [
     "Added",
     // i18n: noun: where the download comes from (Web or Torrent)
     "Source",
+    // i18n: column title: what a torrent sends to peers, bytes per second
+    "Upload speed",
     // i18n: column title: how many peers a torrent is connected to now (seeders and leechers)
     "Peers",
     // i18n: column title: what a torrent has sent to peers against what it took
@@ -74,19 +76,21 @@ pub const TITLES: [&str; COLS] = [
 pub const ADDED: usize = 8;
 /// The "Source" column's data slot: its cell is "Web" or "Torrent", painted as a chip.
 pub const SOURCE: usize = 9;
+/// The "Upload speed" column's data slot (what a torrent sends; blank for anything else).
+pub const UPLOAD: usize = 10;
 /// The "Peers" column's data slot (a torrent's connected peers; blank for anything else).
-pub const PEERS: usize = 10;
+pub const PEERS: usize = 11;
 /// The "Share ratio" column's data slot (a torrent's sent over taken; blank otherwise).
-pub const RATIO: usize = 11;
+pub const RATIO: usize = 12;
 
 /// IDM's default column widths (and ours for Added, room for a 12-hour clock's
-/// `Oct 28 9:05:01 AM 2026`, Source, Peers and Share ratio).
+/// `Oct 28 9:05:01 AM 2026`, Source, Upload speed, Peers and Share ratio).
 pub const DEFAULT_WIDTHS: [f32; COLS] = [
-    150.0, 20.0, 75.0, 65.0, 75.0, 95.0, 65.0, 200.0, 145.0, 62.0, 64.0, 92.0,
+    150.0, 20.0, 75.0, 65.0, 75.0, 95.0, 65.0, 200.0, 145.0, 62.0, 100.0, 64.0, 92.0,
 ];
-/// Default display order: Source first, then IDM's, a torrent's two columns after its rate, and
+/// Default display order: Source first, then IDM's, a torrent's three columns after its rate, and
 /// Added after Last Try Date.
-const DEFAULT_ORDER: [usize; COLS] = [SOURCE, 0, 1, 2, 3, 4, 5, PEERS, RATIO, 6, ADDED, 7];
+const DEFAULT_ORDER: [usize; COLS] = [SOURCE, 0, 1, 2, 3, 4, 5, UPLOAD, PEERS, RATIO, 6, ADDED, 7];
 
 const MIN_WIDTH: f32 = 16.0;
 /// How far from a separator a press grabs it for resizing.
@@ -251,9 +255,9 @@ impl ListState {
     }
 
     /// Restore a saved layout. One saved before "Added" existed gets it after Last Try Date,
-    /// one saved before "Source" gets it first, one saved before "Peers" and "Share ratio" gets
-    /// them after Transfer rate; a layout that doesn't name every column exactly once is
-    /// ignored.
+    /// one saved before "Source" gets it first, one saved before the torrent's columns gets them
+    /// after Transfer rate, in this order: Upload speed, Peers, Share ratio. A layout that
+    /// doesn't name every column exactly once is ignored.
     pub fn apply(&mut self, mut l: Layout) {
         if !l.order.contains(&SOURCE) {
             l.order.insert(0, SOURCE);
@@ -281,6 +285,16 @@ impl ListState {
                 .position(|c| *c == PEERS)
                 .map_or(l.order.len(), |p| p + 1);
             l.order.insert(at, RATIO);
+        }
+        // Last, and so before the two already there: a layout from before #357's second half
+        // keeps Transfer rate, then Upload speed, Peers, Share ratio.
+        if !l.order.contains(&UPLOAD) {
+            let at = l
+                .order
+                .iter()
+                .position(|c| *c == 5)
+                .map_or(l.order.len(), |p| p + 1);
+            l.order.insert(at, UPLOAD);
         }
         let mut seen = l.order.clone();
         seen.sort_unstable();
@@ -1196,7 +1210,8 @@ fn cell_text(col: usize, s: &str) -> String {
     match col {
         0 | 7 => crate::i18n::isolate(s),
         // Dates, a peer count and a ratio read left to right.
-        6 | ADDED | PEERS | RATIO => crate::i18n::ltr(s),
+        // Dates, a rate, a peer count and a ratio read left to right.
+        6 | ADDED | UPLOAD | PEERS | RATIO => crate::i18n::ltr(s),
         _ => s.to_owned(),
     }
 }
@@ -1564,6 +1579,20 @@ mod tests {
         assert_eq!(shown(&st), 1);
     }
 
+    /// The slots are fixed, so a title inserted in the middle of [`TITLES`] would name the wrong
+    /// column — the screenshots caught exactly that.
+    #[test]
+    fn each_titles_slot_names_its_own_column() {
+        assert_eq!(TITLES[0], "File Name");
+        assert_eq!(TITLES[6], "Last Try Date");
+        assert_eq!(TITLES[7], "Description");
+        assert_eq!(TITLES[ADDED], "Added");
+        assert_eq!(TITLES[SOURCE], "Source");
+        assert_eq!(TITLES[UPLOAD], "Upload speed");
+        assert_eq!(TITLES[PEERS], "Peers");
+        assert_eq!(TITLES[RATIO], "Share ratio");
+    }
+
     #[test]
     fn hidden_columns_keep_their_place() {
         let mut st = ListState::default();
@@ -1585,23 +1614,24 @@ mod tests {
         };
         let mut st = ListState::default();
         st.apply(old);
-        // Source first, the two torrent columns after Transfer rate, Added after Last Try Date.
+        // Source first, the three torrent columns after Transfer rate, Added after Last Try Date.
         assert_eq!(
             st.order,
-            [SOURCE, 0, 2, 1, 3, 4, 5, PEERS, RATIO, 6, ADDED, 7]
+            [SOURCE, 0, 2, 1, 3, 4, 5, UPLOAD, PEERS, RATIO, 6, ADDED, 7]
         );
         assert_eq!(st.widths[0], 200.0, "the saved widths stay");
         assert_eq!(st.widths[ADDED], DEFAULT_WIDTHS[ADDED]);
         assert!(st.visible[ADDED]);
         assert!(st.visible[SOURCE]);
         // A layout saved before they existed gets their defaults, shown.
+        assert_eq!(st.widths[UPLOAD], DEFAULT_WIDTHS[UPLOAD]);
         assert_eq!(st.widths[PEERS], DEFAULT_WIDTHS[PEERS]);
         assert_eq!(st.widths[RATIO], DEFAULT_WIDTHS[RATIO]);
-        assert!(st.visible[PEERS] && st.visible[RATIO]);
+        assert!(st.visible[UPLOAD] && st.visible[PEERS] && st.visible[RATIO]);
         assert_eq!(st.sort, Some((2, false)));
     }
 
-    /// #357: a layout saved between "Source" and the two torrent columns gets them in the same
+    /// #357: a layout saved between "Source" and the torrent columns gets them in the same
     /// place, and a layout that names a column twice is still ignored.
     #[test]
     fn a_layout_saved_before_the_torrent_columns_gets_them() {
@@ -1617,9 +1647,11 @@ mod tests {
         st.apply(old);
         assert_eq!(
             st.order,
-            [SOURCE, 0, 1, 2, 3, 4, 5, PEERS, RATIO, 6, ADDED, 7]
+            [SOURCE, 0, 1, 2, 3, 4, 5, UPLOAD, PEERS, RATIO, 6, ADDED, 7]
         );
-        assert!(st.widths[PEERS] > 0.0 && st.widths[RATIO] > 0.0);
+        assert!(st.widths[UPLOAD] > 0.0 && st.widths[PEERS] > 0.0 && st.widths[RATIO] > 0.0);
+        // None of the torrent columns were in that layout, so all three get their defaults.
+        assert_eq!(st.widths[UPLOAD], DEFAULT_WIDTHS[UPLOAD]);
         // A layout that names one column twice (and so misses another) is ignored whole.
         let bad = Layout {
             order: vec![SOURCE, 0, 1, 2, 3, 4, 5, 6, ADDED, 7, PEERS, PEERS],
@@ -1630,5 +1662,31 @@ mod tests {
         let mut st = ListState::default();
         st.apply(bad);
         assert_eq!(st.order, DEFAULT_ORDER.to_vec(), "the default stands");
+    }
+
+    /// The second half of #357: a layout saved with Peers and Share ratio but before Upload speed
+    /// gets it between Transfer rate and Peers, not at the end.
+    #[test]
+    fn a_layout_saved_before_upload_speed_gets_it_after_transfer_rate() {
+        let old = Layout {
+            order: vec![SOURCE, 0, 1, 2, 3, 4, 5, PEERS, RATIO, 6, ADDED, 7],
+            widths: vec![
+                150.0, 20.0, 75.0, 65.0, 75.0, 95.0, 65.0, 300.0, 145.0, 62.0, 64.0, 92.0,
+            ],
+            visible: vec![true; 12],
+            sort: None,
+        };
+        let mut st = ListState::default();
+        st.apply(old);
+        assert_eq!(
+            st.order,
+            [SOURCE, 0, 1, 2, 3, 4, 5, UPLOAD, PEERS, RATIO, 6, ADDED, 7]
+        );
+        assert_eq!(
+            st.widths[UPLOAD], 64.0,
+            "widths are per slot, so this slot's saved width stays"
+        );
+        assert_eq!(st.widths[SOURCE], 62.0, "the saved widths stay");
+        assert_eq!(st.widths[ADDED], 145.0);
     }
 }
