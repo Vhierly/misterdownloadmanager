@@ -2424,7 +2424,7 @@ impl App {
                 .category
                 .as_deref()
                 .and_then(|k| Category::all().into_iter().find(|c| c.key() == k))
-                .unwrap_or_else(|| Category::of(&name));
+                .unwrap_or_else(|| Category::of_site(&name, url.as_str()));
             let queue = cmd
                 .queue
                 .as_deref()
@@ -4352,7 +4352,7 @@ impl App {
         let mut ids = Vec::new();
         for url in added.urls {
             let name = mdm_engine::naming::file_name(None, &url);
-            let category = Category::of(&name);
+            let category = Category::of_site(&name, url.as_str());
             let dir = self.settings.category_dir(category, &self.downloads);
             let dest = mdm_engine::naming::destination(&dir, &name);
             let id = self.push_item(
@@ -4630,7 +4630,7 @@ impl App {
             }
         }
         let name = mdm_engine::naming::sanitize(&mdm_engine::naming::file_name(None, &url));
-        let category = category.unwrap_or_else(|| Category::of(&name));
+        let category = category.unwrap_or_else(|| Category::of_site(&name, url.as_str()));
         let dir = self.settings.category_dir(category, &self.downloads);
         let dest = mdm_engine::naming::destination(&dir, &name);
         cmd.remote = false;
@@ -7641,7 +7641,7 @@ impl App {
                 let Ok(url) = url::Url::parse(&d.url) else {
                     continue;
                 };
-                let category = Category::of(&name);
+                let category = Category::of_site(&name, url.as_str());
                 let dir = if pk.folder.as_os_str().is_empty() {
                     self.settings.category_dir(category, &self.downloads)
                 } else {
@@ -8905,7 +8905,7 @@ impl App {
                 .clone()
                 .unwrap_or_else(|| mdm_engine::naming::file_name(None, &url));
             let name = mdm_engine::naming::sanitize(&name);
-            let category = Category::of(&name);
+            let category = Category::of_site(&name, url.as_str());
             let dir = self.settings.category_dir(category, &self.downloads);
             let dest = mdm_engine::naming::destination(&dir, &name);
             let size = context.size;
