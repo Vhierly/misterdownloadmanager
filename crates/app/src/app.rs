@@ -518,6 +518,13 @@ enum Cmd {
     WindowSystem(Option<crate::settings::WindowSystemPick>),
     /// View → Interface size → a size in percent (#262).
     InterfaceSize(u16),
+    /// View → Font → Choose a font file (#1489): the interface's text in a TrueType or OpenType
+    /// file picked from disk.
+    InterfaceFont,
+    /// View → Font → System font (#1489): back to the computer's own font.
+    InterfaceFontSystem,
+    /// View → Font → Size → a text size in percent (#1489).
+    InterfaceTextSize(u16),
     /// View → Text → Smooth (`true`) or Classic (Windows).
     #[cfg(windows)]
     SmoothText(bool),
@@ -3444,11 +3451,13 @@ impl App {
                 let (index, sub) = tab.split_once(':').unwrap_or((tab, ""));
                 let index = index.parse().unwrap_or(0);
                 self.open_menu = Some(index);
-                // menu:3:theme opens View → Theme (#45), menu:3:size View → Interface size (#262).
+                // menu:3:theme opens View → Theme (#45), menu:3:size View → Interface size (#262),
+                // menu:3:font View → Font (#1489).
                 let wanted = match sub {
                     "draw" => "Draw with",
                     "theme" => "Theme",
                     "size" => "&Interface size",
+                    "font" => "&Font",
                     _ => "",
                 };
                 let at = self
@@ -8113,6 +8122,25 @@ impl App {
             }
             // Every window at once (the frames after this one); saved by `follow_zoom`.
             Cmd::InterfaceSize(percent) => crate::scale::set(ctx, percent),
+            Cmd::InterfaceFont => {
+                // i18n: title of the file dialog of View → Font → Choose a font file
+                let title = crate::i18n::t("Choose a font file").to_owned();
+                // i18n: the kind of file View → Font → Choose a font file lists: TrueType and OpenType font files
+                let kinds = crate::i18n::t("Font files").to_owned();
+                let all = crate::i18n::t("All files").to_owned();
+                winui::start_pick(&self.ui_ctx, "app-interface-font", move || {
+                    crate::winui::file_dialog(&title)
+                        .add_filter(kinds, &["ttf", "otf", "ttc"])
+                        .add_filter(all, &["*"])
+                        .pick_file()
+                });
+            }
+            Cmd::InterfaceFontSystem => self.set_interface_font(None, ctx),
+            Cmd::InterfaceTextSize(percent) => {
+                self.settings.interface_text_size = percent;
+                crate::theme::set_text_size(ctx, percent);
+                self.dirty = true;
+            }
             #[cfg(windows)]
             Cmd::SmoothText(on) => {
                 crate::theme::set_smooth_text(ctx, on);
@@ -8935,8 +8963,8 @@ impl App {
                     true,
                     self.settings.always_dark,
                 ),
-                // i18n: noun: the list's font (submenu)
-                Sub("Font", false, vec![]),
+                // i18n: noun: the interface's font (View submenu: the font and its size)
+                self.font_menu(),
                 Sep,
                 // IDM's place for it; a window rather than IDM's submenu, which 86 languages
                 // would make taller than the screen (langpick.rs).
@@ -9075,6 +9103,29 @@ impl App {
             .collect();
         // i18n: View menu: submenu choosing how large MDM draws its windows and text (100 % to 200 %), as a browser's zoom
         MenuEntry::Sub("&Interface size", true, items)
+    }
+
+    /// View → Font (#1489): the file the interface's text is drawn in, and its own size, both
+    /// apart from View → Interface size (which zooms every window). Applies at once.
+    fn font_menu(&self) -> MenuEntry<Cmd> {
+        use MenuEntry::{Item as I, Radio, Sep, Sub};
+        let chosen = self.settings.interface_font.is_some();
+        // i18n: View → Font: the computer's own font, the default (Segoe UI on Windows)
+        let system = Radio("&System font", Cmd::InterfaceFontSystem, true, !chosen);
+        // i18n: View → Font: a TrueType or OpenType font file on disk to draw the interface's text in
+        let file = I("Choose a font &file...", Cmd::InterfaceFont, true, false);
+        let now = self.settings.interface_text_size;
+        let sizes = crate::theme::TEXT_SIZES
+            .iter()
+            .map(|p| {
+                // As the interface language writes a percentage: 125%, 125 %, %125.
+                let label = crate::chrome::label(&crate::i18n::percent(f64::from(*p) / 100.0, 0));
+                Radio(label, Cmd::InterfaceTextSize(*p), true, *p == now)
+            })
+            .collect();
+        // i18n: View → Font → Size: submenu of the interface text's sizes (75 % to 200 % of the theme's)
+        let sizes = Sub("S&ize", true, sizes);
+        MenuEntry::Sub("&Font", true, vec![system, file, Sep, sizes])
     }
 
     /// View → Text (Windows): how the letters are drawn. Smooth is DirectWrite's natural look
@@ -11041,6 +11092,9 @@ impl App {
         if let Some(path) = winui::picked(ctx, "app-theme-file") {
             self.add_theme_file(&path, ctx);
         }
+        if let Some(path) = winui::picked(ctx, "app-interface-font") {
+            self.set_interface_font(Some(path), ctx);
+        }
         if let Some(target) = winui::picked(ctx, "app-move-rename")
             && let Some(id) = self.move_rename_for.take()
         {
@@ -11074,6 +11128,31 @@ impl App {
                 ));
             }
         }
+    }
+
+    /// View → Font (#1489): draw the interface's text in the font file at `path`, or in the
+    /// computer's own when `None`. Saved at once; a file egui can't read is refused with a
+    /// message, and the font in use stays.
+    fn set_interface_font(&mut self, path: Option<std::path::PathBuf>, ctx: &egui::Context) {
+        if let Some(path) = &path
+            && crate::theme::read_font(path).is_none()
+        {
+            tracing::warn!("interface font: {} is not a font", path.display());
+            self.notice = Some((
+                // i18n: title of the message when the font picked in View → Font can't be used
+                crate::i18n::mark("Choose a font file"),
+                // i18n: the message when a file picked in View → Font isn't a TrueType or OpenType font MDM can read
+                crate::i18n::t("This file can't be used as a font.").to_owned(),
+            ));
+            return;
+        }
+        if let Some(path) = &path {
+            tracing::info!("interface font: {}", path.display());
+        }
+        self.settings.interface_font = path.as_ref().map(|p| p.display().to_string());
+        crate::theme::set_ui_font(path);
+        crate::theme::reload_fonts(ctx);
+        self.dirty = true;
     }
 
     /// The addresses in a list file, shown in Import to tick before adding. The file is read and

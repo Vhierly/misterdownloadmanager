@@ -569,7 +569,7 @@ fn only_loadable_fonts(defs: &mut egui::FontDefinitions) {
 
 /// The folder the font tables name files in.
 #[cfg(any(windows, target_os = "macos"))]
-fn font_dir() -> std::path::PathBuf {
+pub(crate) fn font_dir() -> std::path::PathBuf {
     #[cfg(windows)]
     return std::env::var_os("WINDIR")
         .map(|w| std::path::PathBuf::from(w).join("Fonts"))
@@ -1033,8 +1033,67 @@ fn add_script_fallback(ctx: &egui::Context) {
     });
 }
 
-/// The interface font: Segoe UI as IDM has it on Windows, the system's own elsewhere.
-fn ui_font() -> Option<Vec<u8>> {
+/// View → Font → Size (#1489): the sizes the menu offers, in percent of the theme's own sizes.
+pub const TEXT_SIZES: &[u16] = &[75, 80, 90, 100, 110, 120, 125, 150, 175, 200];
+
+/// View → Font → Size (#1489), percent: the interface's text drawn that much larger or smaller
+/// than the theme's sizes. Unlike View → Interface size (which zooms every window), the layout
+/// keeps its measurements: only the letters change.
+static TEXT_SIZE: std::sync::atomic::AtomicU16 = std::sync::atomic::AtomicU16::new(100);
+
+/// View → Font (#1489): the font file the interface's text is drawn in, or none for the
+/// computer's own font.
+static UI_FONT: std::sync::Mutex<Option<std::path::PathBuf>> = std::sync::Mutex::new(None);
+
+/// View → Font (#1489): moved with each change of the interface's font, so the text is
+/// rasterized again ([`classic_text`]).
+static FONT_GENERATION: AtomicU64 = AtomicU64::new(0);
+
+/// View → Font (#1489): draw the interface's text in `path` (`None`: the computer's own font)
+/// from now on. The fonts are loaded again by [`reload_fonts`].
+pub fn set_ui_font(path: Option<std::path::PathBuf>) {
+    *UI_FONT.lock().unwrap_or_else(|e| e.into_inner()) = path;
+    FONT_GENERATION.fetch_add(1, Ordering::Relaxed);
+}
+
+/// The font file View → Font chose, if one is chosen (Windows' DirectWrite draws with it too).
+pub(crate) fn chosen_ui_font() -> Option<std::path::PathBuf> {
+    UI_FONT.lock().unwrap_or_else(|e| e.into_inner()).clone()
+}
+
+/// The setting's value, before the first frame (it is read at start).
+pub fn init_text_size(percent: u16) {
+    TEXT_SIZE.store(
+        percent.clamp(TEXT_SIZES[0], *TEXT_SIZES.last().unwrap()),
+        Ordering::Relaxed,
+    );
+}
+
+/// View → Font → Size: draw the interface's text at `percent` of the theme's sizes from now on,
+/// in every window, and keep the choice (the caller saves it).
+pub fn set_text_size(ctx: &egui::Context, percent: u16) {
+    init_text_size(percent);
+    text_styles(ctx);
+    ctx.request_repaint();
+}
+
+/// The interface's text size now, in percent of the theme's own ([`TEXT_SIZES`]).
+pub fn text_size() -> u16 {
+    TEXT_SIZE.load(Ordering::Relaxed)
+}
+
+/// Load the fonts again after the interface's font changed (View → Font): the same script fonts
+/// as before, on top of the new one.
+pub fn reload_fonts(ctx: &egui::Context) {
+    let all = LOADED.lock().unwrap().as_ref().is_some_and(|l| l.1);
+    *LOADED.lock().unwrap() = None;
+    load_fonts(ctx, all);
+    ctx.request_repaint();
+}
+
+/// The computer's own interface font, whatever View → Font chose: Segoe UI as IDM has it on
+/// Windows, the system's own elsewhere.
+fn system_ui_font() -> Option<Vec<u8>> {
     #[cfg(windows)]
     return read_font(&font_dir().join("segoeui.ttf"));
     #[cfg(target_os = "macos")]
@@ -1181,12 +1240,18 @@ fn load_fonts(ctx: &egui::Context, all: bool) {
 }
 
 /// IDM draws with Segoe UI 9 pt (12 px at 100 %): the system's own copy, nothing bundled
-/// (elsewhere the system's interface font, [`ui_font`]; else egui's default font). Every family
-/// falls back to it (Tahoma has no Armenian or Georgian), then to the script fonts for `code`
+/// (elsewhere the system's interface font, [`system_ui_font`]; else egui's default font). View →
+/// Font's file, when one is chosen, leads every family in its place. Every family falls back to
+/// the system's font (Tahoma has no Armenian or Georgian), then to the script fonts for `code`
 /// (all with `all`).
 fn fonts(ctx: &egui::Context, code: &str, all: bool) {
     let mut defs = egui::FontDefinitions::default();
-    let ui = ui_font();
+    // View → Font (#1489): the chosen file leads every family (a theme's own font, Tahoma's,
+    // stays behind it); the computer's own font follows as a fallback, then the scripts'.
+    let chosen = chosen_ui_font().and_then(|path| read_font(&path));
+    let custom = chosen.is_some();
+    let system = system_ui_font();
+    let ui = chosen.clone().or_else(|| system.clone());
     if let Some(bytes) = &ui {
         defs.font_data.insert(
             "segoe-ui".into(),
@@ -1203,6 +1268,12 @@ fn fonts(ctx: &egui::Context, code: &str, all: bool) {
     crate::winui::install_fonts(&mut defs, Some(&font_dir()));
     #[cfg(not(windows))]
     crate::winui::install_fonts(&mut defs, None);
+    if custom {
+        for list in defs.families.values_mut() {
+            list.retain(|f| f != "segoe-ui");
+            list.insert(0, "segoe-ui".into());
+        }
+    }
     // A fallback's glyphs sit on the baseline of the family's first font (Japanese next to
     // Latin digits, Georgian in a Tahoma line), not centred in its row.
     let on_baseline = |bytes: Vec<u8>| {
@@ -1211,7 +1282,7 @@ fn fonts(ctx: &egui::Context, code: &str, all: bool) {
         std::sync::Arc::new(font_data(bytes).tweak(tweak))
     };
     let mut fallbacks: Vec<String> = Vec::new();
-    if let Some(bytes) = ui {
+    if let Some(bytes) = system {
         defs.font_data
             .insert("segoe-ui-fallback".into(), on_baseline(bytes));
         fallbacks.push("segoe-ui-fallback".into());
@@ -1227,8 +1298,10 @@ fn fonts(ctx: &egui::Context, code: &str, all: bool) {
     }
     for list in defs.families.values_mut() {
         for f in &fallbacks {
-            // Segoe UI already leads the two built-in families (as itself, not a fallback).
-            if f == "segoe-ui-fallback" && list.first().is_some_and(|l| l == "segoe-ui") {
+            // The computer's font already leads the two built-in families when it is the
+            // interface's own (as itself, not a fallback); when a file was chosen, it follows it.
+            if !custom && f == "segoe-ui-fallback" && list.first().is_some_and(|l| l == "segoe-ui")
+            {
                 continue;
             }
             if !list.contains(f) {
@@ -1263,7 +1336,10 @@ fn classic_text(ctx: &egui::Context) {
         "ko" => 4,
         _ => 0,
     };
-    let now = u64::from(rtl) | (u64::from(smooth) << 1) | (lang << 2);
+    let now = (FONT_GENERATION.load(Ordering::Relaxed) << 8)
+        | u64::from(rtl)
+        | (u64::from(smooth) << 1)
+        | (lang << 2);
     if DRAWN.swap(now, Ordering::Relaxed) != now {
         ctx.set_glyph_rasterizers(
             crate::win32::text_rasterizer(font_dir(), rtl, smooth)
@@ -1344,9 +1420,18 @@ fn text_styles(ctx: &egui::Context) {
 
 /// The size a role is drawn at: in a Chinese, Japanese or Korean interface, no smaller than the
 /// theme's `font.cjk` (their glyphs are denser than Latin's at the same size, #837). Other
-/// languages keep the role's size exactly.
+/// languages keep the role's size exactly. View → Font → Size then draws it at that percent of
+/// the role's size (#1489): the text changes, the layout's measurements don't.
 pub fn font_size(size: f32) -> f32 {
-    font_size_for(crate::i18n::code(), size, metrics().font_cjk)
+    scaled(
+        font_size_for(crate::i18n::code(), size, metrics().font_cjk),
+        text_size(),
+    )
+}
+
+/// [`font_size`]'s last step, apart so tests can check it whatever the settings say.
+fn scaled(size: f32, percent: u16) -> f32 {
+    size * f32::from(percent) / 100.0
 }
 
 /// [`font_size`] for an interface language `code` and a theme's CJK floor (also the production
@@ -1433,7 +1518,7 @@ pub fn apply_theme(ctx: &egui::Context) {
 
 #[cfg(test)]
 mod mode_tests {
-    use super::{font_size_for, wanted};
+    use super::{font_size_for, scaled, wanted};
 
     /// #60: Always dark wins whatever the system says; otherwise Dark Mode support follows it.
     #[test]
@@ -1463,6 +1548,15 @@ mod mode_tests {
         // doesn't shrink the role.
         assert_eq!(font_size_for("zh-hans", 11.0, 14.0), 14.0);
         assert_eq!(font_size_for("zh-hans", 16.0, 14.0), 16.0);
+    }
+
+    /// #1489: View → Font → Size draws the interface's text at that percent of the role's size;
+    /// 100 keeps the theme's sizes exactly.
+    #[test]
+    fn the_text_size_is_a_percent_of_the_themes_sizes() {
+        assert_eq!(scaled(12.0, 100), 12.0);
+        assert_eq!(scaled(12.0, 150), 18.0);
+        assert_eq!(scaled(10.0, 75), 7.5);
     }
 }
 

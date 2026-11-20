@@ -131,6 +131,15 @@ pub struct Settings {
     /// View → Interface size (#262), percent: one of `crate::scale::STEPS` (100 to 200). Every
     /// window drawn that much larger than the display's own scale makes it.
     pub interface_size: u16,
+    /// View → Font (#1489): the font file the interface's text is drawn in (a path to a
+    /// TrueType or OpenType file), or none for the computer's own font (Segoe UI on Windows).
+    /// It changes the letters only: View → Interface size still sizes every window.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub interface_font: Option<String>,
+    /// View → Font → Size (#1489), percent: one of `crate::theme::TEXT_SIZES`. The interface's
+    /// text drawn that much larger or smaller than the theme's sizes; the layout keeps its own
+    /// (View → Interface size zooms all of it).
+    pub interface_text_size: u16,
     /// View → Text (Windows): smooth text as Windows' modern apps draw it, or the classic
     /// controls' hinted, whole-pixel look, the default (`crate::theme::set_smooth_text`): text
     /// doesn't change look on an update; a dense screen can choose Smooth.
@@ -452,6 +461,8 @@ impl Default for Settings {
             renderer: None,
             window_system: None,
             interface_size: 100,
+            interface_font: None,
+            interface_text_size: 100,
             smooth_text: false,
             limits_on: false,
             limits_mb: 200,
@@ -1225,6 +1236,20 @@ mod tests {
         assert_eq!(own.own_user_agent(), Some("MyAgent/1.0"));
         let again: Settings = serde_json::from_value(serde_json::to_value(&own).unwrap()).unwrap();
         assert_eq!(again.own_user_agent(), Some("MyAgent/1.0"));
+    }
+
+    /// #1489: a settings file written before View → Font existed reads as the computer's own
+    /// font at the theme's sizes, and nothing chosen is saved as nothing.
+    #[test]
+    fn view_font_keeps_its_defaults_in_older_settings() {
+        use super::Settings;
+        let saved = serde_json::json!({ "interface_size": 125 });
+        let s: Settings = serde_json::from_value(saved).unwrap();
+        assert_eq!(s.interface_font, None);
+        assert_eq!(s.interface_text_size, 100);
+        let again = serde_json::to_value(&s).unwrap();
+        assert!(again.get("interface_font").is_none(), "nothing chosen");
+        assert_eq!(again["interface_text_size"], 100);
     }
 
     /// #475: a folder chosen for a video is the Video category's next time; the category's own

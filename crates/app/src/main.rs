@@ -482,6 +482,15 @@ fn app() -> eframe::Result {
     // zoom applies: its sizes are given zoomed here.
     let z = scale::startup(loaded.settings.interface_size);
     theme::init_smooth_text(loaded.settings.smooth_text);
+    // View → Font (#1489): the interface's own font and text size, apart from that zoom.
+    theme::set_ui_font(
+        loaded
+            .settings
+            .interface_font
+            .as_deref()
+            .map(std::path::PathBuf::from),
+    );
+    theme::init_text_size(loaded.settings.interface_text_size);
     // The log (release builds too) and the crash monitor.
     if let Some(data) = mdm_ipc::data_dir() {
         mdm_crash::logs::init(&data, mdm_crash::logs::APP);

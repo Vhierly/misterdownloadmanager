@@ -92,6 +92,14 @@ pub fn monitor_main(m: MonitorArgs) -> eframe::Result {
     // given zoomed (brought inside the screen at its first frame).
     let zoom = crate::scale::startup(settings.interface_size);
     crate::theme::init_smooth_text(settings.smooth_text);
+    // View → Font (#1489): the crash report in the interface's own font and text size too.
+    crate::theme::set_ui_font(
+        settings
+            .interface_font
+            .as_deref()
+            .map(std::path::PathBuf::from),
+    );
+    crate::theme::init_text_size(settings.interface_text_size);
     let builder = crate::quiet(
         crate::window_builder()
             .with_title(crate::i18n::os_text(crate::i18n::t(
