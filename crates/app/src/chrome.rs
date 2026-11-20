@@ -171,20 +171,22 @@ const MENUS: [(&str, f32, f32, f32); 5] = [
     ("&Help", 186.0, 39.0, 193.0),
 ];
 
-/// The menu bar in the interface language: English keeps the measured rects; a translation is
-/// laid out by the same rule (Win32's: text at item.x + 7, width = text + 14) from the translated label's width: GDI's, or the
-/// width it is drawn at when wider (a script drawn in a fallback font, such as Japanese).
+/// The menu bar in the interface language: English keeps IDM's measured rects at the theme's
+/// own size and font; a translation — or View → Font's own text size or font file (#1489), which
+/// change the letters' widths — is laid out by the same rule (Win32's: text at item.x + 7,
+/// width = text + 14) from the label's width: GDI's, or the width it is drawn at when wider (a
+/// script drawn in a fallback font, such as Japanese), so titles never run into one another.
 pub fn menus(p: &egui::Painter) -> Vec<(&'static str, f32, f32, f32)> {
     let table = &MENUS;
     let translated: Vec<&'static str> = table
         .iter()
         .map(|(l, ..)| crate::i18n::tc("menubar", l))
         .collect();
-    if translated
+    let english = translated
         .iter()
         .zip(table.iter())
-        .all(|(t, (l, ..))| t == l)
-    {
+        .all(|(t, (l, ..))| t == l);
+    if english && crate::theme::text_size() == 100 && crate::theme::chosen_ui_font().is_none() {
         return table.to_vec();
     }
     let (pad, inset) = (14.0, 7.0);
