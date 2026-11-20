@@ -135,8 +135,8 @@ pub struct Settings {
     /// TrueType or OpenType file), or none for the computer's own font (Segoe UI on Windows).
     /// It changes the letters only: View → Interface size still sizes every window.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub interface_font: Option<String>,
-    /// View → Font → Size (#1489), percent: one of `crate::theme::TEXT_SIZES`. The interface's
+    pub interface_font: Option<std::path::PathBuf>,
+    /// View → Font (#1489), percent: one of `crate::theme::TEXT_SIZES`. The interface's
     /// text drawn that much larger or smaller than the theme's sizes; the layout keeps its own
     /// (View → Interface size zooms all of it).
     pub interface_text_size: u16,
@@ -1250,6 +1250,24 @@ mod tests {
         let again = serde_json::to_value(&s).unwrap();
         assert!(again.get("interface_font").is_none(), "nothing chosen");
         assert_eq!(again["interface_text_size"], 100);
+    }
+
+    /// #1489: the chosen font is saved as the path it is, not through `display()`, which mangles
+    /// a path that isn't Unicode on Windows.
+    #[test]
+    fn the_chosen_font_is_saved_as_its_path() {
+        use super::Settings;
+        let s = Settings {
+            interface_font: Some(std::path::PathBuf::from(r"C:\Fonts\my font.ttf")),
+            ..Default::default()
+        };
+        let saved = serde_json::to_value(&s).unwrap();
+        assert_eq!(
+            saved["interface_font"],
+            serde_json::json!(r"C:\Fonts\my font.ttf")
+        );
+        let again: Settings = serde_json::from_value(saved).unwrap();
+        assert_eq!(again.interface_font, s.interface_font);
     }
 
     /// #475: a folder chosen for a video is the Video category's next time; the category's own

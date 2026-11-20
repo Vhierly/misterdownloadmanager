@@ -6982,6 +6982,7 @@ menu	&Download Now	ବର୍ତ୍ତମାନ ଡାଉନଲୋଡ୍ କର�
 #, machine
 menu	&Exit	ବାହାରନ୍ତୁ(&E)
 #. menu command in the main window
+#. View menu: submenu choosing the interface's own font and text size
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
 menu	&Font	&ଫଣ୍ଟ
@@ -7483,11 +7484,6 @@ menu	S&cheduler	ସିଡ୍ୟୁଲର୍(&C)
 #. the trailing ... means it opens a window: keep it
 #, machine
 menu	S&ettings...	ସେଟିଙ୍ଗ୍ସ(&S)...
-#. menu command in the main window
-#. View → Font → Size: submenu of the interface text's sizes (75 % to 200 % of the theme's)
-#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
-#, machine
-menu	S&ize	&ଆକାର |
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine

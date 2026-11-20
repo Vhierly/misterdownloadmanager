@@ -523,7 +523,7 @@ enum Cmd {
     InterfaceFont,
     /// View → Font → System font (#1489): back to the computer's own font.
     InterfaceFontSystem,
-    /// View → Font → Size → a text size in percent (#1489).
+    /// View → Font → a text size in percent (#1489).
     InterfaceTextSize(u16),
     /// View → Text → Smooth (`true`) or Classic (Windows).
     #[cfg(windows)]
@@ -9108,24 +9108,23 @@ impl App {
     /// View → Font (#1489): the file the interface's text is drawn in, and its own size, both
     /// apart from View → Interface size (which zooms every window). Applies at once.
     fn font_menu(&self) -> MenuEntry<Cmd> {
-        use MenuEntry::{Item as I, Radio, Sep, Sub};
-        let chosen = self.settings.interface_font.is_some();
+        use MenuEntry::{Item as I, Radio, Sep};
+        let chosen = crate::theme::chosen_ui_font().is_some();
         // i18n: View → Font: the computer's own font, the default (Segoe UI on Windows)
         let system = Radio("&System font", Cmd::InterfaceFontSystem, true, !chosen);
         // i18n: View → Font: a TrueType or OpenType font file on disk to draw the interface's text in
         let file = I("Choose a font &file...", Cmd::InterfaceFont, true, false);
-        let now = self.settings.interface_text_size;
-        let sizes = crate::theme::TEXT_SIZES
-            .iter()
-            .map(|p| {
-                // As the interface language writes a percentage: 125%, 125 %, %125.
-                let label = crate::chrome::label(&crate::i18n::percent(f64::from(*p) / 100.0, 0));
-                Radio(label, Cmd::InterfaceTextSize(*p), true, *p == now)
-            })
-            .collect();
-        // i18n: View → Font → Size: submenu of the interface text's sizes (75 % to 200 % of the theme's)
-        let sizes = Sub("S&ize", true, sizes);
-        MenuEntry::Sub("&Font", true, vec![system, file, Sep, sizes])
+        let now = crate::theme::text_size();
+        // The sizes sit in the Font menu itself: a submenu of a submenu can't open (Win32's
+        // menus, and this one's, go two levels deep).
+        let mut items = vec![system, file, Sep];
+        items.extend(crate::theme::TEXT_SIZES.iter().map(|p| {
+            // As the interface language writes a percentage: 125%, 125 %, %125.
+            let label = crate::chrome::label(&crate::i18n::percent(f64::from(*p) / 100.0, 0));
+            Radio(label, Cmd::InterfaceTextSize(*p), true, *p == now)
+        }));
+        // i18n: View menu: submenu choosing the interface's own font and text size
+        MenuEntry::Sub("&Font", true, items)
     }
 
     /// View → Text (Windows): how the letters are drawn. Smooth is DirectWrite's natural look
@@ -10054,13 +10053,19 @@ impl App {
             let entries = self.menu_entries(i);
             // Under the item's leading edge (the menu's top-right in RTL).
             let at = pos2(winui::mx(o.x + x), o.y + chrome::MENU_H - 1.0);
-            let event = match chrome::popup(
+            let event = match chrome::popup_with(
                 &ctx,
                 MenuKind::Bar,
                 &format!("menu-{i}"),
                 at,
                 &entries,
                 &|c: &Cmd| c.hint(),
+                &|c: &Cmd| match c {
+                    // The escape hatch stays in the computer's own font, whatever font is in
+                    // use: a damaged file must not make the way back unreadable (#1489).
+                    Cmd::InterfaceFontSystem => Some(crate::winui::system_font()),
+                    _ => None,
+                },
             ) {
                 PopupResult::Open => None,
                 PopupResult::Neighbor(d) => {
@@ -11131,28 +11136,25 @@ impl App {
     }
 
     /// View → Font (#1489): draw the interface's text in the font file at `path`, or in the
-    /// computer's own when `None`. Saved at once; a file egui can't read is refused with a
-    /// message, and the font in use stays.
+    /// computer's own when `None`. A file is read beside the window's thread (`theme::set_ui_font`)
+    /// and saved once it is in use; one egui can't read is refused with a message, and the font
+    /// in use stays (`tick` polls `theme::poll_ui_font`).
     fn set_interface_font(&mut self, path: Option<std::path::PathBuf>, ctx: &egui::Context) {
-        if let Some(path) = &path
-            && crate::theme::read_font(path).is_none()
-        {
-            tracing::warn!("interface font: {} is not a font", path.display());
-            self.notice = Some((
-                // i18n: title of the message when the font picked in View → Font can't be used
-                crate::i18n::mark("Choose a font file"),
-                // i18n: the message when a file picked in View → Font isn't a TrueType or OpenType font MDM can read
-                crate::i18n::t("This file can't be used as a font.").to_owned(),
-            ));
+        let Some(path) = path else {
+            crate::theme::set_ui_font(None);
+            crate::theme::reload_fonts(ctx);
+            self.settings.interface_font = None;
+            self.dirty = true;
+            return;
+        };
+        // Already drawn with: nothing to read, the choice is saved as it is.
+        if crate::theme::chosen_ui_font().as_deref() == Some(path.as_path()) {
+            self.settings.interface_font = Some(path);
+            self.dirty = true;
             return;
         }
-        if let Some(path) = &path {
-            tracing::info!("interface font: {}", path.display());
-        }
-        self.settings.interface_font = path.as_ref().map(|p| p.display().to_string());
-        crate::theme::set_ui_font(path);
-        crate::theme::reload_fonts(ctx);
-        self.dirty = true;
+        tracing::info!("interface font: {}", path.display());
+        crate::theme::set_ui_font(Some(path));
     }
 
     /// The addresses in a list file, shown in Import to tick before adding. The file is read and
@@ -12786,6 +12788,25 @@ impl App {
         let _ = opens;
         if handled {
             ctx.request_ui_pass(egui::ViewportId::ROOT);
+        }
+        // View → Font (#1489): the chosen file read beside the window's thread. Once it is in
+        // use the choice is saved and the fonts are loaded again; a file egui can't read says
+        // why, and the font in use stays.
+        match crate::theme::poll_ui_font() {
+            Some(crate::theme::UiFontLoad::Loaded) => {
+                self.settings.interface_font = crate::theme::chosen_ui_font();
+                crate::theme::reload_fonts(ctx);
+                self.dirty = true;
+            }
+            Some(crate::theme::UiFontLoad::Failed) => {
+                self.notice = Some((
+                    // i18n: title of the message when the font picked in View → Font can't be used
+                    crate::i18n::mark("Choose a font file"),
+                    // i18n: the message when a file picked in View → Font isn't a TrueType or OpenType font MDM can read
+                    crate::i18n::t("This file can't be used as a font.").to_owned(),
+                ));
+            }
+            None => {}
         }
         self.lookups.prune(Instant::now());
         crate::crash::step(crate::crash::Step::NetworkSettings);

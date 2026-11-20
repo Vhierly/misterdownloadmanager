@@ -8484,21 +8484,23 @@ fn classic_char(c: char, rtl: bool) -> bool {
     ) || crate::theme::cjk_script(c).is_some()
 }
 
-/// The font file of a family `theme.rs` sets up (the interface's own, View → Font's too, leads the
-/// two built-in ones; Segoe UI is the computer's).
+/// The font file of a family `theme.rs` sets up (the interface's own, View → Font's too, leads
+/// the regular families; Segoe UI is the computer's own).
 fn classic_font_file(family: &egui::FontFamily) -> Option<std::path::PathBuf> {
-    // View → Font (#1489): the chosen file leads every family (`theme::fonts`), so DirectWrite
-    // draws its letters too.
-    if let Some(file) = crate::theme::chosen_ui_font() {
-        return Some(file);
-    }
+    // View → Font (#1489): the chosen file leads the regular families (`theme::fonts`), so
+    // DirectWrite draws its letters too. The bold families keep their own faces, and
+    // `system-ui` is always the computer's own font (the way back from a damaged file).
+    let chosen = || crate::theme::chosen_ui_font();
     let font = |name: &str| crate::theme::font_dir().join(name);
     match family {
-        egui::FontFamily::Proportional | egui::FontFamily::Monospace => Some(font("segoeui.ttf")),
+        egui::FontFamily::Proportional | egui::FontFamily::Monospace => {
+            Some(chosen().unwrap_or_else(|| font("segoeui.ttf")))
+        }
         egui::FontFamily::Name(name) => match &**name {
-            "tahoma" => Some(font("tahoma.ttf")),
+            "tahoma" => Some(chosen().unwrap_or_else(|| font("tahoma.ttf"))),
             "tahoma-bold" => Some(font("tahomabd.ttf")),
             "arial-bold" => Some(font("arialbd.ttf")),
+            "system-ui" => Some(font("segoeui.ttf")),
             _ => None,
         },
     }

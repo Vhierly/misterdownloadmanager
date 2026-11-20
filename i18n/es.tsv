@@ -7007,6 +7007,7 @@ menu	&Download Now	&Descargar ahora
 #, machine
 menu	&Exit	&Salir
 #. menu command in the main window
+#. View menu: submenu choosing the interface's own font and text size
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
 menu	&Font	F&uente
@@ -7513,11 +7514,6 @@ menu	S&cheduler	Pro&gramador
 #. the trailing ... means it opens a window: keep it
 #, machine
 menu	S&ettings...	Con&figuración...
-#. menu command in the main window
-#. View → Font → Size: submenu of the interface text's sizes (75 % to 200 % of the theme's)
-#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
-#, machine
-menu	S&ize	&Tamaño
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine

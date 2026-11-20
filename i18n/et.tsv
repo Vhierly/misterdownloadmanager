@@ -6990,6 +6990,7 @@ menu	&Download Now	&Laadi kohe alla
 #, machine
 menu	&Exit	&Välju
 #. menu command in the main window
+#. View menu: submenu choosing the interface's own font and text size
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
 menu	&Font	Fo&nt
@@ -7496,11 +7497,6 @@ menu	S&cheduler	&Ajasti
 #. the trailing ... means it opens a window: keep it
 #, machine
 menu	S&ettings...	&Sätted...
-#. menu command in the main window
-#. View → Font → Size: submenu of the interface text's sizes (75 % to 200 % of the theme's)
-#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
-#, machine
-menu	S&ize	&Suurus
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine

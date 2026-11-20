@@ -194,7 +194,7 @@ pub fn menus(p: &egui::Painter) -> Vec<(&'static str, f32, f32, f32)> {
     translated
         .into_iter()
         .map(|label| {
-            let w = menu_width(p, &plain(label).0) + pad;
+            let w = menu_width(p, &plain(label).0, None) + pad;
             let item = (label, x, w, x + inset);
             x += w;
             item
@@ -497,7 +497,7 @@ fn mirror_for_screen_readers<C>(
     if hl0 == usize::MAX {
         return;
     }
-    let size = menu_size(ctx, entries, hint);
+    let size = menu_size(ctx, entries, hint, &|_| None);
     let screen = Rect::from_min_size(place_menu(ctx, at, size, None), size);
     let open_sub = ctx.data(|d| d.get_temp::<usize>(sub_key));
     let sub_screen = ctx.data(|d| d.get_temp::<Rect>(sub_key.with("sub-rect")));
@@ -994,6 +994,21 @@ pub fn popup<C: Clone>(
     entries: &[MenuEntry<C>],
     hint: &dyn Fn(&C) -> Option<&'static str>,
 ) -> PopupResult<C> {
+    popup_with(ctx, kind, id, pos, entries, hint, &|_| None)
+}
+
+/// Like [`popup`], with `font` choosing the font an entry's label is drawn and measured in
+/// (`None`: the menu's own font). View → Font's "System font" is drawn in the computer's own
+/// font even while another one is chosen, so it can always be read and clicked (#1489).
+pub fn popup_with<C: Clone>(
+    ctx: &egui::Context,
+    kind: MenuKind,
+    id: &str,
+    pos: Pos2,
+    entries: &[MenuEntry<C>],
+    hint: &dyn Fn(&C) -> Option<&'static str>,
+    font: &dyn Fn(&C) -> Option<egui::FontId>,
+) -> PopupResult<C> {
     let sub_key = egui::Id::unique(("popup-sub", id));
     // The control that has the keys while the menu is open (a drop-down list, a text box): the
     // menu's windows never take them, so Escape reached its window, and egui let them go there
@@ -1042,6 +1057,7 @@ pub fn popup<C: Clone>(
         &mut result,
         0,
         hint,
+        font,
     );
     mirror_for_screen_readers(
         ctx,
@@ -1237,8 +1253,8 @@ pub fn popup_surface(p: &egui::Painter, rc: egui::Rect) {
 /// by up to a pixel either way: IDM's menus are 236, 291 wide where egui gives 237, 290), or the
 /// width it is drawn at when that is wider by more (a script drawn in a fallback font, such as
 /// Japanese).
-fn menu_width(p: &egui::Painter, label: &str) -> f32 {
-    let drawn = text_width_font(p, winui::segoe(), label).ceil();
+fn menu_width(p: &egui::Painter, label: &str, font: Option<egui::FontId>) -> f32 {
+    let drawn = text_width_font(p, font.unwrap_or_else(winui::segoe), label).ceil();
     #[cfg(windows)]
     {
         let gdi = crate::win32::menu_text_width(label) as f32;
@@ -1257,19 +1273,23 @@ fn menu_size<C>(
     ctx: &egui::Context,
     entries: &[MenuEntry<C>],
     hint: &dyn Fn(&C) -> Option<&'static str>,
+    font: &dyn Fn(&C) -> Option<egui::FontId>,
 ) -> egui::Vec2 {
     let painter = ctx.layer_painter(egui::LayerId::background());
-    let width = |t: &str| menu_width(&painter, t);
+    let width = |t: &str| menu_width(&painter, t, None);
     let widest = entries
         .iter()
         .filter_map(|e| match e {
             MenuEntry::Item(l, c, ..) | MenuEntry::Radio(l, c, ..) => Some(match hint(c) {
                 Some(k) => {
-                    width(without_shortcut(&plain(crate::i18n::tc("menu", l)).0))
-                        + 28.0
+                    menu_width(
+                        &painter,
+                        without_shortcut(&plain(crate::i18n::tc("menu", l)).0),
+                        font(c),
+                    ) + 28.0
                         + text_width_font(&painter, winui::segoe(), &key_label(k)).ceil()
                 }
-                None => width(&plain(crate::i18n::tc("menu", l)).0),
+                None => menu_width(&painter, &plain(crate::i18n::tc("menu", l)).0, font(c)),
             }),
             MenuEntry::Sub(l, ..) => Some(width(&plain(crate::i18n::tc("menu", l)).0)),
             MenuEntry::Sep => None,
@@ -1477,10 +1497,11 @@ fn popup_level<C: Clone>(
     result: &mut Option<C>,
     depth: usize,
     hint: &dyn Fn(&C) -> Option<&'static str>,
+    font: &dyn Fn(&C) -> Option<egui::FontId>,
 ) {
     // A system dialog waits for this window to close (winui::start_pick, #615).
     winui::menu_drawn(ctx);
-    let size = menu_size(ctx, entries, hint);
+    let size = menu_size(ctx, entries, hint, font);
     let kb_key = sub_key.with("kb");
     let kb: Option<usize> = ctx
         .data(|d| d.get_temp::<(Option<usize>, Option<usize>)>(kb_key))
@@ -1706,7 +1727,19 @@ fn popup_level<C: Clone>(
                 }
                 _ => {}
             }
-            let drawn = text_font(&painter, winui::segoe(), o.x + 38.0, y + 14.0, &t, color);
+            let label_font = match e {
+                MenuEntry::Item(_, c, ..) | MenuEntry::Radio(_, c, ..) => font(c),
+                _ => None,
+            }
+            .unwrap_or_else(winui::segoe);
+            let drawn = text_font(
+                &painter,
+                label_font.clone(),
+                o.x + 38.0,
+                y + 14.0,
+                &t,
+                color,
+            );
             // The shortcut at the trailing edge, in the menu's quieter ink.
             if let Some(k) = keys {
                 winui::text_right(
@@ -1721,7 +1754,7 @@ fn popup_level<C: Clone>(
             if let Some(m) = mn
                 && cues(ctx)
             {
-                let (x0, x1) = winui::char_span(&painter, &winui::segoe(), &t, m, drawn);
+                let (x0, x1) = winui::char_span(&painter, &label_font, &t, m, drawn);
                 fill(&painter, x0, y + 16.0, x1, y + 16.0, color);
             }
             // The check box column: x 12..21 from the leading edge (the glyphs keep their
@@ -1844,6 +1877,7 @@ fn popup_level<C: Clone>(
             result,
             depth + 1,
             hint,
+            font,
         );
     }
 }
@@ -3113,6 +3147,7 @@ mod tests {
                     &mut result,
                     0,
                     &|_| None,
+                    &|_| None,
                 );
             });
             out.textures_delta.clear();
@@ -3190,6 +3225,7 @@ mod tests {
                         sub_key,
                         &mut result,
                         0,
+                        &|_| None,
                         &|_| None,
                     );
                     if result.is_some() {
@@ -3274,6 +3310,7 @@ mod tests {
                         sub_key,
                         &mut result,
                         0,
+                        &|_| None,
                         &|_| None,
                     );
                 }

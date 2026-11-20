@@ -6991,6 +6991,7 @@ menu	&Download Now	&Hozir yuklab olish
 #, machine
 menu	&Exit	&Chiqish
 #. menu command in the main window
+#. View menu: submenu choosing the interface's own font and text size
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
 menu	&Font	&Shrift
@@ -7497,11 +7498,6 @@ menu	S&cheduler	&Rejalashtiruvchi
 #. the trailing ... means it opens a window: keep it
 #, machine
 menu	S&ettings...	&Sozlamalar...
-#. menu command in the main window
-#. View → Font → Size: submenu of the interface text's sizes (75 % to 200 % of the theme's)
-#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
-#, machine
-menu	S&ize	&Hajmi
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine

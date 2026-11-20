@@ -402,20 +402,128 @@ fn symbol_fonts() -> Vec<Vec<u8>> {
 /// anything else is not one, and egui stops on a font it was given and can't read (#931:
 /// fontconfig named a gzipped PCF font for Japanese; #1412: a BDF font for the symbols).
 fn loadable_font(bytes: &[u8], index: u32) -> bool {
+    use skrifa::MetadataProvider as _;
     use skrifa::raw::TableProvider as _;
     let Ok(font) = skrifa::FontRef::from_index(bytes, index) else {
         return false;
     };
     // A font whose list of tables is whole but whose tables are cut short (a copy that stopped)
     // passes the first look: every table it lists is in the file, and those every font has read.
-    font.table_directory
+    if !(font
+        .table_directory
         .table_records()
         .iter()
         .all(|table| font.table_data(table.tag()).is_some())
         && font.head().is_ok()
         && font.hhea().is_ok()
         && font.maxp().is_ok()
-        && font.cmap().is_ok()
+        && font.cmap().is_ok())
+    {
+        return false;
+    }
+    let (Ok(head), Ok(maxp)) = (font.head(), font.maxp()) else {
+        return false;
+    };
+    let glyphs = u32::from(maxp.num_glyphs());
+    let upem = f32::from(head.units_per_em());
+    if glyphs == 0 || !upem.is_finite() || upem <= 0.0 {
+        return false;
+    }
+    // A damaged cmap can name glyphs the font doesn't have. egui then asks for an outline that
+    // isn't there and draws nothing (or stops), and the whole interface becomes unreadable (#1489).
+    let mappings = font.charmap().mappings();
+    let mut mapped = 0usize;
+    for (_, glyph) in mappings {
+        if glyph.to_u32() >= glyphs {
+            return false;
+        }
+        mapped += 1;
+    }
+    if mapped == 0 {
+        return false;
+    }
+    // The tables can be whole and the cmap right while the glyphs themselves are damaged: a
+    // copy that stopped inside `glyf`/`CFF`, coordinates that are not numbers or that lie far
+    // outside the em square. A sample across the font is enough to tell, and at least one of
+    // those glyphs must actually draw something (an empty font is no font).
+    outlines_loadable(&font, mapped, upem)
+}
+
+/// Whether the outlines of a sample of `font`'s mapped glyphs are whole: every coordinate a
+/// number, inside four em squares, and at least one glyph drawn ([`loadable_font`]).
+fn outlines_loadable(font: &skrifa::FontRef<'_>, mapped: usize, upem: f32) -> bool {
+    use skrifa::MetadataProvider as _;
+    use skrifa::instance::{LocationRef, Size};
+    use skrifa::outline::{DrawSettings, OutlinePen};
+
+    /// Collects a glyph's bounds, refusing a coordinate that isn't a number or that lies far
+    /// outside the em square, and says whether the glyph draws anything at all.
+    struct Bounds {
+        limit: f32,
+        ok: bool,
+        drawn: bool,
+        min: (f32, f32),
+        max: (f32, f32),
+    }
+    impl Bounds {
+        fn point(&mut self, x: f32, y: f32) {
+            if !x.is_finite() || !y.is_finite() || x.abs() > self.limit || y.abs() > self.limit {
+                self.ok = false;
+                return;
+            }
+            self.min = (self.min.0.min(x), self.min.1.min(y));
+            self.max = (self.max.0.max(x), self.max.1.max(y));
+            self.drawn = true;
+        }
+    }
+    impl OutlinePen for Bounds {
+        fn move_to(&mut self, x: f32, y: f32) {
+            self.point(x, y);
+        }
+        fn line_to(&mut self, x: f32, y: f32) {
+            self.point(x, y);
+        }
+        fn quad_to(&mut self, cx: f32, cy: f32, x: f32, y: f32) {
+            self.point(cx, cy);
+            self.point(x, y);
+        }
+        fn curve_to(&mut self, cx0: f32, cy0: f32, cx1: f32, cy1: f32, x: f32, y: f32) {
+            self.point(cx0, cy0);
+            self.point(cx1, cy1);
+            self.point(x, y);
+        }
+        fn close(&mut self) {}
+    }
+
+    // At most 64 glyphs, spread over the cmap, always with the first and the last: damage at
+    // either end of a cut-short font is the likeliest, and a sample in the middle catches a
+    // table that is wrong throughout.
+    const SAMPLE: usize = 64;
+    let step = mapped.div_ceil(SAMPLE).max(1);
+    let outlines = font.outline_glyphs();
+    let limit = upem * 4.0;
+    let mut drawn = false;
+    for (i, (_, glyph)) in font.charmap().mappings().enumerate() {
+        if i % step != 0 && i + 1 != mapped {
+            continue;
+        }
+        let Some(outline) = outlines.get(glyph) else {
+            continue;
+        };
+        let settings = DrawSettings::unhinted(Size::unscaled(), LocationRef::default());
+        let mut bounds = Bounds {
+            limit,
+            ok: true,
+            drawn: false,
+            min: (f32::INFINITY, f32::INFINITY),
+            max: (f32::NEG_INFINITY, f32::NEG_INFINITY),
+        };
+        if outline.draw(settings, &mut bounds).is_err() || !bounds.ok {
+            return false;
+        }
+        drawn |= bounds.drawn;
+    }
+    drawn
 }
 
 /// The face of `bytes` the interface draws with (#1483). A single font has one, face 0. A
@@ -517,12 +625,34 @@ pub(crate) fn font_face_index(path: &std::path::Path) -> u32 {
         .unwrap_or(0)
 }
 
+/// The largest font file MDM reads, in bytes. A font of every script is some 20–40 MB; a
+/// collection of them can be larger. Past this, the file isn't a font the interface should wait
+/// for (a video picked by mistake, a huge archive): it is passed over, not read into memory.
+const MAX_FONT_BYTES: u64 = 64 * 1024 * 1024;
+
 /// A font file's bytes, when egui can draw with them ([`loadable_font`], at the face
 /// [`text_face`] chooses). Any other file is passed over, and the log says so (once a run: the
 /// fonts are loaded again with each change of language): the next font in line is used instead.
 pub(crate) fn read_font(path: &std::path::Path) -> Option<Vec<u8>> {
     static SAID: std::sync::Mutex<Option<std::collections::HashSet<std::path::PathBuf>>> =
         std::sync::Mutex::new(None);
+    let mut said = SAID.lock().unwrap_or_else(|e| e.into_inner());
+    let too_large = std::fs::metadata(path)
+        .map(|m| m.len() > MAX_FONT_BYTES)
+        .unwrap_or(false);
+    if too_large {
+        if said
+            .get_or_insert_with(Default::default)
+            .insert(path.to_owned())
+        {
+            tracing::warn!(
+                "fonts: {} is larger than {} MB, passed over",
+                path.display(),
+                MAX_FONT_BYTES / (1024 * 1024)
+            );
+        }
+        return None;
+    }
     let bytes = std::fs::read(path).ok()?;
     // Given to egui by `font_data`, at the same face.
     let face = text_face(&bytes);
@@ -534,7 +664,6 @@ pub(crate) fn read_font(path: &std::path::Path) -> Option<Vec<u8>> {
             .insert(path.to_owned(), face);
         return Some(bytes);
     }
-    let mut said = SAID.lock().unwrap_or_else(|e| e.into_inner());
     if said
         .get_or_insert_with(Default::default)
         .insert(path.to_owned())
@@ -1033,43 +1162,145 @@ fn add_script_fallback(ctx: &egui::Context) {
     });
 }
 
-/// View → Font → Size (#1489): the sizes the menu offers, in percent of the theme's own sizes.
+/// View → Font (#1489): the sizes the menu offers, in percent of the theme's own sizes.
 pub const TEXT_SIZES: &[u16] = &[75, 80, 90, 100, 110, 120, 125, 150, 175, 200];
 
-/// View → Font → Size (#1489), percent: the interface's text drawn that much larger or smaller
+/// View → Font (#1489), percent: the interface's text drawn that much larger or smaller
 /// than the theme's sizes. Unlike View → Interface size (which zooms every window), the layout
 /// keeps its measurements: only the letters change.
 static TEXT_SIZE: std::sync::atomic::AtomicU16 = std::sync::atomic::AtomicU16::new(100);
 
 /// View → Font (#1489): the font file the interface's text is drawn in, or none for the
-/// computer's own font.
+/// computer's own font. It is read beside the window's thread ([`set_ui_font`]); [`UI_FONT_READY`]
+/// holds what was read.
 static UI_FONT: std::sync::Mutex<Option<std::path::PathBuf>> = std::sync::Mutex::new(None);
+
+/// The chosen file's bytes, once read: the path and the bytes egui draws with. A font that is
+/// loading (or that failed) leaves the previous one in place.
+static UI_FONT_READY: std::sync::Mutex<Option<(std::path::PathBuf, Vec<u8>)>> =
+    std::sync::Mutex::new(None);
+
+/// What the thread reading the chosen font read: its path and its bytes, or `None` when egui
+/// can't draw with it. Taken by [`poll_ui_font`].
+static UI_FONT_RESULT: std::sync::Mutex<Option<(std::path::PathBuf, Option<Vec<u8>>)>> =
+    std::sync::Mutex::new(None);
 
 /// View → Font (#1489): moved with each change of the interface's font, so the text is
 /// rasterized again ([`classic_text`]).
 static FONT_GENERATION: AtomicU64 = AtomicU64::new(0);
 
+/// What [`poll_ui_font`] found: the chosen font is in use, or it can't be.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum UiFontLoad {
+    /// The chosen file is read and egui can draw with it: load the fonts again.
+    Loaded,
+    /// The chosen file can't be used; the font in use stays.
+    Failed,
+}
+
 /// View → Font (#1489): draw the interface's text in `path` (`None`: the computer's own font)
-/// from now on. The fonts are loaded again by [`reload_fonts`].
+/// from now on. A file is read beside the window's thread; [`poll_ui_font`] says when it is in
+/// use, and [`reload_fonts`] loads the fonts again then.
 pub fn set_ui_font(path: Option<std::path::PathBuf>) {
-    *UI_FONT.lock().unwrap_or_else(|e| e.into_inner()) = path;
-    FONT_GENERATION.fetch_add(1, Ordering::Relaxed);
+    let previous = {
+        let mut current = UI_FONT.lock().unwrap_or_else(|e| e.into_inner());
+        std::mem::replace(&mut *current, path.clone())
+    };
+    if previous == path && path.is_none() {
+        return;
+    }
+    *UI_FONT_RESULT.lock().unwrap_or_else(|e| e.into_inner()) = None;
+    match path {
+        None => {
+            *UI_FONT_READY.lock().unwrap_or_else(|e| e.into_inner()) = None;
+            FONT_GENERATION.fetch_add(1, Ordering::Relaxed);
+        }
+        Some(path) => {
+            if UI_FONT_READY
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .as_ref()
+                .is_some_and(|(ready, _)| *ready == path)
+            {
+                return;
+            }
+            let _ = std::thread::Builder::new()
+                .name("ui-font".into())
+                .spawn(move || {
+                    let bytes = read_font(&path);
+                    // Chosen again while this read ran: the newer choice's own thread answers
+                    // for it; this one must not overwrite what that thread leaves.
+                    if UI_FONT.lock().unwrap_or_else(|e| e.into_inner()).as_deref()
+                        == Some(path.as_path())
+                    {
+                        *UI_FONT_RESULT.lock().unwrap_or_else(|e| e.into_inner()) =
+                            Some((path, bytes));
+                    }
+                });
+        }
+    }
 }
 
-/// The font file View → Font chose, if one is chosen (Windows' DirectWrite draws with it too).
+/// Take what the thread reading the chosen font read, if anything: the font is in use now
+/// (`Loaded`: load the fonts again), or it can't be (`Failed`: keep the one in use and say so).
+/// Called every frame, never waiting.
+pub fn poll_ui_font() -> Option<UiFontLoad> {
+    let chosen = UI_FONT.lock().unwrap_or_else(|e| e.into_inner()).clone()?;
+    let result = UI_FONT_RESULT
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .take();
+    let (path, bytes) = result?;
+    // Chosen again while it was read: what came back is for an older choice.
+    if path != chosen {
+        return None;
+    }
+    match bytes {
+        Some(bytes) => {
+            *UI_FONT_READY.lock().unwrap_or_else(|e| e.into_inner()) = Some((path, bytes));
+            FONT_GENERATION.fetch_add(1, Ordering::Relaxed);
+            Some(UiFontLoad::Loaded)
+        }
+        None => Some(UiFontLoad::Failed),
+    }
+}
+
+/// The font file View → Font chose and that is in use, if one is (Windows' DirectWrite draws
+/// with it too).
 pub(crate) fn chosen_ui_font() -> Option<std::path::PathBuf> {
-    UI_FONT.lock().unwrap_or_else(|e| e.into_inner()).clone()
+    UI_FONT_READY
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .as_ref()
+        .map(|(path, _)| path.clone())
 }
 
-/// The setting's value, before the first frame (it is read at start).
+/// The chosen font's bytes, when one is in use ([`chosen_ui_font`]).
+fn ui_font_bytes() -> Option<Vec<u8>> {
+    UI_FONT_READY
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .as_ref()
+        .map(|(_, bytes)| bytes.clone())
+}
+
+/// The setting's value, before the first frame (it is read at start). A saved size that isn't
+/// one the menu offers (an older value, a hand-edited file) snaps to the nearest one, so the
+/// menu always shows a checked size.
 pub fn init_text_size(percent: u16) {
-    TEXT_SIZE.store(
-        percent.clamp(TEXT_SIZES[0], *TEXT_SIZES.last().unwrap()),
-        Ordering::Relaxed,
-    );
+    TEXT_SIZE.store(snap_text_size(percent), Ordering::Relaxed);
 }
 
-/// View → Font → Size: draw the interface's text at `percent` of the theme's sizes from now on,
+/// The size of [`TEXT_SIZES`] closest to `percent` (the smaller of two equally close ones).
+fn snap_text_size(percent: u16) -> u16 {
+    TEXT_SIZES
+        .iter()
+        .copied()
+        .min_by_key(|p| p.abs_diff(percent))
+        .unwrap_or(100)
+}
+
+/// View → Font: draw the interface's text at `percent` of the theme's sizes from now on,
 /// in every window, and keep the choice (the caller saves it).
 pub fn set_text_size(ctx: &egui::Context, percent: u16) {
     init_text_size(percent);
@@ -1246,17 +1477,20 @@ fn load_fonts(ctx: &egui::Context, all: bool) {
 /// (all with `all`).
 fn fonts(ctx: &egui::Context, code: &str, all: bool) {
     let mut defs = egui::FontDefinitions::default();
-    // View → Font (#1489): the chosen file leads every family (a theme's own font, Tahoma's,
-    // stays behind it); the computer's own font follows as a fallback, then the scripts'.
-    let chosen = chosen_ui_font().and_then(|path| read_font(&path));
+    // View → Font (#1489): the chosen file leads the regular families (a theme's own font,
+    // Tahoma's, stays behind it); the computer's own font follows as a fallback, then the
+    // scripts'. The bold families keep their own files: a chosen regular font has no bold face,
+    // and Windows draws its bold text with Tahoma Bold and Arial Bold.
+    let chosen = ui_font_bytes();
     let custom = chosen.is_some();
     let system = system_ui_font();
-    let ui = chosen.clone().or_else(|| system.clone());
-    if let Some(bytes) = &ui {
-        defs.font_data.insert(
-            "segoe-ui".into(),
-            std::sync::Arc::new(font_data(bytes.clone())),
-        );
+    let system_data = system
+        .clone()
+        .map(|bytes| std::sync::Arc::new(font_data(bytes)));
+    let chosen_data = chosen.map(|bytes| std::sync::Arc::new(font_data(bytes)));
+    let ui = chosen_data.clone().or_else(|| system_data.clone());
+    if let Some(data) = &ui {
+        defs.font_data.insert("segoe-ui".into(), data.clone());
         for fam in [egui::FontFamily::Proportional, egui::FontFamily::Monospace] {
             defs.families
                 .entry(fam)
@@ -1264,14 +1498,35 @@ fn fonts(ctx: &egui::Context, code: &str, all: bool) {
                 .insert(0, "segoe-ui".into());
         }
     }
+    // The computer's own font as a family of its own, whatever View → Font chose: the "System
+    // font" menu item is drawn in it, so it stays readable when a chosen file isn't (#1489).
+    if let Some(data) = &system_data {
+        defs.font_data.insert("system-ui".into(), data.clone());
+    }
     #[cfg(windows)]
     crate::winui::install_fonts(&mut defs, Some(&font_dir()));
     #[cfg(not(windows))]
     crate::winui::install_fonts(&mut defs, None);
+    let system_ui = if system_data.is_some() {
+        let mut list = vec!["system-ui".to_owned()];
+        if let Some(ui) = defs.families.get(&egui::FontFamily::Proportional) {
+            list.extend(ui.iter().filter(|f| *f != "system-ui").cloned());
+        }
+        list
+    } else {
+        defs.families
+            .get(&egui::FontFamily::Proportional)
+            .cloned()
+            .unwrap_or_default()
+    };
+    defs.families
+        .insert(egui::FontFamily::Name("system-ui".into()), system_ui);
     if custom {
-        for list in defs.families.values_mut() {
-            list.retain(|f| f != "segoe-ui");
-            list.insert(0, "segoe-ui".into());
+        for (family, list) in defs.families.iter_mut() {
+            if replaced_by_chosen(family) {
+                list.retain(|f| f != "segoe-ui");
+                list.insert(0, "segoe-ui".into());
+            }
         }
     }
     // A fallback's glyphs sit on the baseline of the family's first font (Japanese next to
@@ -1314,6 +1569,18 @@ fn fonts(ctx: &egui::Context, code: &str, all: bool) {
     only_loadable_fonts(&mut defs);
     ctx.set_fonts(defs);
     text_styles(ctx);
+}
+
+/// Whether View → Font's chosen file takes `family`'s place ([`fonts`]): the regular families
+/// (the interface's, the theme's, Tahoma's), not the bold ones, which have faces of their own,
+/// or `system-ui`, which stays the computer's own font.
+fn replaced_by_chosen(family: &egui::FontFamily) -> bool {
+    match family {
+        egui::FontFamily::Proportional | egui::FontFamily::Monospace => true,
+        egui::FontFamily::Name(name) => {
+            !matches!(&**name, "tahoma-bold" | "arial-bold" | "system-ui")
+        }
+    }
 }
 
 /// Latin, Greek and Cyrillic text drawn the way Windows' classic controls draw it (#262, #323,
@@ -1418,15 +1685,17 @@ fn text_styles(ctx: &egui::Context) {
     });
 }
 
-/// The size a role is drawn at: in a Chinese, Japanese or Korean interface, no smaller than the
+/// The size a role is drawn at: View → Font draws it at that percent of the role's size
+/// (#1489), and in a Chinese, Japanese or Korean interface the result is no smaller than the
 /// theme's `font.cjk` (their glyphs are denser than Latin's at the same size, #837). Other
-/// languages keep the role's size exactly. View → Font → Size then draws it at that percent of
-/// the role's size (#1489): the text changes, the layout's measurements don't.
+/// languages keep the scaled size exactly. The text changes; the layout's measurements don't.
 pub fn font_size(size: f32) -> f32 {
-    scaled(
-        font_size_for(crate::i18n::code(), size, metrics().font_cjk),
-        text_size(),
-    )
+    font_size_at(crate::i18n::code(), size, metrics().font_cjk, text_size())
+}
+
+/// [`font_size`] in full, apart so tests can check it whatever the settings say.
+fn font_size_at(code: &str, size: f32, cjk: f32, percent: u16) -> f32 {
+    font_size_for(code, scaled(size, percent), cjk)
 }
 
 /// [`font_size`]'s last step, apart so tests can check it whatever the settings say.
@@ -1518,7 +1787,7 @@ pub fn apply_theme(ctx: &egui::Context) {
 
 #[cfg(test)]
 mod mode_tests {
-    use super::{font_size_for, scaled, wanted};
+    use super::{font_size_at, font_size_for, scaled, snap_text_size, wanted};
 
     /// #60: Always dark wins whatever the system says; otherwise Dark Mode support follows it.
     #[test]
@@ -1550,13 +1819,49 @@ mod mode_tests {
         assert_eq!(font_size_for("zh-hans", 16.0, 14.0), 16.0);
     }
 
-    /// #1489: View → Font → Size draws the interface's text at that percent of the role's size;
+    /// #1489: View → Font draws the interface's text at that percent of the role's size;
     /// 100 keeps the theme's sizes exactly.
     #[test]
     fn the_text_size_is_a_percent_of_the_themes_sizes() {
         assert_eq!(scaled(12.0, 100), 12.0);
         assert_eq!(scaled(12.0, 150), 18.0);
         assert_eq!(scaled(10.0, 75), 7.5);
+    }
+
+    /// #837, #1489: a smaller text size doesn't take Chinese, Japanese or Korean text under the
+    /// theme's floor: the floor applies after the percentage, not before it.
+    #[test]
+    fn a_smaller_text_size_keeps_the_cjk_floor() {
+        assert_eq!(font_size_at("zh-hans", 12.0, 12.0, 75), 12.0);
+        assert_eq!(font_size_at("ja", 11.0, 12.0, 75), 12.0);
+        assert_eq!(font_size_at("en", 12.0, 12.0, 75), 9.0);
+        assert_eq!(font_size_at("zh-hans", 12.0, 12.0, 150), 18.0);
+    }
+
+    /// #1489: a saved size the menu doesn't offer snaps to the nearest one, so a size is always
+    /// checked (a hand-edited 130 % shows 125 %).
+    #[test]
+    fn a_saved_text_size_snaps_to_one_the_menu_offers() {
+        assert_eq!(snap_text_size(100), 100);
+        assert_eq!(snap_text_size(130), 125);
+        assert_eq!(snap_text_size(140), 150);
+        assert_eq!(snap_text_size(0), 75);
+        assert_eq!(snap_text_size(255), 200);
+        assert_eq!(snap_text_size(115), 110);
+    }
+
+    /// #1489: the chosen file replaces the regular families only; the bold ones keep their own
+    /// faces, and system-ui stays the computer's own font (the way back from a damaged file).
+    #[test]
+    fn the_chosen_font_replaces_the_regular_families_only() {
+        use super::replaced_by_chosen;
+        use egui::FontFamily;
+        assert!(replaced_by_chosen(&FontFamily::Proportional));
+        assert!(replaced_by_chosen(&FontFamily::Monospace));
+        assert!(replaced_by_chosen(&FontFamily::Name("tahoma".into())));
+        assert!(!replaced_by_chosen(&FontFamily::Name("tahoma-bold".into())));
+        assert!(!replaced_by_chosen(&FontFamily::Name("arial-bold".into())));
+        assert!(!replaced_by_chosen(&FontFamily::Name("system-ui".into())));
     }
 }
 
@@ -1606,6 +1911,39 @@ mod font_file_tests {
         ] {
             assert!(!loadable_font(bytes, 0), "{what} was taken");
         }
+    }
+
+    /// #1489: a font whose tables are whole and whose cmap is right can still have damaged
+    /// glyphs (a copy that stopped inside them). Its outlines are checked too, and a font with
+    /// nothing that draws is refused.
+    #[test]
+    fn a_font_whose_glyphs_are_damaged_is_refused() {
+        let mut ttf = real_ttf("Hack");
+        let font = skrifa::FontRef::new(&ttf).unwrap();
+        let glyf = font
+            .table_directory
+            .table_records()
+            .iter()
+            .find(|table| table.tag() == skrifa::Tag::new(b"glyf"))
+            .expect("Hack has a glyf table");
+        let (offset, length) = (glyf.offset() as usize, glyf.length() as usize);
+        ttf[offset..offset + length].fill(0xff);
+        assert!(!loadable_font(&ttf, 0), "damaged glyphs were taken");
+    }
+
+    /// #1489: a file larger than any font (a video picked by mistake) is refused from its
+    /// metadata alone, never read into memory.
+    #[test]
+    fn a_file_too_large_to_be_a_font_is_refused_unread() {
+        let path = std::env::temp_dir().join(format!("mdm-font-cap-{}.ttf", std::process::id()));
+        let file = std::fs::File::create(&path).unwrap();
+        file.set_len(super::MAX_FONT_BYTES + 1).unwrap();
+        drop(file);
+        assert!(
+            super::read_font(&path).is_none(),
+            "an oversized file was read"
+        );
+        let _ = std::fs::remove_file(&path);
     }
 
     /// fontconfig's answer, best first: its first font egui can read is the one taken. A font

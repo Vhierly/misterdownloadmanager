@@ -6936,6 +6936,7 @@ menu	&Download Now	اکنون &دانلود کن
 #, machine
 menu	&Exit	&خروج
 #. menu command in the main window
+#. View menu: submenu choosing the interface's own font and text size
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
 menu	&Font	&فونت
@@ -7437,11 +7438,6 @@ menu	S&cheduler	&زمان‌بندی
 #. the trailing ... means it opens a window: keep it
 #, machine
 menu	S&ettings...	&تنظیمات...
-#. menu command in the main window
-#. View → Font → Size: submenu of the interface text's sizes (75 % to 200 % of the theme's)
-#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
-#, machine
-menu	S&ize	&اندازه
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine

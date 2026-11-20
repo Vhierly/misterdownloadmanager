@@ -6978,6 +6978,7 @@ menu	&Download Now	ទាញយកឥឡូវ(&D)
 #, machine
 menu	&Exit	ចេញ(&E)
 #. menu command in the main window
+#. View menu: submenu choosing the interface's own font and text size
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
 menu	&Font	ពុ&ម្ពអក្សរ
@@ -7470,11 +7471,6 @@ menu	S&cheduler	កាលវិភាគ(&S)
 #. the trailing ... means it opens a window: keep it
 #, machine
 menu	S&ettings...	ការកំណត់(&S)...
-#. menu command in the main window
-#. View → Font → Size: submenu of the interface text's sizes (75 % to 200 % of the theme's)
-#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
-#, machine
-menu	S&ize	ទំ&ហំ
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine

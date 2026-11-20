@@ -6991,6 +6991,7 @@ menu	&Download Now	&Baixa ara
 #, machine
 menu	&Exit	&Eixir
 #. menu command in the main window
+#. View menu: submenu choosing the interface's own font and text size
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
 menu	&Font	&Font
@@ -7497,11 +7498,6 @@ menu	S&cheduler	&Planificador
 #. the trailing ... means it opens a window: keep it
 #, machine
 menu	S&ettings...	Confi&guració...
-#. menu command in the main window
-#. View → Font → Size: submenu of the interface text's sizes (75 % to 200 % of the theme's)
-#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
-#, machine
-menu	S&ize	&Mida
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
