@@ -1018,6 +1018,11 @@
 #. remote control page (on a phone): what the ".torrent file" button does (screen readers)
 #, machine
 	Choose a .torrent file	Выберыце .torrent-файл
+#. message or event log entry in the main window
+#. title of the file dialog of View → Font → Choose a font file
+#. title of the message when the font picked in View → Font can't be used
+#, machine
+	Choose a font file	Выберыце файл шрыфта
 #. text in langpick.rs
 #, machine
 	Choose a language	Выберыце мову
@@ -1948,6 +1953,10 @@
 #. text in categories.rs
 #, machine
 	Folder:	Папка:
+#. message or event log entry in the main window
+#. the kind of file View → Font → Choose a font file lists: TrueType and OpenType font files
+#, machine
+	Font files	Файлы шрыфтоў
 #. text in finish.rs
 #. Snooze menu of the Download complete window: show no Download complete window for this long
 #, machine
@@ -5203,6 +5212,10 @@
 #, machine
 	This device's name	Назва гэтай прылады
 #. message or event log entry in the main window
+#. the message when a file picked in View → Font isn't a TrueType or OpenType font MDM can read
+#, machine
+	This file can't be used as a font.	Гэты файл нельга выкарыстоўваць у якасці шрыфта.
+#. message or event log entry in the main window
 #. {error} is why, in English (a file that isn't a theme or a colour scheme, a colour missing)
 #. {error} = an error message (keep the braces as they are)
 #, machine
@@ -6969,6 +6982,10 @@ menu	&Download Now	&Загрузіць зараз
 #, machine
 menu	&Exit	&Выхад
 #. menu command in the main window
+#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
+#, machine
+menu	&Font	&Шрыфт
+#. menu command in the main window
 #. verb: load downloads from a file
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
@@ -7047,6 +7064,11 @@ menu	&Stop All	&Спыніць усе
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
 menu	&Stop Download	&Спыніць загрузку
+#. menu command in the main window
+#. View → Font: the computer's own font, the default (Segoe UI on Windows)
+#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
+#, machine
+menu	&System font	Сіст&эмны шрыфт
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
@@ -7183,6 +7205,12 @@ menu	C&ustomize URL List...	Н&аладзіць спіс URL...
 #, machine
 menu	Check for &updates...	Праверыць &абнаўленні...
 #. menu command in the main window
+#. View → Font: a TrueType or OpenType font file on disk to draw the interface's text in
+#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
+#. the trailing ... means it opens a window: keep it
+#, machine
+menu	Choose a font &file...	В&ыберыце файл шрыфта...
+#. menu command in the main window
 #. View → Theme: MDM's own look, the default (IDM's layout, Windows 11's controls)
 #, machine
 menu	Classic	Класічная
@@ -7271,10 +7299,6 @@ menu	Find Next (F3)	Знайсці далей (F3)
 #. right-click → Torrent, a choice with a check mark (with Download in order): each file's first and last pieces first, which a video player needs to start
 #, machine
 menu	First and last pieces first	Спачатку першыя і апошнія часткі
-#. menu command in the main window
-#. noun: the list's font (submenu)
-#, machine
-menu	Font	Шрыфт
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #. the trailing ... means it opens a window: keep it
@@ -7454,6 +7478,11 @@ menu	S&cheduler	&Планіроўшчык
 #. the trailing ... means it opens a window: keep it
 #, machine
 menu	S&ettings...	&Налады...
+#. menu command in the main window
+#. View → Font → Size: submenu of the interface text's sizes (75 % to 200 % of the theme's)
+#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
+#, machine
+menu	S&ize	Пам&ер
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
