@@ -402,25 +402,37 @@ fn symbol_fonts() -> Vec<Vec<u8>> {
 /// anything else is not one, and egui stops on a font it was given and can't read (#931:
 /// fontconfig named a gzipped PCF font for Japanese; #1412: a BDF font for the symbols).
 fn loadable_font(bytes: &[u8], index: u32) -> bool {
-    use skrifa::MetadataProvider as _;
     use skrifa::raw::TableProvider as _;
     let Ok(font) = skrifa::FontRef::from_index(bytes, index) else {
         return false;
     };
     // A font whose list of tables is whole but whose tables are cut short (a copy that stopped)
     // passes the first look: every table it lists is in the file, and those every font has read.
-    if !(font
-        .table_directory
+    font.table_directory
         .table_records()
         .iter()
         .all(|table| font.table_data(table.tag()).is_some())
         && font.head().is_ok()
         && font.hhea().is_ok()
         && font.maxp().is_ok()
-        && font.cmap().is_ok())
-    {
+        && font.cmap().is_ok()
+}
+
+/// Whether the file View → Font chose can be drawn with: [`loadable_font`]'s checks, then the
+/// cmap's glyph ids against `num_glyphs` and a sample of the glyphs' outlines (#1489). A damaged
+/// file can pass the first look and still draw nothing (or stop) in every window, so the chosen
+/// file alone is checked further, once, beside the window's thread ([`read_chosen_font`]).
+/// System fonts keep [`loadable_font`]: they are known to draw, and a bitmap or colour font must
+/// not be refused for having no outlines.
+fn chosen_font_ok(bytes: &[u8], index: u32) -> bool {
+    use skrifa::MetadataProvider as _;
+    use skrifa::raw::TableProvider as _;
+    if !loadable_font(bytes, index) {
         return false;
     }
+    let Ok(font) = skrifa::FontRef::from_index(bytes, index) else {
+        return false;
+    };
     let (Ok(head), Ok(maxp)) = (font.head(), font.maxp()) else {
         return false;
     };
@@ -430,10 +442,9 @@ fn loadable_font(bytes: &[u8], index: u32) -> bool {
         return false;
     }
     // A damaged cmap can name glyphs the font doesn't have. egui then asks for an outline that
-    // isn't there and draws nothing (or stops), and the whole interface becomes unreadable (#1489).
-    let mappings = font.charmap().mappings();
+    // isn't there and draws nothing (or stops), and the whole interface becomes unreadable.
     let mut mapped = 0usize;
-    for (_, glyph) in mappings {
+    for (_, glyph) in font.charmap().mappings() {
         if glyph.to_u32() >= glyphs {
             return false;
         }
@@ -450,7 +461,7 @@ fn loadable_font(bytes: &[u8], index: u32) -> bool {
 }
 
 /// Whether the outlines of a sample of `font`'s mapped glyphs are whole: every coordinate a
-/// number, inside four em squares, and at least one glyph drawn ([`loadable_font`]).
+/// number, inside four em squares, and at least one glyph drawn ([`chosen_font_ok`]).
 fn outlines_loadable(font: &skrifa::FontRef<'_>, mapped: usize, upem: f32) -> bool {
     use skrifa::MetadataProvider as _;
     use skrifa::instance::{LocationRef, Size};
@@ -606,6 +617,13 @@ pub(crate) fn font_data(bytes: Vec<u8>) -> egui::FontData {
     data
 }
 
+/// [`font_data`] for bytes already shared: View → Font's file can be a large collection, and the
+/// font definitions keep the one copy egui was given (#1489).
+fn font_data_shared(bytes: std::sync::Arc<Vec<u8>>) -> egui::FontData {
+    let index = text_face(&bytes);
+    egui::FontData::from_blob(bytes, index)
+}
+
 /// The faces [`read_font`] chose, by file: Windows' DirectWrite draws CJK text with the same
 /// face egui has ([`font_face_index`]).
 static FACES: std::sync::Mutex<Option<std::collections::HashMap<std::path::PathBuf, u32>>> =
@@ -625,34 +643,12 @@ pub(crate) fn font_face_index(path: &std::path::Path) -> u32 {
         .unwrap_or(0)
 }
 
-/// The largest font file MDM reads, in bytes. A font of every script is some 20–40 MB; a
-/// collection of them can be larger. Past this, the file isn't a font the interface should wait
-/// for (a video picked by mistake, a huge archive): it is passed over, not read into memory.
-const MAX_FONT_BYTES: u64 = 64 * 1024 * 1024;
-
 /// A font file's bytes, when egui can draw with them ([`loadable_font`], at the face
 /// [`text_face`] chooses). Any other file is passed over, and the log says so (once a run: the
 /// fonts are loaded again with each change of language): the next font in line is used instead.
 pub(crate) fn read_font(path: &std::path::Path) -> Option<Vec<u8>> {
     static SAID: std::sync::Mutex<Option<std::collections::HashSet<std::path::PathBuf>>> =
         std::sync::Mutex::new(None);
-    let mut said = SAID.lock().unwrap_or_else(|e| e.into_inner());
-    let too_large = std::fs::metadata(path)
-        .map(|m| m.len() > MAX_FONT_BYTES)
-        .unwrap_or(false);
-    if too_large {
-        if said
-            .get_or_insert_with(Default::default)
-            .insert(path.to_owned())
-        {
-            tracing::warn!(
-                "fonts: {} is larger than {} MB, passed over",
-                path.display(),
-                MAX_FONT_BYTES / (1024 * 1024)
-            );
-        }
-        return None;
-    }
     let bytes = std::fs::read(path).ok()?;
     // Given to egui by `font_data`, at the same face.
     let face = text_face(&bytes);
@@ -664,6 +660,7 @@ pub(crate) fn read_font(path: &std::path::Path) -> Option<Vec<u8>> {
             .insert(path.to_owned(), face);
         return Some(bytes);
     }
+    let mut said = SAID.lock().unwrap_or_else(|e| e.into_inner());
     if said
         .get_or_insert_with(Default::default)
         .insert(path.to_owned())
@@ -673,6 +670,75 @@ pub(crate) fn read_font(path: &std::path::Path) -> Option<Vec<u8>> {
             path.display()
         );
     }
+    None
+}
+
+/// The largest file View → Font reads, in bytes. A font of every script is some 20–40 MB; a
+/// collection of CJK faces can be larger (macOS's PingFang.ttc, Songti.ttc). Past this, the file
+/// isn't a font the interface should wait for (a video or an archive picked by mistake): it is
+/// passed over, not read into memory.
+const MAX_CHOSEN_FONT_BYTES: u64 = 128 * 1024 * 1024;
+
+/// View → Font's chosen file's bytes, when egui can draw with them ([`chosen_font_ok`], at the
+/// face [`text_face`] chooses). Read beside the window's thread ([`set_ui_font`]).
+///
+/// Only a regular file is read: a device or a pipe (`/dev/zero`, a FIFO) can say it is empty and
+/// then read forever. The read stops at one byte past the cap, so a file that grows meanwhile is
+/// refused rather than read to the end.
+pub(crate) fn read_chosen_font(path: &std::path::Path) -> Option<Vec<u8>> {
+    use std::io::Read as _;
+
+    let meta = match std::fs::metadata(path) {
+        Ok(meta) if meta.is_file() => meta,
+        Ok(_) => {
+            tracing::warn!(
+                "fonts: {} is not a regular file, passed over",
+                path.display()
+            );
+            return None;
+        }
+        Err(e) => {
+            tracing::warn!("fonts: {} can't be read ({e}), passed over", path.display());
+            return None;
+        }
+    };
+    if meta.len() > MAX_CHOSEN_FONT_BYTES {
+        tracing::warn!(
+            "fonts: {} is larger than {} MB, passed over",
+            path.display(),
+            MAX_CHOSEN_FONT_BYTES / (1024 * 1024)
+        );
+        return None;
+    }
+    let mut bytes = Vec::new();
+    let read = std::fs::File::open(path)
+        .and_then(|file| file.take(MAX_CHOSEN_FONT_BYTES + 1).read_to_end(&mut bytes));
+    if let Err(e) = read {
+        tracing::warn!("fonts: {} can't be read ({e}), passed over", path.display());
+        return None;
+    }
+    if bytes.len() as u64 > MAX_CHOSEN_FONT_BYTES {
+        tracing::warn!(
+            "fonts: {} grew past {} MB while it was read, passed over",
+            path.display(),
+            MAX_CHOSEN_FONT_BYTES / (1024 * 1024)
+        );
+        return None;
+    }
+    // Given to egui by `font_data`, at the same face.
+    let face = text_face(&bytes);
+    if chosen_font_ok(&bytes, face) {
+        FACES
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .get_or_insert_with(Default::default)
+            .insert(path.to_owned(), face);
+        return Some(bytes);
+    }
+    tracing::warn!(
+        "fonts: {} is not a font egui can draw with, passed over",
+        path.display()
+    );
     None
 }
 
@@ -1175,15 +1241,18 @@ static TEXT_SIZE: std::sync::atomic::AtomicU16 = std::sync::atomic::AtomicU16::n
 /// holds what was read.
 static UI_FONT: std::sync::Mutex<Option<std::path::PathBuf>> = std::sync::Mutex::new(None);
 
-/// The chosen file's bytes, once read: the path and the bytes egui draws with. A font that is
-/// loading (or that failed) leaves the previous one in place.
-static UI_FONT_READY: std::sync::Mutex<Option<(std::path::PathBuf, Vec<u8>)>> =
+/// The chosen file's bytes, once read: the path and the bytes egui draws with, shared with the
+/// font definitions (an `Arc`, so a large collection is held once). A font that is loading (or
+/// that failed) leaves the previous one in place.
+static UI_FONT_READY: std::sync::Mutex<Option<(std::path::PathBuf, std::sync::Arc<Vec<u8>>)>> =
     std::sync::Mutex::new(None);
 
-/// What the thread reading the chosen font read: its path and its bytes, or `None` when egui
-/// can't draw with it. Taken by [`poll_ui_font`].
-static UI_FONT_RESULT: std::sync::Mutex<Option<(std::path::PathBuf, Option<Vec<u8>>)>> =
-    std::sync::Mutex::new(None);
+/// What the thread reading the chosen font read: its path, whether a failure should be shown (a
+/// pick; a start is quiet), and its bytes, or `None` when egui can't draw with it.
+type UiFontRead = (std::path::PathBuf, bool, Option<Vec<u8>>);
+
+/// The last [`UiFontRead`], taken by [`poll_ui_font`].
+static UI_FONT_RESULT: std::sync::Mutex<Option<UiFontRead>> = std::sync::Mutex::new(None);
 
 /// View → Font (#1489): moved with each change of the interface's font, so the text is
 /// rasterized again ([`classic_text`]).
@@ -1200,8 +1269,10 @@ pub enum UiFontLoad {
 
 /// View → Font (#1489): draw the interface's text in `path` (`None`: the computer's own font)
 /// from now on. A file is read beside the window's thread; [`poll_ui_font`] says when it is in
-/// use, and [`reload_fonts`] loads the fonts again then.
-pub fn set_ui_font(path: Option<std::path::PathBuf>) {
+/// use, and [`reload_fonts`] loads the fonts again then. `announce` says whether a file that
+/// can't be used is shown to the person: it is when they picked it, and not at start, where a
+/// saved file that has since gone missing is logged and the system font is used quietly.
+pub fn set_ui_font(path: Option<std::path::PathBuf>, announce: bool) {
     let previous = {
         let mut current = UI_FONT.lock().unwrap_or_else(|e| e.into_inner());
         std::mem::replace(&mut *current, path.clone())
@@ -1227,14 +1298,14 @@ pub fn set_ui_font(path: Option<std::path::PathBuf>) {
             let _ = std::thread::Builder::new()
                 .name("ui-font".into())
                 .spawn(move || {
-                    let bytes = read_font(&path);
+                    let bytes = read_chosen_font(&path);
                     // Chosen again while this read ran: the newer choice's own thread answers
                     // for it; this one must not overwrite what that thread leaves.
                     if UI_FONT.lock().unwrap_or_else(|e| e.into_inner()).as_deref()
                         == Some(path.as_path())
                     {
                         *UI_FONT_RESULT.lock().unwrap_or_else(|e| e.into_inner()) =
-                            Some((path, bytes));
+                            Some((path, announce, bytes));
                     }
                 });
         }
@@ -1243,6 +1314,7 @@ pub fn set_ui_font(path: Option<std::path::PathBuf>) {
 
 /// Take what the thread reading the chosen font read, if anything: the font is in use now
 /// (`Loaded`: load the fonts again), or it can't be (`Failed`: keep the one in use and say so).
+/// A failure at start is not `Failed`: it is logged, and the system font is used quietly.
 /// Called every frame, never waiting.
 pub fn poll_ui_font() -> Option<UiFontLoad> {
     let chosen = UI_FONT.lock().unwrap_or_else(|e| e.into_inner()).clone()?;
@@ -1250,18 +1322,20 @@ pub fn poll_ui_font() -> Option<UiFontLoad> {
         .lock()
         .unwrap_or_else(|e| e.into_inner())
         .take();
-    let (path, bytes) = result?;
+    let (path, announce, bytes) = result?;
     // Chosen again while it was read: what came back is for an older choice.
     if path != chosen {
         return None;
     }
     match bytes {
         Some(bytes) => {
-            *UI_FONT_READY.lock().unwrap_or_else(|e| e.into_inner()) = Some((path, bytes));
+            *UI_FONT_READY.lock().unwrap_or_else(|e| e.into_inner()) =
+                Some((path, std::sync::Arc::new(bytes)));
             FONT_GENERATION.fetch_add(1, Ordering::Relaxed);
             Some(UiFontLoad::Loaded)
         }
-        None => Some(UiFontLoad::Failed),
+        None if announce => Some(UiFontLoad::Failed),
+        None => None,
     }
 }
 
@@ -1275,8 +1349,8 @@ pub(crate) fn chosen_ui_font() -> Option<std::path::PathBuf> {
         .map(|(path, _)| path.clone())
 }
 
-/// The chosen font's bytes, when one is in use ([`chosen_ui_font`]).
-fn ui_font_bytes() -> Option<Vec<u8>> {
+/// The chosen font's bytes, when one is in use ([`chosen_ui_font`]), shared rather than copied.
+fn ui_font_bytes() -> Option<std::sync::Arc<Vec<u8>>> {
     UI_FONT_READY
         .lock()
         .unwrap_or_else(|e| e.into_inner())
@@ -1487,7 +1561,7 @@ fn fonts(ctx: &egui::Context, code: &str, all: bool) {
     let system_data = system
         .clone()
         .map(|bytes| std::sync::Arc::new(font_data(bytes)));
-    let chosen_data = chosen.map(|bytes| std::sync::Arc::new(font_data(bytes)));
+    let chosen_data = chosen.map(|bytes| std::sync::Arc::new(font_data_shared(bytes)));
     let ui = chosen_data.clone().or_else(|| system_data.clone());
     if let Some(data) = &ui {
         defs.font_data.insert("segoe-ui".into(), data.clone());
@@ -1928,22 +2002,35 @@ mod font_file_tests {
             .expect("Hack has a glyf table");
         let (offset, length) = (glyf.offset() as usize, glyf.length() as usize);
         ttf[offset..offset + length].fill(0xff);
-        assert!(!loadable_font(&ttf, 0), "damaged glyphs were taken");
+        assert!(!super::chosen_font_ok(&ttf, 0), "damaged glyphs were taken");
     }
 
     /// #1489: a file larger than any font (a video picked by mistake) is refused from its
     /// metadata alone, never read into memory.
     #[test]
-    fn a_file_too_large_to_be_a_font_is_refused_unread() {
+    fn a_chosen_file_too_large_to_be_a_font_is_refused_unread() {
         let path = std::env::temp_dir().join(format!("mdm-font-cap-{}.ttf", std::process::id()));
         let file = std::fs::File::create(&path).unwrap();
-        file.set_len(super::MAX_FONT_BYTES + 1).unwrap();
+        file.set_len(super::MAX_CHOSEN_FONT_BYTES + 1).unwrap();
         drop(file);
         assert!(
-            super::read_font(&path).is_none(),
+            super::read_chosen_font(&path).is_none(),
             "an oversized file was read"
         );
         let _ = std::fs::remove_file(&path);
+    }
+
+    /// #1489: only a regular file is read: a directory (or a device, or a pipe) can say it is
+    /// empty and then read forever, so it is refused from its metadata.
+    #[test]
+    fn a_chosen_path_that_is_not_a_regular_file_is_refused() {
+        let path = std::env::temp_dir().join(format!("mdm-font-dir-{}", std::process::id()));
+        std::fs::create_dir_all(&path).unwrap();
+        assert!(
+            super::read_chosen_font(&path).is_none(),
+            "a directory was read as a font"
+        );
+        let _ = std::fs::remove_dir(&path);
     }
 
     /// fontconfig's answer, best first: its first font egui can read is the one taken. A font

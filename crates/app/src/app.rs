@@ -3489,6 +3489,9 @@ impl App {
                 let id = crate::chrome::label(tab);
                 self.run(Cmd::Theme(id), None, ctx);
             }
+            // View → Font → Choose a font file..., as its dialog answers: `font:<path>` (tests of
+            // a file that can't be used without the system's dialog, #1489).
+            "font" => self.set_interface_font(Some(std::path::PathBuf::from(tab)), ctx),
             // A menu of the menu bar open (menu:0 is Tasks), for screenshots; menu:3:draw opens
             // View with its Draw with submenu (#89).
             "menu" => {
@@ -11495,7 +11498,7 @@ impl App {
     /// in use stays (`tick` polls `theme::poll_ui_font`).
     fn set_interface_font(&mut self, path: Option<std::path::PathBuf>, ctx: &egui::Context) {
         let Some(path) = path else {
-            crate::theme::set_ui_font(None);
+            crate::theme::set_ui_font(None, false);
             crate::theme::reload_fonts(ctx);
             self.settings.interface_font = None;
             self.dirty = true;
@@ -11508,7 +11511,7 @@ impl App {
             return;
         }
         tracing::info!("interface font: {}", path.display());
-        crate::theme::set_ui_font(Some(path));
+        crate::theme::set_ui_font(Some(path), true);
     }
 
     /// The addresses in a list file, shown in Import to tick before adding. The file is read and

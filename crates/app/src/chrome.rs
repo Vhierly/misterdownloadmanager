@@ -1729,6 +1729,10 @@ fn popup_level<C: Clone>(
             }
             let label_font = match e {
                 MenuEntry::Item(_, c, ..) | MenuEntry::Radio(_, c, ..) => font(c),
+                // View → Font's own entry stays in the computer's own font, whatever file it
+                // chose: a damaged file must not make the way back unreadable (#1489). The key
+                // is English in every language (`i18n::tc`).
+                MenuEntry::Sub(l, ..) if *l == "&Font" => Some(winui::system_font()),
                 _ => None,
             }
             .unwrap_or_else(winui::segoe);
