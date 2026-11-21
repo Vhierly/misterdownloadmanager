@@ -1228,8 +1228,10 @@ fn add_script_fallback(ctx: &egui::Context) {
     });
 }
 
-/// View → Font (#1489): the sizes the menu offers, in percent of the theme's own sizes.
-pub const TEXT_SIZES: &[u16] = &[75, 80, 90, 100, 110, 120, 125, 150, 175, 200];
+/// View → Font (#1489): the sizes the menu offers, in percent of the theme's own sizes. The list
+/// stops at 150 %: above it the letters outgrow the fixed-height rows (the menu bar's titles and
+/// the tree's lines), which the issue accepts as tight but not as cut.
+pub const TEXT_SIZES: &[u16] = &[75, 80, 90, 100, 110, 120, 125, 150];
 
 /// View → Font (#1489), percent: the interface's text drawn that much larger or smaller
 /// than the theme's sizes. Unlike View → Interface size (which zooms every window), the layout
@@ -1920,7 +1922,8 @@ mod mode_tests {
         assert_eq!(snap_text_size(130), 125);
         assert_eq!(snap_text_size(140), 150);
         assert_eq!(snap_text_size(0), 75);
-        assert_eq!(snap_text_size(255), 200);
+        assert_eq!(snap_text_size(255), 150);
+        assert_eq!(snap_text_size(175), 150);
         assert_eq!(snap_text_size(115), 110);
     }
 
