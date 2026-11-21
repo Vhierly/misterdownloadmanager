@@ -569,6 +569,56 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 These ship in the next version.
 
+- ✅ MDM keeps its own yt-dlp, gallery-dl, ffmpeg and Deno up to date by itself: a check a few
+  seconds after it starts and then while it runs (yt-dlp and gallery-dl at most every 6 hours,
+  Deno daily, ffmpeg weekly, remembered across starts), each new version checked as its first
+  install was and switched to only once no download is using it, the previous one kept to go
+  back to. A video or gallery that fails in a way that usually means its helper is out of date
+  has MDM look for a newer one at once and try again with it. Helpers says how each stands, with
+  **Check for updates**, **Update** and **Go back to** the previous version, and a switch to turn
+  it off; the command line has `update-helpers`
+  ([#1544](https://github.com/anefzaoui/misterdownloadmanager/issues/1544))
+- ✅ Deleting a download keeps its file unless **Also delete the files from disk** is ticked in
+  that very question: the box starts unticked every time (only **Shift+Delete** and **Remove
+  with files** tick it, once), it says how many finished files go with it, a question turned
+  off only takes downloads off the list, and deleting files always asks
+  ([#1563](https://github.com/anefzaoui/misterdownloadmanager/issues/1563))
+- ✅ The command line's downloads, look-ups, helper installs and torrents go through Options →
+  Proxy / Socks (and its network adapter and DNS) as the app's do, with a `--proxy` switch for
+  one run ([#1556](https://github.com/anefzaoui/misterdownloadmanager/issues/1556))
+- ✅ SOCKS5 and SOCKS4 as a real choice in Options → Proxy / Socks: a **Type** (HTTP, HTTPS,
+  SOCKS5, SOCKS4), site names looked up through the proxy (on by default), a SOCKS5 login, Get
+  System reading Windows' SOCKS proxy, a **Test** button; every connection follows it: downloads
+  and FTP, video pages and galleries, MDM's own downloads and the update check, a proxy script's
+  SOCKS answers, and torrents when asked
+  ([#1558](https://github.com/anefzaoui/misterdownloadmanager/issues/1558))
+- ✅ 7z and RAR archives are extracted with the 7-Zip another archiver brings: PeaZip's and
+  NanaZip's command line are found by themselves on Windows, and **Options → Archives → Use
+  another program...** takes any other 7-Zip command line program (a portable copy), checked
+  before it is used
+  ([#1525](https://github.com/anefzaoui/misterdownloadmanager/issues/1525))
+- ✅ The proxy reaches yt-dlp: Options' automatic configuration script is asked about the
+  video's page for every yt-dlp run, "Use system settings" follows Windows' setup script (a
+  proxy program's PAC mode), and a manual proxy chosen with no protocol ticked gets http and
+  https ticked ([#1448](https://github.com/anefzaoui/misterdownloadmanager/issues/1448))
+- ✅ Website: screenshots open over the page in [Vitrine](https://github.com/anefzaoui/vitrine), growing out of their
+  place and back: arrows, keys and swipes through a group, zoom by click, double tap, pinch or
+  wheel, Back and Escape to close, the focus and the page kept where they were, right to left,
+  light and dark, reduced motion; the language picker opens and closes the same way
+- ✅ A video download, look-up, playlist or gallery finishes when yt-dlp (or gallery-dl) does:
+  a program it started that still held its output open kept the download running at its last
+  progress ([#1521](https://github.com/anefzaoui/misterdownloadmanager/issues/1521))
+- ✅ The browser add-on's popup lists MDM's newest downloads, live while it is open: the system's
+  own icon for each file type, its progress, speed and time left, search and filters (running,
+  done, failed), and on each one **Open**, **Show in folder**, **Pause** / **Resume**, **Copy
+  file** (to paste the file itself into a folder, a chat or an upload box), **Share** (Windows'
+  and macOS's share sheet), **Copy link**, **Download again**, **Remove from list** and **Delete
+  file**; the toolbar button counts the running ones. The popup has tabs now: **Downloads**,
+  **This page** and **Settings** ([#1496](https://github.com/anefzaoui/misterdownloadmanager/issues/1496))
+- ✅ macOS crash and freeze reports: the release's symbols are found (by the program's name, or
+  by its id when the report has no name for it) and carry unwinding tables and inlined calls, so
+  no frame is skipped; a freeze says how much the window's thread ran and how many pages MDM read
+  from disk meanwhile ([#1515](https://github.com/anefzaoui/misterdownloadmanager/issues/1515))
 - ✅ Alt+click on a link behind a site's bot check (Cloudflare's "Just a moment...") opens it in
   the tab, so the browser passes the check and keeps the file: Chromium browsers and Safari saved
   the check's page instead ([#1494](https://github.com/anefzaoui/misterdownloadmanager/issues/1494))
@@ -619,6 +669,10 @@ These ship in the next version.
   its first 256 KB block was written (some 15 s at 128 kbit/s, longer at lower bitrates); Stop and
   save before that block keeps nothing yet and leaves the download stopped to resume
   ([#1450](https://github.com/anefzaoui/misterdownloadmanager/pull/1450))
+- ✅ Tests: the live recording checks that failed now and then (most runs on Linux) wait until
+  enough is recorded for what they check, instead of saving at the first block: a recording that
+  short is within the second an MP4 may lose and still count as whole, so whether the MP4 was
+  judged short depended on when the save came
 - ✅ Download video: a video's own file (Kwai's MP4) is offered and downloaded when its server
   doesn't say it is a video, instead of "No video this can download on that page"; the button's
   click downloads such a file at once
@@ -1660,6 +1714,24 @@ These ship in the next version.
 - ✅ How a change is verified, written down: a `verify` skill (`.claude/skills/verify`) for
   running a change for real before it's merged, and REVIEW.md, what to check by what a pull
   request touches; every pull request says what was verified and what wasn't
+- ✅ Screen readers name the buttons a glyph or a shared word hid: "+" is "Add category",
+  "..." is "Browse", Options' two "Edit..." buttons take their captions ("Customize MDM
+  menu items in context menu of browsers", "Customize MDM Download panels in browsers"),
+  and the remembered folder field is "Category folder", not the checkbox's caption
+  ([#1407](https://github.com/anefzaoui/misterdownloadmanager/issues/1407); thanks to
+  [@Seyamalam](https://github.com/Seyamalam))
+- ✅ Tests: the video checks of an address that expires while downloading (a stream's, and DASH
+  pieces') no longer fail now and then on a busy computer: the test server times such a link from
+  its first request, not from the look-up that gave it, so a slow start can't kill it before the
+  download has asked for it
+- ✅ Linux and macOS: **Launch Mister Download Manager on startup** is ticked only when the startup
+  entry is on and starts this copy; an entry naming a program that's gone (moved, or replaced by an
+  upgrade while MDM ran) is written again as MDM starts
+  ([#1484](https://github.com/anefzaoui/misterdownloadmanager/issues/1484))
+- ✅ No more **The window stopped responding** report while MDM's window is minimized to the
+  taskbar and its thread waits on the computer: as in the notification area, logged, and reported
+  only if it lasts past a minute, if MDM's thread is busy, or if MDM is asked for something
+  meanwhile and doesn't answer ([#1481](https://github.com/anefzaoui/misterdownloadmanager/issues/1481))
 
 ## Being worked on
 
@@ -1679,6 +1751,10 @@ These ship in a later version, when they're ready.
 
 ### Bugs being looked into
 
+- 🔍 The system's automatic proxy settings beyond Windows' setup script: Windows'
+  "Automatically detect settings" (WPAD), and the automatic configuration scripts of Linux
+  desktops and macOS, aren't read yet
+  ([#1448](https://github.com/anefzaoui/misterdownloadmanager/issues/1448))
 - 🔍 Linux on native Wayland: while the main window is out of sight (on another workspace), the
   other windows (Download File Info, Download complete, the dialogs) don't open or don't answer
   until it is shown again, as the compositor doesn't let a window it isn't showing redraw and

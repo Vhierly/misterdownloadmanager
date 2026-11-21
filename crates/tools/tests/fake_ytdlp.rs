@@ -10,7 +10,7 @@
 //!   without touching its own environment.
 //!
 //! #769: with `page.json` beside it, the fake's page is that one (its formats' addresses on a lab
-//! server, `{EXPIRES}` replaced by a time a little ahead each look-up); asked for its choice
+//! server, `{LINK}` replaced by a name of its own each look-up); asked for its choice
 //! (`-O "MDMJ %()j"`) it answers as yt-dlp does after choosing; and asked to download a choice
 //! whose streams are already there (MDM's engine downloaded them), it merges them as yt-dlp
 //! does ("has already been downloaded"), downloading only what isn't there.
@@ -39,6 +39,8 @@ fn main() -> ExitCode {
     }
     if std::env::var_os("MDM_SUBS_RETRY_SECS").is_some() {
         private_cookie_checks(&me);
+        proxy_checks(&me);
+        held_output_checks(&me);
         checks(&me);
         job_checks(&me);
         merge_checks(&me);
@@ -70,10 +72,11 @@ fn mode(dir: &Path) -> String {
 }
 
 /// A process the fake leaves behind (as yt-dlp's launcher leaves its child, and ffmpeg): it
-/// writes to `file` every 100 ms for 30 s, unless ended.
-fn linger(file: &Path) -> ExitCode {
+/// writes to `file` every 100 ms for `secs` (30 s unless said), unless ended.
+fn linger(file: &Path, secs: Option<&str>) -> ExitCode {
     use std::io::Write;
-    let end = Instant::now() + Duration::from_secs(30);
+    let secs = secs.and_then(|s| s.parse().ok()).unwrap_or(30);
+    let end = Instant::now() + Duration::from_secs(secs);
     while Instant::now() < end {
         if let Ok(mut f) = std::fs::OpenOptions::new()
             .create(true)
@@ -85,6 +88,16 @@ fn linger(file: &Path) -> ExitCode {
         std::thread::sleep(Duration::from_millis(100));
     }
     ExitCode::SUCCESS
+}
+
+/// #1521: a process the fake leaves behind holding its stdout and stderr open for 90 s
+/// ([`linger`], writing to `file`), as an ffmpeg yt-dlp started and shares its output with can.
+fn holder(file: &Path) {
+    let me = std::env::current_exe().unwrap();
+    let _ = Command::new(me)
+        .args(["--linger", &file.to_string_lossy(), "90"])
+        .stdin(std::process::Stdio::null())
+        .spawn();
 }
 
 /// Raw bytes on stdout (a line in another code page than UTF-8, #79).
@@ -103,7 +116,7 @@ const PAGE: &str = r#"{"title": "Talk", "language": "ru", "formats": [
 fn fake_ytdlp() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.first().map(String::as_str) == Some("--linger") {
-        return linger(Path::new(&args[1]));
+        return linger(Path::new(&args[1]), args.get(2).map(String::as_str));
     }
     // `--version` as yt-dlp answers it, and nothing else: MDM asks a yt-dlp it didn't install
     // whether it has `--js-runtimes` (2025.11.12, #1448) before telling it of this computer's
@@ -196,6 +209,10 @@ fn fake_ytdlp() -> ExitCode {
         if n >= 1 && home.join("slow-second-look-up").exists() {
             std::thread::sleep(Duration::from_secs(3));
         }
+        // #1521: a process left behind holding the output open, when asked.
+        if home.join("hold-output").exists() {
+            holder(&home.join("linger.log"));
+        }
         // #852: YouTube looked up without a JavaScript runtime, as yt-dlp says it.
         if args
             .last()
@@ -206,8 +223,9 @@ fn fake_ytdlp() -> ExitCode {
                 include_str!("fixtures/ytdlp-js-runtime/no-runtime.stderr")
             );
         }
-        // #769: a page of the test's, its links signed for a little while from now; #686: the
-        // signed-in viewer's (`page-signed-in.json`) when the look-up has the browser's cookies.
+        // #769: a page of the test's, its links signed anew (`link=` a name of this look-up's own,
+        // which the lab times from its first request); #686: the signed-in viewer's
+        // (`page-signed-in.json`) when the look-up has the browser's cookies.
         let signed_in = home.join("page-signed-in.json");
         let page = if has("--cookies") && signed_in.is_file() {
             signed_in
@@ -219,8 +237,9 @@ fn fake_ytdlp() -> ExitCode {
                 let ms = std::time::SystemTime::now()
                     .duration_since(std::time::UNIX_EPOCH)
                     .unwrap()
-                    .as_millis() as u64;
-                println!("{}", page.replace("{EXPIRES}", &(ms + 1500).to_string()));
+                    .as_millis();
+                let link = format!("{}-{ms}", std::process::id());
+                println!("{}", page.replace("{LINK}", &link));
             }
             Err(_) => println!("{PAGE}"),
         }
@@ -433,6 +452,15 @@ fn fake_ytdlp() -> ExitCode {
         std::thread::sleep(Duration::from_millis(500));
         eprintln!("ERROR: unable to download video data: HTTP Error 500");
         return ExitCode::FAILURE;
+    }
+    // #1521: it ends (well, or falling over) leaving behind a process that still holds its
+    // output open, as an ffmpeg yt-dlp started and shares its output with can.
+    if mode == "held" || mode == "held-crash" {
+        holder(&dir.join("linger.log"));
+        if mode == "held-crash" {
+            eprintln!("ERROR: unable to download video data: HTTP Error 500");
+            return ExitCode::FAILURE;
+        }
     }
     // #79: lines that aren't UTF-8, before and as the final path (a legacy code page).
     if mode == "odd-lines" {
@@ -906,6 +934,112 @@ fn private_cookie_checks(me: &Path) {
     assert_eq!(log.lines().count(), 1, "no cookie retry: {log}");
     assert!(!log.contains("\"--cookies-from-browser\""), "{log}");
     set_browser_cookies(None);
+}
+
+/// #1448: Options' automatic configuration script reaches every run of yt-dlp for a video, the
+/// look-up and the download from its looked-up page alike: each is asked about the page. The
+/// download's run went straight to the site, the script asked about no address.
+fn proxy_checks(me: &Path) {
+    let tools = tempfile::tempdir().unwrap();
+    let out = tempfile::tempdir().unwrap();
+    let exe = fake_in(me, tools.path());
+    std::fs::write(tools.path().join("record-cookie-args"), "").unwrap();
+    mdm_tools::proc::set_proxy(mdm_engine::Proxy::Pac {
+        script: std::sync::Arc::from(
+            "function FindProxyForURL(u,h){return h=='video.example'?'PROXY 127.0.0.1:3128':'DIRECT';}",
+        ),
+    });
+    let job = VideoJob::start(
+        &exe,
+        "https://video.example/talk",
+        "b",
+        out.path(),
+        "Talk",
+        None,
+        None,
+        None,
+        &Default::default(),
+        &Subs::default(),
+        None,
+    )
+    .unwrap();
+    let until = Instant::now() + Duration::from_secs(60);
+    let progress = loop {
+        let progress = job.progress();
+        if progress.state != State::Running {
+            break progress;
+        }
+        assert!(Instant::now() < until, "still running: {progress:?}");
+        std::thread::sleep(Duration::from_millis(20));
+    };
+    mdm_tools::proc::set_proxy(mdm_engine::Proxy::None);
+    assert!(matches!(progress.state, State::Done(_)), "{progress:?}");
+    let runs: Vec<Vec<String>> = std::fs::read_to_string(tools.path().join("cookie-args.jsonl"))
+        .unwrap()
+        .lines()
+        .map(|s| serde_json::from_str(s).unwrap())
+        .collect();
+    assert!(
+        runs.iter()
+            .any(|args| args.iter().any(|a| a == "--load-info-json")),
+        "download ran: {runs:?}"
+    );
+    for args in &runs {
+        let at = args.iter().position(|a| a == "--proxy");
+        assert_eq!(
+            at.and_then(|i| args.get(i + 1)).map(String::as_str),
+            Some("http://127.0.0.1:3128"),
+            "{args:?}"
+        );
+    }
+}
+
+/// #1521: yt-dlp ended, but a process it started still holds its output open (an ffmpeg that
+/// shares it; here for 90 s): the look-up and the download end with yt-dlp, not with that
+/// process, and it is ended with them.
+fn held_output_checks(me: &Path) {
+    // Far below the holder's 90 s, far above the 2 s the output is read after yt-dlp's end.
+    let soon = Duration::from_secs(30);
+    // The holder writes to its file every 100 ms until it is ended.
+    let ended = |file: &Path, what: &str| {
+        let size = || std::fs::metadata(file).map_or(0, |m| m.len());
+        std::thread::sleep(Duration::from_millis(800));
+        let after = size();
+        std::thread::sleep(Duration::from_millis(1500));
+        assert_eq!(size(), after, "{what}: what yt-dlp left was ended with it");
+    };
+    // A look-up: yt-dlp's `-J` output read to its end.
+    let tools = tempfile::tempdir().unwrap();
+    let exe = fake_in(me, tools.path());
+    std::fs::write(tools.path().join("hold-output"), "").unwrap();
+    let started = Instant::now();
+    let looked =
+        mdm_tools::resolve::look_up(&exe, "https://video.example/talk", &Default::default());
+    let took = started.elapsed();
+    assert!(looked.is_ok(), "look-up: {:?}", looked.err());
+    assert!(
+        took < soon,
+        "the look-up waited {took:?} for what yt-dlp left"
+    );
+    ended(&tools.path().join("linger.log"), "look-up");
+    // A download that ends well, and one that falls over.
+    for mode in ["held", "held-crash"] {
+        let started = Instant::now();
+        let (p, files, out) = download_as(me, mode, &Subs::default(), "b", "Talk");
+        let took = started.elapsed();
+        assert!(
+            took < soon,
+            "{mode}: the download waited {took:?} for what yt-dlp left"
+        );
+        match &p.state {
+            State::Done(_) if mode == "held" => assert_eq!(files, ["Talk.mp4"]),
+            State::Failed(e) if mode == "held-crash" => {
+                assert!(e.contains("HTTP Error 500"), "{e}");
+            }
+            other => panic!("{mode}: {other:?}"),
+        }
+        ended(&out.path().join("linger.log"), mode);
+    }
 }
 
 /// Download with `subs` while the fake behaves as `mode`; the end state, its log and folder.
@@ -1672,13 +1806,15 @@ fn engine_checks(me: &Path) {
     );
     assert!(log.iter().any(|t| t.starts_with("Resuming: ")), "{log:?}");
 
-    // Addresses that expire after 1.5 s, on connections dropped every 512 KB at 512 KB/s:
-    // yt-dlp is asked for today's, and the stream goes on.
+    // Addresses that expire 1.5 s after their first request, on connections dropped every 512 KB
+    // at 512 KB/s (3 MB over two connections, 3 s at least): yt-dlp is asked for today's, and
+    // the stream goes on. Timed from the first request, not the look-up, so a busy computer's
+    // slow start can't kill a link before the engine has used it.
     let (tools, out) = (tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap());
     std::fs::write(
         tools.path().join("page.json"),
         page(
-            "/gen/3M/v.mp4?seed=1&rate=512K&drop_after=512K&expires={EXPIRES}",
+            "/gen/3M/v.mp4?seed=1&rate=512K&drop_after=512K&lasts_ms=1500&link={LINK}",
             "/gen/1M/a.m4a?seed=2",
             "https",
         ),
@@ -1789,6 +1925,16 @@ fn recording_checks(me: &Path) {
     let recording = |job: &VideoJob| {
         job.live_state() == Some(LiveState::Recording) && job.progress().recorded > 0
     };
+    // Recording, and enough of it that what a check tells apart doesn't hang on how much was in
+    // when it saved (the watcher reads the size once a second while the fake writes a block of
+    // 65,424 bytes every tenth: anything from one block to ten). The fake ffprobe's `short` modes
+    // say the MP4 (or its sound) plays half as long as the recording, and MDM takes an MP4 up to
+    // a second shorter as whole (`SLACK` in video.rs): up to 2 s recorded (three blocks), the
+    // missing half is within that second and the MP4 counts as whole. 3 s of the fake's playback
+    // (five blocks) is past it, as past the 64 KiB `tiny` checks (two blocks) and the two rounds
+    // `live-split` checks. What is recorded only grows until yt-dlp is stopped.
+    let enough =
+        |job: &VideoJob| recording(job) && job.progress().recorded as f64 >= 3.0 * BYTES_PER_SECOND;
     // Recording, whatever has been written.
     let opened = |job: &VideoJob| job.live_state() == Some(LiveState::Recording);
     // For a while (twice the watcher's second) nothing says it records: it isn't, while the
@@ -1913,7 +2059,7 @@ fn recording_checks(me: &Path) {
     // ffmpeg's file far smaller than the recording: not taken, the recording kept whole.
     let (_tools, out, exe, ffmpeg) = folders("live", "tiny");
     let job = start(&exe, out.path(), Some(&ffmpeg), true);
-    until(&job, "recording", &recording);
+    until(&job, "enough recorded", &enough);
     job.save();
     let p = ended(&job);
     assert_eq!(p.state, State::Done(out.path().join("Talk.ts")));
@@ -2127,7 +2273,7 @@ fn recording_checks(me: &Path) {
     let (_tools, out, exe, ffmpeg) = folders("live", "");
     std::fs::write(out.path().join("ffprobe-mode.txt"), "short").unwrap();
     let job = start(&exe, out.path(), Some(&ffmpeg), true);
-    until(&job, "recording", &recording);
+    until(&job, "enough recorded", &enough);
     job.save();
     let p = ended(&job);
     let log = log_of(&p);
@@ -2167,7 +2313,7 @@ fn recording_checks(me: &Path) {
             mode => std::fs::write(out.path().join("ffprobe-mode.txt"), mode).unwrap(),
         }
         let job = start(&exe, out.path(), Some(&ffmpeg), true);
-        until(&job, "recording", &recording);
+        until(&job, "enough recorded", &enough);
         job.save();
         let p = ended(&job);
         let log = log_of(&p);
@@ -2200,7 +2346,7 @@ fn recording_checks(me: &Path) {
     // the parts gone, the log naming them.
     let (_tools, out, exe, ffmpeg) = folders("live-split", "");
     let job = start(&exe, out.path(), Some(&ffmpeg), true);
-    until(&job, "recording", &recording);
+    until(&job, "enough recorded", &enough);
     let (video, audio) = (
         out.path().join("Talk.f1.mp4.part"),
         out.path().join("Talk.f2.m4a.part"),
@@ -2511,7 +2657,7 @@ fn recording_checks(me: &Path) {
         let (_tools, out, exe, ffmpeg) = folders("live", "");
         std::fs::write(out.path().join("ffprobe-mode.txt"), "short").unwrap();
         let job = start(&exe, out.path(), Some(&ffmpeg), true);
-        until(&job, "recording", &recording);
+        until(&job, "enough recorded", &enough);
         let part = out.path().join("Talk.mp4.part");
         let held = std::fs::OpenOptions::new()
             .read(true)
@@ -2878,14 +3024,15 @@ fn pieces_checks(
     let (saved, _, _) = run(dash, 4);
     assert!(saved == want, "DASH pieces joined in order");
 
-    // Pieces whose addresses expire 1.5 s after each look-up, one at a time at 256 KB/s: yt-dlp
-    // is asked for the list again, and the pieces go on from the new one.
+    // Pieces whose addresses expire together, 1.5 s after the first piece of each look-up's list
+    // is asked, one at a time at 256 KB/s (a second each): yt-dlp is asked for the list again,
+    // and the pieces go on from the new one. Timed from the first request, as above.
     let pieces: Vec<String> = (1..=4)
         .map(|i| {
             format!(
                 r#"{{"url": "{}"}}"#,
                 lab.url(&format!(
-                    "/gen/256K/p{i}?seed={}&rate=256K&expires={{EXPIRES}}",
+                    "/gen/256K/p{i}?seed={}&rate=256K&lasts_ms=1500&link={{LINK}}",
                     20 + i
                 ))
             )
