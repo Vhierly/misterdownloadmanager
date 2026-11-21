@@ -569,6 +569,12 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 These ship in the next version.
 
+- ✅ Private-window downloads stay in the list by default (Options → General → Keep
+  private-window downloads in the list is on for every list that never chose, their cookies
+  still never saved): each is marked with a mask before its status, whose tip says whether the
+  list keeps it, the first one brings a notice saying so and where to turn it off, and the log
+  notes each one without its name or address
+  ([#1581](https://github.com/anefzaoui/misterdownloadmanager/issues/1581))
 - ✅ YouTube's JavaScript runtime: MDM installs Node.js (its newest LTS, from nodejs.org, its
   checksum list checked against Node.js's releasers' signing keys) instead of Deno, for Windows
   (x64, ARM64, 32-bit), macOS and Linux (x64, ARM64), kept up to date with the other helpers; a
@@ -1694,7 +1700,8 @@ These ship in the next version.
   kept aside and a new one begins, the download list's torrents are added again from MDM's own
   copies and find their pieces on disk; MDM's own rewrite of the list reaches the disk before it
   replaces the old one ([#1357](https://github.com/anefzaoui/misterdownloadmanager/issues/1357))
-- ✅ **Options → General → Keep private-window downloads in the list** (off by default): a private
+- ✅ **Options → General → Keep private-window downloads in the list** (on by default since
+  [#1581](https://github.com/anefzaoui/misterdownloadmanager/issues/1581)): a private
   window's downloads are saved like any other and survive MDM closing or restarting, still apart
   from normal windows' downloads (a saved private-window mark; their cookies never saved); a
   private window's video never falls back to Cookies for video sites, after a restart either
