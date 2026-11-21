@@ -665,8 +665,9 @@ These ship in the next version.
   first one, Songti SC Black ([#1483](https://github.com/anefzaoui/misterdownloadmanager/issues/1483))
 - ✅ **View → Font** draws every window's text in a font file of your own and at its own size,
   apart from **View → Interface size**: the file is checked before use and read beside the
-  window, and **System font** stays drawn in the computer's own font even when a chosen file is
-  damaged, so the way back is always readable
+  window, **System font** stays drawn in the computer's own font even when a chosen file is
+  damaged, so the way back is always readable, and the file in use is named and checked in the
+  menu
   ([#1489](https://github.com/anefzaoui/misterdownloadmanager/issues/1489))
 - ✅ The browser extension remembers paired servers and switches between them and this computer
   with a click without re-pairing (thanks to [@kngkatak](https://github.com/kngkatak))

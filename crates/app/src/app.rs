@@ -524,6 +524,9 @@ enum Cmd {
     InterfaceFont,
     /// View → Font → System font (#1489): back to the computer's own font.
     InterfaceFontSystem,
+    /// View → Font → the file in use, shown by its name (#1489): choosing it again reads that
+    /// saved file (a missing one then says so, like a fresh pick).
+    InterfaceFontFile,
     /// View → Font → a text size in percent (#1489).
     InterfaceTextSize(u16),
     /// View → Text → Smooth (`true`) or Classic (Windows).
@@ -8484,6 +8487,13 @@ impl App {
                 });
             }
             Cmd::InterfaceFontSystem => self.set_interface_font(None, ctx),
+            Cmd::InterfaceFontFile => {
+                // The checked line naming the file in use (#1489): choosing it reads that saved
+                // file again, so a file that went away says so, as a fresh pick would.
+                if let Some(path) = self.settings.interface_font.clone() {
+                    self.set_interface_font(Some(path), ctx);
+                }
+            }
             Cmd::InterfaceTextSize(percent) => {
                 self.settings.interface_text_size = percent;
                 crate::theme::set_text_size(ctx, percent);
@@ -9603,15 +9613,33 @@ impl App {
     /// apart from View → Interface size (which zooms every window). Applies at once.
     fn font_menu(&self) -> MenuEntry<Cmd> {
         use MenuEntry::{Item as I, Radio, Sep};
-        let chosen = crate::theme::chosen_ui_font().is_some();
+        let chosen = crate::theme::chosen_ui_font();
+        let chosen_on = chosen.is_some();
         // i18n: View → Font: the computer's own font, the default (Segoe UI on Windows)
-        let system = Radio("&System font", Cmd::InterfaceFontSystem, true, !chosen);
+        let system = Radio("&System font", Cmd::InterfaceFontSystem, true, !chosen_on);
         // i18n: View → Font: a TrueType or OpenType font file on disk to draw the interface's text in
         let file = I("Choose a font &file...", Cmd::InterfaceFont, true, false);
         let now = crate::theme::text_size();
         // The sizes sit in the Font menu itself: a submenu of a submenu can't open (Win32's
         // menus, and this one's, go two levels deep).
-        let mut items = vec![system, file, Sep];
+        let mut items = vec![system];
+        // The file in use, by its name, checked: until now nothing in the group said what was on
+        // (`System font` is off and the sizes say only the text size, #1489). The name is the
+        // file's own, so it isn't translated.
+        if let Some(path) = chosen.as_deref() {
+            let name = path
+                .file_name()
+                .map(|n| n.to_string_lossy().into_owned())
+                .unwrap_or_else(|| path.to_string_lossy().into_owned());
+            items.push(Radio(
+                crate::chrome::label(&name),
+                Cmd::InterfaceFontFile,
+                true,
+                true,
+            ));
+        }
+        items.push(file);
+        items.push(Sep);
         items.extend(crate::theme::TEXT_SIZES.iter().map(|p| {
             // As the interface language writes a percentage: 125%, 125 %, %125.
             let label = crate::chrome::label(&crate::i18n::percent(f64::from(*p) / 100.0, 0));

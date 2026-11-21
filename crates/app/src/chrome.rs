@@ -1317,7 +1317,6 @@ fn menu_size<C>(
     font: &dyn Fn(&C) -> Option<egui::FontId>,
 ) -> egui::Vec2 {
     let painter = ctx.layer_painter(egui::LayerId::background());
-    let width = |t: &str| menu_width(&painter, t, None);
     let widest = entries
         .iter()
         .filter_map(|e| match e {
@@ -1332,7 +1331,21 @@ fn menu_size<C>(
                 }
                 None => menu_width(&painter, &plain(crate::i18n::tc("menu", l)).0, font(c)),
             }),
-            MenuEntry::Sub(l, ..) => Some(width(&plain(crate::i18n::tc("menu", l)).0)),
+            // View → Font's own entry is drawn in the system font (#1489), so measure it in that
+            // font too: a narrow chosen font would otherwise leave View a little too narrow for
+            // "Schriftart" on Linux and macOS.
+            MenuEntry::Sub(l, ..) => {
+                let font = if *l == "&Font" {
+                    Some(winui::system_font())
+                } else {
+                    None
+                };
+                Some(menu_width(
+                    &painter,
+                    &plain(crate::i18n::tc("menu", l)).0,
+                    font,
+                ))
+            }
             MenuEntry::Sep => None,
         })
         .fold(0.0, f32::max);
