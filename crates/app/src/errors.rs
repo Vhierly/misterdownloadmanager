@@ -278,6 +278,11 @@ fn refusal(r: &Refusal) -> String {
             ),
             &[("site", &ltr(site))],
         ),
+        Refusal::NotTaken { site } => fmt(
+            // i18n: a download's error: a video site kept answering MDM's request for the file with its download page again; {site} = the site's name (LuluStream)
+            t("{site} didn't give the file this time: try again in a moment"),
+            &[("site", &ltr(site))],
+        ),
         Refusal::Service { service, fault } => self::service(service, fault),
     }
 }
@@ -369,7 +374,7 @@ pub fn tools(e: &mdm_tools::Error) -> String {
             &[("name", name), ("version", version), ("oldest", oldest)],
         ),
         E::Busy(name) => fmt(
-            // i18n: error: a helper (yt-dlp, ffmpeg, gallery-dl, Deno) is being downloaded already, by MDM's automatic update or another copy of MDM; {name} = its name
+            // i18n: error: a helper (yt-dlp, ffmpeg, gallery-dl, Node.js) is being downloaded already, by MDM's automatic update or another copy of MDM; {name} = its name
             t("{name} is being downloaded already: try again in a moment"),
             &[("name", name)],
         ),
