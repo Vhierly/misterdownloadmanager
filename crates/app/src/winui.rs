@@ -6326,6 +6326,23 @@ pub fn to_tray_button(ui: &mut Ui, rc: Rect, id: &str, tip: &str) -> Response {
     resp
 }
 
+/// The flat icon button with a × drawn in the text ink: closes a borderless window of ours that
+/// has no title bar (the tray icon's panel, #1365). `tip` is English, translated here.
+pub fn close_button(ui: &mut Ui, rc: Rect, id: &str, tip: &str) -> Response {
+    let resp = icon_button_light(ui, rc, id, true, tip);
+    let c = rc.center().round();
+    let ink = Stroke::new(1.0, LIGHT_TEXT());
+    // Close's cross, 8 px across, its strokes through pixel centres.
+    let (a, b) = (
+        c + vec2(-4.0, -4.0) + vec2(0.5, 0.5),
+        c + vec2(4.0, 4.0) + vec2(0.5, 0.5),
+    );
+    ui.painter().line_segment([a, b], ink);
+    ui.painter()
+        .line_segment([pos2(a.x, b.y), pos2(b.x, a.y)], ink);
+    resp
+}
+
 /// Our "minimize it away to the notification area" glyph (#63; our own drawing): Minimize's dash
 /// at its height, shortened to 6 of its 10 px on the start side, and from its end a 45° arrow
 /// (shaft about 5.7 px, open head) down towards the screen's corner where the tray is. No

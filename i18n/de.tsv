@@ -12,6 +12,10 @@
 #. {n} = a number (keep the braces as they are)
 #, machine
 @plural	An unknown site wants to send {n} link to Link grabber.|An unknown site wants to send {n} links to Link grabber.	Eine unbekannte Website möchte {n} Link an den Link-Grabber senden.|Eine unbekannte Website möchte {n} Links an den Link-Grabber senden.
+#. the notification-area icon's panel (#1365), under the downloads it lists: how many others are running; {n} a number
+#. {n} = a number (keep the braces as they are)
+#, machine
+@plural	And {n} more|And {n} more	Und {n} weiterer|Und {n} weitere
 #. count in torrent downloads
 #. number of additional files in a list of files
 #. {n} = a number (keep the braces as they are)
@@ -982,6 +986,9 @@
 #. text in helpers.rs
 #, machine
 	Check your connection, then try again, or get them later from the video window.	Überprüfen Sie Ihre Verbindung und versuchen Sie es dann erneut, oder rufen Sie sie später über das Videofenster ab.
+#. tooltip of "Show downloads when the notification area icon is clicked": what the click on MDM's tray icon does when it is ticked and when not
+#, machine
+	Checked, a click on MDM's icon shows what is downloading, with Pause and Cancel, and a double click opens the window; unchecked, a click shows or hides the window	Aktiviert: Ein Klick auf das MDM-Symbol zeigt, was heruntergeladen wird, mit Anhalten und Abbrechen, und ein Doppelklick öffnet das Fenster. Deaktiviert: Ein Klick zeigt das Fenster an oder blendet es aus
 #. text in the Options window
 #. tooltip of the close-setting: checked keeps MDM running when the window closes, in the notification area when available or else the taskbar; downloads continue; unchecked closing quits
 #, machine
@@ -3337,6 +3344,9 @@
 #. message or event log entry in the main window
 #, machine
 	No download links were found in the clipboard. Copy a text with http, https, ftp or magnet links in it, and try again.	Es wurden keine Download-Links in der Zwischenablage gefunden. Kopieren Sie einen Text mit http-, https-, ftp- oder Magnet-Links und versuchen Sie es erneut.
+#. the notification-area icon's panel (#1365) when no download is running
+#, machine
+	No downloads are running	Es laufen keine Downloads
 #. message or event log entry in the main window
 #. title in the empty download list (this category or queue has no downloads)
 #, machine
@@ -4410,6 +4420,9 @@
 #. checkbox in the Options window
 #, machine
 	Show download progress dialog when a download starts	Download-Fortschrittsdialog anzeigen, wenn ein Download startet
+#. checkbox: a click on MDM's icon in the notification area (system tray) shows a small panel over it with the downloads now running, their progress, Pause and Cancel; unticked, the click shows or hides the main window
+#, machine
+	Show downloads when the notification area icon is clicked	Downloads beim Klick auf das Symbol im Infobereich anzeigen
 #. button in a dialog box
 #. button: shows these downloads in MDM's list, selected
 #, machine

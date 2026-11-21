@@ -317,6 +317,13 @@ pub struct Settings {
     /// closing quits). On by default, for existing lists too, in every copy. Only where a tray
     /// shows MDM's icon.
     pub close_to_tray: bool,
+    /// General: "Show downloads when the notification area icon is clicked" (#1365): a click on
+    /// the icon shows the downloads panel (traypanel.rs), a double click the window; unticked,
+    /// the click shows the window again or hides it there, as before. Ticked for a new list; a
+    /// list saved before it reads unticked (the field's own default), so nobody's click changes
+    /// under them. Only where a tray shows MDM's icon.
+    #[serde(default)]
+    pub tray_panel: bool,
     /// General: a private (incognito) window's downloads are written to the saved list like any
     /// other, so they survive MDM closing or restarting (their cookies stay in memory, as every
     /// download's do); unticked, they live in memory only, as the browser keeps them. On by
@@ -633,6 +640,7 @@ impl Default for Settings {
             extension_never_ask: false,
             clipboard_autostart: true,
             minimize_to_tray: true,
+            tray_panel: true,
             close_to_tray: true,
             keep_private_downloads: true,
             private_notice_shown: false,
@@ -1537,6 +1545,28 @@ mod tests {
         let saved = serde_json::to_value(&old).unwrap();
         assert!(saved.get("delete_files_too").is_none(), "{saved}");
         assert!(saved.get("confirm_delete").is_some());
+    }
+
+    /// #1365: a click on the tray icon shows the downloads panel in a new list, and keeps
+    /// opening the window in a list saved before the panel; the choice is kept across a save.
+    #[test]
+    fn the_tray_panel_is_on_for_new_lists_only() {
+        use super::Settings;
+        assert!(Settings::default().tray_panel, "a new list: the panel");
+        let old: Settings = serde_json::from_value(serde_json::json!({})).unwrap();
+        assert!(
+            !old.tray_panel,
+            "a list saved before it: the window, as before"
+        );
+        for on in [true, false] {
+            let s = Settings {
+                tray_panel: on,
+                ..Settings::default()
+            };
+            let again: Settings =
+                serde_json::from_value(serde_json::to_value(&s).unwrap()).unwrap();
+            assert_eq!(again.tray_panel, on);
+        }
     }
 
     /// #1278: the video button's size is Full unless Compact was chosen, kept across a save,

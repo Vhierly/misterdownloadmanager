@@ -11,6 +11,10 @@
 #. {n} = a number (keep the braces as they are)
 #, machine
 @plural	An unknown site wants to send {n} link to Link grabber.|An unknown site wants to send {n} links to Link grabber.	يريد موقع غير معروف إرسال {n} رابط إلى ملتقط الروابط.|يريد موقع غير معروف إرسال {n} رابط إلى ملتقط الروابط.|يريد موقع غير معروف إرسال {n} رابطين إلى ملتقط الروابط.|يريد موقع غير معروف إرسال {n} روابط إلى ملتقط الروابط.|يريد موقع غير معروف إرسال {n} رابطا إلى ملتقط الروابط.|يريد موقع غير معروف إرسال {n} رابط إلى ملتقط الروابط.
+#. the notification-area icon's panel (#1365), under the downloads it lists: how many others are running; {n} a number
+#. {n} = a number (keep the braces as they are)
+#, machine
+@plural	And {n} more|And {n} more	و{n} غيرها|و{n} غيره|و{n} غيرهما|و{n} غيرها|و{n} غيرها|و{n} غيرها
 #. count in torrent downloads
 #. number of additional files in a list of files
 #. {n} = a number (keep the braces as they are)
@@ -787,6 +791,9 @@
 	Check the proxy in Options → {proxy}, or download {name} yourself and choose it in {helpers} → {other}.	تحقق من الوكيل في الخيارات ← {proxy}، أو نزل {name} بنفسك واختره في {helpers} ← {other}.
 #. text in helpers.rs
 	Check your connection, then try again, or get them later from the video window.	تحقق من اتصالك، ثم حاول مرة أخرى، أو احصل عليها لاحقا من نافذة الفيديو.
+#. tooltip of "Show downloads when the notification area icon is clicked": what the click on MDM's tray icon does when it is ticked and when not
+#, machine
+	Checked, a click on MDM's icon shows what is downloading, with Pause and Cancel, and a double click opens the window; unchecked, a click shows or hides the window	عند التحديد، تعرض النقرة على أيقونة MDM ما يجري تنزيله مع الإيقاف المؤقت والإلغاء، وتفتح النقرة المزدوجة النافذة؛ وعند عدم التحديد، تُظهر النقرة النافذة أو تخفيها
 #. text in the Options window
 #. tooltip of the close-setting: checked keeps MDM running when the window closes, in the notification area when available or else the taskbar; downloads continue; unchecked closing quits
 #, machine
@@ -2656,6 +2663,9 @@
 #. message or event log entry in the main window
 #, machine
 	No download links were found in the clipboard. Copy a text with http, https, ftp or magnet links in it, and try again.	لم يتم العثور على روابط تنزيل في الحافظة. انسخ نصا يحتوي على روابط http أو https أو ftp أو روابط مغناطيسية، ثم حاول مرة أخرى.
+#. the notification-area icon's panel (#1365) when no download is running
+#, machine
+	No downloads are running	لا توجد تنزيلات جارية
 #. message or event log entry in the main window
 #. title in the empty download list (this category or queue has no downloads)
 	No downloads here	لا توجد تنزيلات هنا
@@ -3493,6 +3503,9 @@
 #. checkbox in the Options window
 #, machine
 	Show download progress dialog when a download starts	إظهار مربع حوار تقدم التنزيل عند بدء التنزيل
+#. checkbox: a click on MDM's icon in the notification area (system tray) shows a small panel over it with the downloads now running, their progress, Pause and Cancel; unticked, the click shows or hides the main window
+#, machine
+	Show downloads when the notification area icon is clicked	إظهار التنزيلات عند النقر على أيقونة منطقة الإعلامات
 #. button in a dialog box
 #. button: shows these downloads in MDM's list, selected
 #, machine
