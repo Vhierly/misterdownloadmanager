@@ -569,6 +569,30 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 These ship in the next version.
 
+- ✅ Tests: the checks of a DNS that never answers ask one on this computer, not an address
+  nobody has: on a network that answers every DNS question itself (a transparent DNS proxy) that
+  address answered, and one check failed while another passed for the wrong reason
+  ([#1653](https://github.com/anefzaoui/misterdownloadmanager/issues/1653))
+- ✅ Windows: bringing a window forward no longer sends a fake Alt key press that programs with
+  Alt hotkeys, such as Discord's push-to-talk, picked up (the add-on's Download video and
+  Options, a second launch, the tray icon's panel)
+  ([#1645](https://github.com/anefzaoui/misterdownloadmanager/issues/1645))
+- ✅ Torrents: unticked files are no longer made in the download's folder; the parts of the
+  pieces they share with ticked files are kept in a parts file of MDM's own, and a file ticked
+  later, while the torrent downloads or once it has finished, is made then and gets them from
+  there ([#1567](https://github.com/anefzaoui/misterdownloadmanager/pull/1567))
+- ✅ Torrents: a torrent added again while it downloads (a file ticked, trackers added, its
+  folder moved) keeps every piece it has, not only those of librqbit's last saved piece map
+  ([#1623](https://github.com/anefzaoui/misterdownloadmanager/issues/1623))
+- ✅ Downloads from servers that keep several copies of a file, each with its own version tag
+  and date (ModelScope's), go on with all their connections when the copies carry the same
+  checksum of the whole file, checked on every part, instead of stopping with "the file changed
+  on the server" or falling back to one connection; a file is still never made of two versions,
+  and stopped connections no longer say "Connecting..."
+  ([#1577](https://github.com/anefzaoui/misterdownloadmanager/issues/1577))
+- ✅ Torrents: Torrent → Files… shows a file ticked later as far as its pieces are, not 100 %,
+  for a torrent out of the session (its saved piece map, as the session counts it)
+  ([#1624](https://github.com/anefzaoui/misterdownloadmanager/issues/1624))
 - ✅ Windows: Simplified Chinese drawn with a Chinese font on every Windows, no longer as boxes
   where Microsoft YaHei's usual file is missing (Windows 7's `msyh.ttf`, DengXian, SimSun and
   SimHei are looked for too, a Chinese font must have its language's own characters, the Chinese
@@ -702,6 +726,9 @@ These ship in the next version.
   its first 256 KB block was written (some 15 s at 128 kbit/s, longer at lower bitrates); Stop and
   save before that block keeps nothing yet and leaves the download stopped to resume
   ([#1450](https://github.com/anefzaoui/misterdownloadmanager/pull/1450))
+- ✅ Tests: the Node.js check of an older release passes on 32-bit Windows too: it listed a
+  release older than the 64-bit builds take but not 32-bit Windows' own oldest (Node.js has no
+  newer 32-bit build), so there it was a refused downgrade rather than nothing offered
 - ✅ Tests: the live recording checks that failed now and then (most runs on Linux) wait until
   enough is recorded for what they check, instead of saving at the first block: a recording that
   short is within the second an MP4 may lose and still count as whole, so whether the MP4 was
@@ -1763,6 +1790,13 @@ These ship in the next version.
   only its number; the same two boxes on the **Scheduler**'s limits page are named too
   ([#1407](https://github.com/anefzaoui/misterdownloadmanager/issues/1407); thanks to
   [@Seyamalam](https://github.com/Seyamalam))
+- ✅ Screen readers name the lists and number boxes that still had none (#1407): the
+  **Accounts**, **Sites Logins** and **Paired devices** lists in Options say what they hold,
+  and the number boxes inside sentences — a queue's **Download N files at the same time**
+  and the Speed Limiter's **KBytes/sec** — are named by the words around them in the
+  translated sentence, in every language
+  ([#1407](https://github.com/anefzaoui/misterdownloadmanager/issues/1407); thanks to
+  [@abivan100-stack](https://github.com/abivan100-stack))
 - ✅ Screen readers read the **Get ready for video downloads** window: its headline, each
   helper's name and description, the status line under the bar and the advice under it
   were painted text a reader never saw (the same banner wherever it heads a window); the
@@ -1785,6 +1819,23 @@ These ship in the next version.
 - ✅ LuluStream: a video's link (its watch page or player, on `lulustream.com`, `luluvdo.com` or
   `lplaygo.com`) downloads the video, in the best quality its download page lists; a download
   taken from the browser whose link expired asks the video's page for a fresh one
+- ✅ The browser add-on from its stores first: every release's notes start with **Add to
+  Firefox** and **Add to Chrome, Edge, Brave, Opera, Vivaldi**, the release no longer lists the
+  unsigned Firefox `.xpi` (Firefox drops it at every restart), and a copy loaded by hand says in
+  its popup that it won't update itself, with a link to its browser's store
+  ([#1613](https://github.com/anefzaoui/misterdownloadmanager/discussions/1613))
+- ✅ Tests: the slow-disk test no longer fails when the test machine's own disk is slow to flush:
+  its stand-in disk holds the writes only for the flush it models, no longer for the machine's
+  real flush after it as well ([#1626](https://github.com/anefzaoui/misterdownloadmanager/issues/1626))
+- ✅ Luna: a window that isn't the active one has Windows XP's title bar buttons, half-faded
+  into the paler bar (a mid blue, Close a dusty rose) with a crisp pale edge and solid white
+  symbols, instead of greyish buttons with faint symbols; and XP's symbols in every state
+  (Minimize a short thick bar low in the button, a thick-topped Maximize and Restore, a thick X)
+  ([#1612](https://github.com/anefzaoui/misterdownloadmanager/issues/1612))
+- ✅ Luna, Windows 7 and Mac OS X: the title bar's buttons sit exactly inside their edges, with
+  no sliver of the face outside them; Luna's active bar has XP's brighter light band and rows,
+  and its buttons a pure white edge
+  ([#1612](https://github.com/anefzaoui/misterdownloadmanager/issues/1612))
 
 ## Being worked on
 
