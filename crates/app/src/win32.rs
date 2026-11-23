@@ -8496,10 +8496,11 @@ pub fn text_rasterizer(
 }
 
 /// Does [`text_rasterizer`] draw this character? One code point that needs no shaping: Latin,
-/// Greek and Cyrillic letters, digits and punctuation, and the CJK characters whose face comes
-/// from the interface language's script font. Scripts whose letters change shape (Arabic, Indic,
-/// ...) and the invisible marks are left to egui and its shaper; so are the brackets of a
-/// right-to-left line, which the shaper mirrors.
+/// Greek and Cyrillic letters, digits and punctuation, and the CJK characters (the family's own
+/// face, usually the chosen file, draws them when it has them, and the interface language's
+/// script font draws the rest). Scripts whose letters change shape (Arabic, Indic, ...) and the
+/// invisible marks are left to egui and its shaper; so are the brackets of a right-to-left line,
+/// which the shaper mirrors.
 fn classic_char(c: char, rtl: bool) -> bool {
     if rtl
         && matches!(
@@ -8526,8 +8527,10 @@ fn classic_char(c: char, rtl: bool) -> bool {
 /// the regular families; Segoe UI is the computer's own).
 fn classic_font_file(family: &egui::FontFamily) -> Option<std::path::PathBuf> {
     // View → Font (#1489): the chosen file leads the regular families (`theme::fonts`), so
-    // DirectWrite draws its letters too. The bold families keep their own faces, and
-    // `system-ui` is always the computer's own font (the way back from a damaged file).
+    // DirectWrite draws its letters too - Chinese, Japanese and Korean ones as well when it has
+    // them, since `lookup` tries it before the language's script files. The bold families keep
+    // their own faces, and `system-ui` is always the computer's own font (the way back from a
+    // damaged file).
     let chosen = || crate::theme::chosen_ui_font();
     let font = |name: &str| crate::theme::font_dir().join(name);
     match family {
@@ -8625,21 +8628,31 @@ mod classic_text {
                 .clone()
         }
 
-        /// The face and glyph id for `ch`: the family's own face for the scripts it draws, or the
-        /// interface language's CJK face for Chinese, Japanese and Korean text. None when no face
-        /// has a glyph for it: egui and its shaper draw it instead.
+        /// The face and glyph id for `ch`: the family's own face first (the chosen file, for the
+        /// regular families), then the interface language's CJK face for Chinese, Japanese and
+        /// Korean text. None when no face has a glyph for it: egui and its shaper draw it
+        /// instead.
         fn lookup(
             &mut self,
             family: &egui::FontFamily,
             ch: char,
         ) -> Option<(IDWriteFontFace, u16, DWRITE_FONT_METRICS)> {
+            let own = super::classic_font_file(family);
             let files: Vec<PathBuf> = if crate::theme::cjk_script(ch).is_some() {
-                crate::theme::cjk_font_files(ch)
-                    .into_iter()
-                    .map(|file| self.dir.join(file))
-                    .collect()
+                // View → Font (#1489): a chosen file that carries Chinese, Japanese or Korean
+                // text draws it too, as it already draws the Latin; the language's script files
+                // follow it, so a chosen file without the glyph leaves it to them. `system-ui`
+                // and the bold families keep their own faces, which have no such glyph either,
+                // and the search goes on to those files.
+                let mut files: Vec<PathBuf> = own.into_iter().collect();
+                files.extend(
+                    crate::theme::cjk_font_files(ch)
+                        .into_iter()
+                        .map(|file| self.dir.join(file)),
+                );
+                files
             } else {
-                super::classic_font_file(family).into_iter().collect()
+                own.into_iter().collect()
             };
             for file in &files {
                 let Some(face) = self.face(file) else {
