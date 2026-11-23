@@ -550,8 +550,6 @@ fn outlines_loadable(font: &skrifa::FontRef<'_>, mapped: usize, upem: f32) -> bo
         limit: f32,
         ok: bool,
         drawn: bool,
-        min: (f32, f32),
-        max: (f32, f32),
     }
     impl Bounds {
         fn point(&mut self, x: f32, y: f32) {
@@ -559,8 +557,6 @@ fn outlines_loadable(font: &skrifa::FontRef<'_>, mapped: usize, upem: f32) -> bo
                 self.ok = false;
                 return;
             }
-            self.min = (self.min.0.min(x), self.min.1.min(y));
-            self.max = (self.max.0.max(x), self.max.1.max(y));
             self.drawn = true;
         }
     }
@@ -603,8 +599,6 @@ fn outlines_loadable(font: &skrifa::FontRef<'_>, mapped: usize, upem: f32) -> bo
             limit,
             ok: true,
             drawn: false,
-            min: (f32::INFINITY, f32::INFINITY),
-            max: (f32::NEG_INFINITY, f32::NEG_INFINITY),
         };
         if outline.draw(settings, &mut bounds).is_err() || !bounds.ok {
             return false;
@@ -1412,7 +1406,10 @@ pub enum UiFontLoad {
 /// use, and [`reload_fonts`] loads the fonts again then. `announce` says whether a file that
 /// can't be used is shown to the person: it is when they picked it, and not at start, where a
 /// saved file that has since gone missing is logged and the system font is used quietly.
-pub fn set_ui_font(path: Option<std::path::PathBuf>, announce: bool) {
+/// `again` says whether a file is read again when it is the one already drawn with: a pick and
+/// the checked line in View → Font ask for it, so one that has since changed or gone says so; a
+/// start reads the saved file once anyway.
+pub fn set_ui_font(path: Option<std::path::PathBuf>, announce: bool, again: bool) {
     let previous = {
         let mut current = UI_FONT.lock().unwrap_or_else(|e| e.into_inner());
         std::mem::replace(&mut *current, path.clone())
@@ -1427,11 +1424,12 @@ pub fn set_ui_font(path: Option<std::path::PathBuf>, announce: bool) {
             FONT_GENERATION.fetch_add(1, Ordering::Relaxed);
         }
         Some(path) => {
-            if UI_FONT_READY
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .as_ref()
-                .is_some_and(|(ready, _)| *ready == path)
+            if !again
+                && UI_FONT_READY
+                    .lock()
+                    .unwrap_or_else(|e| e.into_inner())
+                    .as_ref()
+                    .is_some_and(|(ready, _)| *ready == path)
             {
                 return;
             }

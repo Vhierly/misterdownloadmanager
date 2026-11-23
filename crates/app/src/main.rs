@@ -505,7 +505,7 @@ fn app() -> eframe::Result {
     }
     // View → Font (#1489): the interface's own font and text size, apart from that zoom.
     theme::init_smooth_text(loaded.settings.smooth_text);
-    theme::set_ui_font(loaded.settings.interface_font.clone(), false);
+    theme::set_ui_font(loaded.settings.interface_font.clone(), false, false);
     theme::init_text_size(loaded.settings.interface_text_size);
     // The default browser, looked for once on a thread of its own (logged): its User-Agent is
     // the one links added by hand go with (#668).

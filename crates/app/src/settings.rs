@@ -1491,8 +1491,10 @@ mod tests {
         assert_eq!(again["interface_text_size"], 100);
     }
 
-    /// #1489: the chosen font is saved as the path it is, not through `display()`, which mangles
-    /// a path that isn't Unicode on Windows.
+    /// #1489: the chosen font is saved as its path, not as the text `display()` makes of it,
+    /// which names another file when the path isn't Unicode on Windows (`serde` refuses such a
+    /// path rather than save that name, so the choice stays as made in memory); the test's path
+    /// is the one a person can have, with a space.
     #[test]
     fn the_chosen_font_is_saved_as_its_path() {
         use super::Settings;

@@ -3619,7 +3619,7 @@ impl App {
             }
             // View → Font → Choose a font file..., as its dialog answers: `font:<path>` (tests of
             // a file that can't be used without the system's dialog, #1489).
-            "font" => self.set_interface_font(Some(std::path::PathBuf::from(tab)), ctx),
+            "font" => self.set_interface_font(Some(std::path::PathBuf::from(tab)), false, ctx),
             // A menu of the menu bar open (menu:0 is Tasks), for screenshots; menu:3:draw opens
             // View with its Draw with submenu (#89).
             "menu" => {
@@ -8528,12 +8528,12 @@ impl App {
                         .pick_file()
                 });
             }
-            Cmd::InterfaceFontSystem => self.set_interface_font(None, ctx),
+            Cmd::InterfaceFontSystem => self.set_interface_font(None, false, ctx),
             Cmd::InterfaceFontFile => {
                 // The checked line naming the file in use (#1489): choosing it reads that saved
                 // file again, so a file that went away says so, as a fresh pick would.
                 if let Some(path) = self.settings.interface_font.clone() {
-                    self.set_interface_font(Some(path), ctx);
+                    self.set_interface_font(Some(path), true, ctx);
                 }
             }
             Cmd::InterfaceTextSize(percent) => {
@@ -11838,7 +11838,7 @@ impl App {
             self.add_theme_file(&path, ctx);
         }
         if let Some(path) = winui::picked(ctx, "app-interface-font") {
-            self.set_interface_font(Some(path), ctx);
+            self.set_interface_font(Some(path), true, ctx);
         }
         if let Some(target) = winui::picked(ctx, "app-move-rename")
             && let Some(id) = self.move_rename_for.take()
@@ -11878,23 +11878,31 @@ impl App {
     /// View → Font (#1489): draw the interface's text in the font file at `path`, or in the
     /// computer's own when `None`. A file is read beside the window's thread (`theme::set_ui_font`)
     /// and saved once it is in use; one egui can't read is refused with a message, and the font
-    /// in use stays (`tick` polls `theme::poll_ui_font`).
-    fn set_interface_font(&mut self, path: Option<std::path::PathBuf>, ctx: &egui::Context) {
+    /// in use stays (`tick` polls `theme::poll_ui_font`). `again` says whether a file that is
+    /// already the one in use is read again: a pick and the checked line in the Font menu do, so
+    /// one that has since changed or gone says so.
+    fn set_interface_font(
+        &mut self,
+        path: Option<std::path::PathBuf>,
+        again: bool,
+        ctx: &egui::Context,
+    ) {
         let Some(path) = path else {
-            crate::theme::set_ui_font(None, false);
+            crate::theme::set_ui_font(None, false, false);
             crate::theme::reload_fonts(ctx);
             self.settings.interface_font = None;
             self.dirty = true;
             return;
         };
-        // Already drawn with: nothing to read, the choice is saved as it is.
-        if crate::theme::chosen_ui_font().as_deref() == Some(path.as_path()) {
+        // Already drawn with and not asked to read it again: nothing to read, the choice is
+        // saved as it is.
+        if !again && crate::theme::chosen_ui_font().as_deref() == Some(path.as_path()) {
             self.settings.interface_font = Some(path);
             self.dirty = true;
             return;
         }
         tracing::info!("interface font: {}", path.display());
-        crate::theme::set_ui_font(Some(path), true);
+        crate::theme::set_ui_font(Some(path), true, again);
     }
 
     /// The addresses in a list file, shown in Import to tick before adding. The file is read and
