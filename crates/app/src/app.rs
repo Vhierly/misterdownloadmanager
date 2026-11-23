@@ -3487,6 +3487,23 @@ impl App {
                     }
                 }
             }
+            // Download video's Part (#1662), on the sample video: `video-part` a quick cut from
+            // 1:30 to 4:10, `video-part:exact` an exact one, `video-part:audio` of the sound alone,
+            // `video-part:backwards` times that can't be (To before From).
+            "video-part" => {
+                self.run(Cmd::VideoPage, None, ctx);
+                if let Some(v) = &mut self.video_dlg {
+                    v.show_sample();
+                    if tab == "audio" {
+                        v.pick("audio only, original m4a");
+                    }
+                    match tab {
+                        "backwards" => v.show_part("4:10", "1:30", false),
+                        "exact" => v.show_part("1:30", "4:10", true),
+                        _ => v.show_part("1:30", "4:10", false),
+                    }
+                }
+            }
             // A page whose videos need ffmpeg (#351): without it the list has only the sound.
             // `video-adaptive:runtime`: yt-dlp said it had no JavaScript runtime (#852).
             "video-adaptive" => {
@@ -3752,6 +3769,10 @@ impl App {
         // dialog opens, as its window is its own.
         if let Some(page) = cmd.video_page.as_deref() {
             self.show_for_dialog(ctx);
+            // Its menu's "Download a part from here..." (#1662): Part ticked, From there.
+            if let Some(from) = cmd.video_part_from {
+                tracing::info!("browser integration: Download video, a part from {from} s");
+            }
             let page = page.to_owned();
             self.video_dlg = Some(self.video_dialog(Some((&page, cmd))));
             return;
@@ -5988,6 +6009,7 @@ impl App {
                 parts: Vec::new(),
                 named: add.named,
                 duration: add.duration,
+                part: add.part,
             });
             // The quality menu's look-up goes with this new download only, started now and while
             // fresh: one queued for later, or added on a duplicate question answered late,
@@ -6123,6 +6145,7 @@ impl App {
                     parts: Vec::new(),
                     named: false,
                     duration: None,
+                    part: None,
                 });
                 item.number_at_start = true;
             }
@@ -6241,6 +6264,7 @@ impl App {
             preloaded,
             engine,
             Some(mark_hook(&item.url, item.context.referer.as_deref())),
+            spec.part,
         );
         match started {
             Ok(job) => {
@@ -6513,7 +6537,7 @@ impl App {
             let dir = self
                 .settings
                 .category_dir(Category::Torrents, &self.downloads);
-            self.add_remote_torrent(magnet, dir, Category::Torrents, true, None);
+            self.add_remote_torrent(magnet, dir, Category::Torrents, true, None, None, None);
             self.show_window(ctx);
             return;
         }
@@ -6554,6 +6578,8 @@ impl App {
 
     /// A torrent through the debrid account (#44): a row whose files come over HTTP once the
     /// service has them, into `dir` (a torrent of several files in a folder of its own there).
+    /// `files`: the paths ticked in Add torrent (None: all), `size` theirs when known.
+    #[allow(clippy::too_many_arguments)]
     fn add_remote_torrent(
         &mut self,
         magnet: url::Url,
@@ -6561,6 +6587,8 @@ impl App {
         category: Category,
         start_now: bool,
         renamed: Option<String>,
+        files: Option<Vec<String>>,
+        size: Option<u64>,
     ) {
         let Some((account, service)) = self.torrent_account() else {
             return;
@@ -6584,13 +6612,20 @@ impl App {
             target,
             category,
             String::new(),
-            None,
+            size,
             None,
             Default::default(),
             crate::i18n::mark("from a magnet link"),
         );
         if let Some(item) = self.item(id) {
             item.preexisting_folder = preexisting;
+            if let Some(f) = &files {
+                item.note(crate::i18n::fmt(
+                    // i18n: event log: a torrent through a debrid account gets only the files ticked in Add torrent; {files} how many ("3")
+                    crate::i18n::t("Only the {files} file(s) ticked in Add torrent"),
+                    &[("files", &f.len().to_string())],
+                ));
+            }
             item.note(crate::i18n::fmt(
                 // i18n: event log: a torrent goes through the user's debrid account, not to peers; {service} its name ("Real-Debrid")
                 crate::i18n::t(
@@ -6603,6 +6638,7 @@ impl App {
                 transfer: None,
                 folder: dir,
                 renamed,
+                files,
             });
         }
         self.selection.set(id);
@@ -6639,6 +6675,7 @@ impl App {
                 transfer: spec.transfer.clone(),
                 folder: spec.folder.clone(),
                 renamed: spec.renamed.clone(),
+                files: spec.files.clone(),
                 net,
                 poll: std::time::Duration::from_secs(5),
             },
@@ -6661,7 +6698,7 @@ impl App {
     }
 
     /// Add torrent → Download Now / Later. Through the debrid account when torrents go there
-    /// (#44): the .torrent's magnet link (its hash, name and trackers), all its files. The
+    /// (#44): the .torrent's magnet link (its hash, name and trackers) and the files ticked. The
     /// download added, if one was (not when the debrid account takes it).
     fn add_torrent(&mut self, add: crate::torrentdlg::TorrentAdd) -> Option<u64> {
         let meta = &add.meta;
@@ -6719,12 +6756,17 @@ impl App {
                 mdm_torrent::magnet_link(&meta.torrent).and_then(|m| url::Url::parse(&m).ok())
         {
             let renamed = crate::torrent_rename::renamed_target(meta);
+            // Only the files ticked go to the service's list of files to download, matched
+            // there by path (each service numbers them its own way).
+            let (files, size) = crate::torrents::remote_choice(meta, add.files.as_deref());
             self.add_remote_torrent(
                 magnet,
                 add.dir.clone(),
                 add.category,
                 add.start_now,
                 renamed,
+                files,
+                Some(size).filter(|s| *s > 0),
             );
             return None;
         }
@@ -9631,8 +9673,10 @@ impl App {
                 .file_name()
                 .map(|n| n.to_string_lossy().into_owned())
                 .unwrap_or_else(|| path.to_string_lossy().into_owned());
+            // An `&` in a file's name is a letter, not an access key (`&&` is its escape).
+            let shown = name.replace('&', "&&");
             items.push(Radio(
-                crate::chrome::label(&name),
+                crate::chrome::label(&shown),
                 Cmd::InterfaceFontFile,
                 true,
                 true,
@@ -11297,7 +11341,12 @@ impl App {
         let (address, selector) = (add.page.clone(), add.selector.clone());
         let page = add.context.page_url.clone().filter(|p| !p.is_empty());
         let duration = add.duration;
-        let same = |i: &Item| same_video(i, &address, page.as_deref(), duration, &selector);
+        // A part (#1662) is another file than the whole video, or than another part of it.
+        let part = add.part;
+        let same = |i: &Item| {
+            same_video(i, &address, page.as_deref(), duration, &selector)
+                .filter(|_| i.video.as_ref().is_some_and(|v| v.part == part))
+        };
         // Its very address, as any download's (Options' answer); else a video only likely the
         // same, which is only ever asked about.
         let step = if self
@@ -13005,9 +13054,9 @@ impl App {
                     self.video_dlg = None;
                     match out {
                         crate::videodlg::VideoOut::One(add) => {
-                            self.add_video_checked(add, false);
+                            self.add_video_checked(*add, false);
                         }
-                        crate::videodlg::VideoOut::Many(add) => self.add_playlist(add),
+                        crate::videodlg::VideoOut::Many(add) => self.add_playlist(*add),
                     }
                 }
             }
@@ -14179,6 +14228,7 @@ mod same_name_tests {
             parts: Vec::new(),
             named: false,
             duration: None,
+            part: None,
         });
         let items = [row(1, &d.join("Master.webm"), Status::Stopped, 9), video];
         assert_eq!(
@@ -14469,6 +14519,7 @@ mod duplicate_tests {
             }),
             named: false,
             duration: None,
+            part: None,
         }
     }
 
@@ -14517,6 +14568,7 @@ mod duplicate_tests {
             parts: Vec::new(),
             named: false,
             duration: None,
+            part: None,
         });
         assert!(is_same(&item, &page(), None, None, SELECTOR));
         assert!(!is_same(
@@ -14545,6 +14597,7 @@ mod duplicate_tests {
             parts: Vec::new(),
             named: false,
             duration: None,
+            part: None,
         });
         item.page = Some(TAB.into());
         let again = stream("https://cdn-7.videos.test/hls/123/master.m3u8?hash=b&expires=2");
@@ -14662,6 +14715,7 @@ mod duplicate_tests {
             parts: Vec::new(),
             named: false,
             duration: Some(754),
+            part: None,
         });
         item.page = Some(TAB.into());
         let again = stream("z9y8x7");
@@ -14738,6 +14792,7 @@ mod duplicate_tests {
             parts: Vec::new(),
             named: false,
             duration: Some(30),
+            part: None,
         });
         item.page = Some(FEED.into());
         let likely =
@@ -14907,6 +14962,7 @@ mod duplicate_tests {
             parts: Vec::new(),
             named: false,
             duration: None,
+            part: None,
         });
         i
     }
@@ -16219,6 +16275,7 @@ mod start_disk_tests {
             parts: Vec::new(),
             named: false,
             duration: None,
+            part: None,
         });
         let mut app = app_with(vec![
             row(1, dir.path().join("a.bin"), Status::Queued),
@@ -16307,6 +16364,7 @@ mod start_disk_tests {
             preloaded: None,
             named: false,
             duration: None,
+            part: None,
         }
     }
 
@@ -16332,6 +16390,7 @@ mod start_disk_tests {
             parts: Vec::new(),
             named: false,
             duration: Some(754),
+            part: None,
         });
         let mut app = app_with(vec![gone]);
         app.settings.duplicate_action = 0;
