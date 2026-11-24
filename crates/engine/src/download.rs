@@ -3255,7 +3255,7 @@ async fn segmented(
     let dest = saved.dest.clone();
     let mut synced = Synced {
         at: std::time::Instant::now(),
-        bytes: 0,
+        bytes: saved.downloaded(),
         took: Duration::ZERO,
         covered: 0,
     };
@@ -3351,6 +3351,12 @@ async fn segmented(
 const SYNC_BYTES_MAX: u64 = 64 << 20;
 const SYNC_BYTES_MIN: u64 = 1 << 20;
 const SYNC_EVERY: Duration = Duration::from_secs(30);
+/// What the first progress flush is guessed to write per second before one has been measured: a
+/// hard disk's speed, fast enough that an on-time first tick (up to 2 s of a 1 Gbit/s link into
+/// `HOLD_MAX`) still runs and measures the real disk, and slow enough that a late one (the saver
+/// held up for seconds by the start-up state's `fsync` on a busy disk, 660 MiB waiting in #1633)
+/// isn't taken to cost no time at all.
+const FIRST_SYNC_RATE: u64 = 150 << 20;
 
 fn sync_bytes(size: u64) -> u64 {
     (size / 16).clamp(SYNC_BYTES_MIN, SYNC_BYTES_MAX)
@@ -3379,19 +3385,19 @@ impl Synced {
     /// does: it would stop them for as long as it takes.
     fn fits(&self, new: u64, elapsed: Duration, room: u64) -> bool {
         let lasts = room as f64 * elapsed.as_secs_f64() / new.max(1) as f64;
-        self.expected(new).as_secs_f64() <= lasts * 0.75
+        room > 0 && self.expected(new).as_secs_f64() <= lasts * 0.75
     }
 
     /// How long a flush of `new` bytes (written since the last one began) should take: as long
-    /// as that one took for each byte it caught up with. What waits in the cache is what came
-    /// since (above), by bytes, not by time: what the connections kept in memory while the last
-    /// flush held their writes reaches the cache all at once when it ends. Counted by the
-    /// seconds since, a flush right after a long one was expected to take a seventh of what it
-    /// did, and stopped the transfer for the rest (on GitHub's macOS runners: 3 s, 1.4 s of it
-    /// with the memory full).
+    /// as that one took for each byte it caught up with, or at `FIRST_SYNC_RATE` before any
+    /// progress flush has run (#1633). What waits in the cache is what came since (above), by
+    /// bytes, not by time: what the connections kept in memory while the last flush held their
+    /// writes reaches the cache all at once when it ends. Counted by the seconds since, a flush
+    /// right after a long one was expected to take a seventh of what it did, and stopped the
+    /// transfer for the rest (on GitHub's macOS runners: 3 s, 1.4 s of it with the memory full).
     fn expected(&self, new: u64) -> Duration {
-        if self.covered == 0 {
-            return self.took;
+        if self.took.is_zero() || self.covered == 0 {
+            return Duration::from_secs_f64(new as f64 / FIRST_SYNC_RATE as f64);
         }
         self.took.mul_f64(new as f64 / self.covered as f64)
     }
@@ -3419,6 +3425,7 @@ async fn save_state(
     let due = force || synced.due(bytes, ctx.size, synced.at.elapsed(), room);
     let file = ctx.file.clone();
     let path = path.to_owned();
+    let slow = ctx.opts.slow_disk.clone();
     if !due {
         // Between flushes only a new validator or address is written (with segments on disk).
         if meta_changed {
@@ -3426,9 +3433,12 @@ async fn save_state(
             saved.final_url = final_url;
             saved.final_get = final_get;
             let s = saved.clone();
-            tokio::task::spawn_blocking(move || s.write(&path))
-                .await
-                .expect("state writer panicked")?;
+            tokio::task::spawn_blocking(move || match slow {
+                Some(disk) => disk.sync(|| s.write(&path)),
+                None => s.write(&path),
+            })
+            .await
+            .expect("state writer panicked")?;
         }
         return Ok(());
     }
@@ -3451,13 +3461,15 @@ async fn save_state(
     // waits for all the disk still has to write, and a resume waited for it (#1328).
     if bytes <= saved.downloaded() {
         s.segments = segments;
-        *saved = tokio::task::spawn_blocking(move || s.write(&path).map(|()| s))
-            .await
-            .expect("state writer panicked")?;
+        *saved = tokio::task::spawn_blocking(move || match slow {
+            Some(disk) => disk.sync(|| s.write(&path).map(|()| s)),
+            None => s.write(&path).map(|()| s),
+        })
+        .await
+        .expect("state writer panicked")?;
         return Ok(());
     }
     // Tests' slow disk (its extra flush time not for the forced saves at the start and the end).
-    let slow = ctx.opts.slow_disk.clone();
     let began = std::time::Instant::now();
     let done = tokio::task::spawn_blocking(move || match slow {
         Some(disk) => disk.flush(!force, || s.save(&path, segments, &file).map(|()| s)),
@@ -6321,6 +6333,40 @@ mod tests {
         assert!(at(forced_gap(true, slow)).due(15 << 20, 24 << 20, tick, HOLD_MAX));
         // A save during the transfer does count: 0.5 s for 1 ms of data is a disk far behind.
         assert!(!at(forced_gap(false, slow)).due(15 << 20, 24 << 20, tick, HOLD_MAX));
+    }
+
+    /// #1633: before any progress flush has run, `Synced` guesses a hard disk's speed rather than
+    /// no time at all. An on-time first tick (up to 2 s of a 1 Gbit/s link) still flushes and
+    /// measures the real disk; a late one (the saver held up for seconds on a busy disk while
+    /// hundreds of megabytes piled up) does not flush the whole cache at once, nor does any tick
+    /// once the connections' memory is full.
+    #[test]
+    fn a_late_first_flush_does_not_hold_the_whole_cache() {
+        let (gb, mb) = (1u64 << 30, 1u64 << 20);
+        let s = Duration::from_secs;
+        let fresh = Synced {
+            at: std::time::Instant::now(),
+            bytes: 0,
+            took: Duration::ZERO,
+            covered: 0,
+        };
+        // On time: 64 MiB in 0.4 s at 160 MiB/s, or 2 s of a 1 Gbit/s link (230 MiB).
+        assert!(fresh.due(64 * mb, gb, Duration::from_millis(400), HOLD_MAX));
+        assert!(fresh.due(230 * mb, 45 * gb, s(2), HOLD_MAX));
+        // #1633: 8.6 s in (the start-up state's fsync waited on a busy disk), 660 MiB waiting.
+        assert!(!fresh.due(660 * mb, 45 * gb, Duration::from_millis(8600), HOLD_MAX));
+        // Also when the forced save at the start flushed a first batch (`forced_gap` leaves `took`
+        // at zero while `covered` is non-zero).
+        let after_forced = Synced {
+            covered: 256 << 10,
+            ..fresh
+        };
+        assert!(!after_forced.due(660 * mb, 45 * gb, Duration::from_millis(8600), HOLD_MAX));
+        // Once the download slows down enough for those 660 MiB to fit in memory, it flushes.
+        assert!(fresh.due(660 * mb, 45 * gb, s(66), HOLD_MAX));
+        // With the connections' memory full (a disk that already sets the pace), not even the
+        // first flush starts.
+        assert!(!fresh.due(64 * mb, 45 * gb, s(2), 0));
     }
 
     /// #782: what the slow check makes of connections that wait for the disk. A connection

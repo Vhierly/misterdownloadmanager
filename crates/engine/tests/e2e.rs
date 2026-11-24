@@ -2669,6 +2669,58 @@ async fn a_slow_disk_does_not_stop_the_transfer() {
     );
 }
 
+/// #1633: when the disk is already busy as the download starts, the start-up resume state's
+/// `fsync` holds up the saver for seconds while the connections keep writing into the cache.
+/// That late first progress check must not flush the whole cache at once and freeze the transfer.
+#[tokio::test]
+async fn a_busy_disk_at_the_start_does_not_stop_the_transfer() {
+    const SIZE: u64 = 1024 << 20;
+    let s = server("rate=20M&burst=1M").await;
+    let dir = tempfile::tempdir().unwrap();
+    let disk = mdm_engine::slowdisk::SlowDisk::new(48 << 20, 256 << 20, Default::default());
+    // 240 MiB already queued on the 48 MiB/s disk (5 s before the start-up state's sync finishes).
+    disk.write(240 << 20, || ());
+    let (out, behind) = watch(
+        Download::start(
+            Request {
+                url: s.url("/gen/1024M/busy.bin?seed=1633").parse().unwrap(),
+                headers: Default::default(),
+                dest: Destination::Dir(dir.path().to_owned()),
+            },
+            Options {
+                save_interval: std::time::Duration::from_millis(100),
+                slow_disk: Some(disk.clone()),
+                ..fast_opts()
+            },
+        ),
+        SIZE,
+        None,
+    )
+    .await;
+    let out = out.expect("download succeeds");
+    assert_eq!(out.size, SIZE);
+    let data = std::fs::read(&out.path).unwrap();
+    let mut want = vec![0; data.len()];
+    content::fill(1633, 0, &mut want);
+    assert!(data == want, "content mismatch");
+    tokio::time::timeout(SETTLE, s.settled())
+        .await
+        .expect("every request ends");
+    let stats = disk.stats();
+    let (flushes, holds) = (stats.flushes, stats.holds);
+    eprintln!(
+        "busy start: {} shed, every byte in {:?}, longest quiet {:?}, flushes {flushes:?}, \
+         writes held {holds:?}",
+        behind.shed, behind.received, behind.quiet
+    );
+    assert_eq!(behind.shed, 0, "connections shed for the disk's pace");
+    assert!(
+        behind.quiet < std::time::Duration::from_millis(1200),
+        "nothing arrived for {:?} (flushes: {flushes:?}, writes held {holds:?})",
+        behind.quiet
+    );
+}
+
 /// How long a pause or a resume may take here (#1328): generous for a busy runner, where a stop
 /// once took 3.4 s (#201), and far from what the disk took before the fix (10 s and more).
 const PROMPT: std::time::Duration = std::time::Duration::from_secs(4);

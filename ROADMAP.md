@@ -569,6 +569,11 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 These ship in the next version.
 
+- ✅ Fast downloads started while the disk is already busy no longer freeze on their first
+  progress save: when writing the download's initial resume state takes seconds and hundreds of
+  megabytes have piled up meanwhile, that first save is judged at a hard disk's speed instead of
+  no time at all, and skipped when it wouldn't fit in memory
+  ([#1633](https://github.com/anefzaoui/misterdownloadmanager/issues/1633))
 - ✅ `thunder://`, `flashget://` and `qqdl://` links (#1782): the ordinary address wrapped in
   each (base64) is unwrapped and downloaded, in **Add URL**, in a link copied to the clipboard and
   wherever links are found in text (Add batch download from clipboard, Link grabber, an imported
