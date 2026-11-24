@@ -8039,7 +8039,7 @@ menu	&Exit	&Quitter
 #. View menu: submenu choosing the interface's own font and text size
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
-menu	&Font	Fo&nte
+menu	&Font	P&olice
 #. menu command in the main window
 #. verb: load downloads from a file
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
