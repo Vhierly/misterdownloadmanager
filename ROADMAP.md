@@ -574,6 +574,25 @@ These ship in the next version.
   megabytes have piled up meanwhile, that first save is judged at a hard disk's speed instead of
   no time at all, and skipped when it wouldn't fit in memory
   ([#1633](https://github.com/anefzaoui/misterdownloadmanager/issues/1633))
+- ✅ Torrents: an optional public tracker list (ngosang/trackerslist's best, or an address you
+  give) added to public torrents, those already in the list and those added, fetched once a day
+  (an hour after a failed fetch) through MDM's own downloader, its last good copy kept; never
+  added to private torrents; the command line's `torrent-get` follows it; **Tasks → Torrent
+  settings**, off by default
+  ([#1776](https://github.com/anefzaoui/misterdownloadmanager/issues/1776))
+- ✅ A link signed for the page's IPv4 address no longer fails with 403 over IPv6 (#1660): a
+  first request refused with 403 by a host that has addresses of both IP families is asked once
+  (one request, no retries) over the other one: the download's, the file's information
+  window's look, and the browser-like connection's, after the User-Agent fallback too. When
+  that works the log says so and that download keeps the family, in its resume state as well;
+  the choice is the download's own, never another download's of the same host. A 403 over both
+  stands, no other error is asked again this way, never through a proxy; an adapter that can't
+  reach the other family is named in the log. The lab server listens on both families
+  (`--both-families`) with a `refuse_family` fault.
+- ✅ LuluStream ([#1593](https://github.com/anefzaoui/misterdownloadmanager/issues/1593)): when
+  the site answers its download form with the form again, MDM waits before sending it back (half
+  a second, then one, two and four seconds) instead of sending its five tries within three
+  seconds, which may be what the site refused
 - ✅ `thunder://`, `flashget://` and `qqdl://` links (#1782): the ordinary address wrapped in
   each (base64) is unwrapped and downloaded, in **Add URL**, in a link copied to the clipboard and
   wherever links are found in text (Add batch download from clipboard, Link grabber, an imported
