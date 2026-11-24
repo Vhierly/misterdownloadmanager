@@ -569,6 +569,12 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 These ship in the next version.
 
+- ✅ Torrents: an optional public tracker list (ngosang/trackerslist's best, or an address you
+  give) added to public torrents, those already in the list and those added, fetched once a day
+  (an hour after a failed fetch) through MDM's own downloader, its last good copy kept; never
+  added to private torrents; the command line's `torrent-get` follows it; **Tasks → Torrent
+  settings**, off by default
+  ([#1776](https://github.com/anefzaoui/misterdownloadmanager/issues/1776))
 - ✅ A link signed for the page's IPv4 address no longer fails with 403 over IPv6 (#1660): a
   first request refused with 403 by a host that has addresses of both IP families is asked once
   (one request, no retries) over the other one: the download's, the file's information
@@ -595,6 +601,9 @@ These ship in the next version.
 - ✅ CI and the release take NASM from nasm.us, checked against its pinned SHA256, and use
   Chocolatey's feed only when that download fails (its outage had stopped every Windows build)
 - ✅ Torrents: trackers are checked more carefully.
+- ✅ A quick Ctrl- or Shift-click on a row of the download list or the Scheduler's Files list
+  keeps its key on a busy computer: a click has the keys held as its button went down
+  ([#1734](https://github.com/anefzaoui/misterdownloadmanager/issues/1734))
 - ✅ Helpers installs a helper that isn't there yet (gallery-dl before the first gallery, or
   any other): **Install** in its row downloads MDM's own copy, checked as always, with its
   progress, then shows its version and **Update**, and automatic updates cover it; greyed, with
