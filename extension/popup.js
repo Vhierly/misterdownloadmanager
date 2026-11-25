@@ -445,11 +445,50 @@ $("images-send").addEventListener("click", async () => {
 // Hide the download button over videos while the page is in full screen (#670), off as installed.
 const hideFullscreen = $("video-hide-fullscreen");
 $("video-hide-fullscreen-row").title = t("popup_video_hide_fullscreen_title");
-ext.storage.local.get({ hideVideoFullscreen: false })
-  .then((v) => (hideFullscreen.checked = Boolean(v.hideVideoFullscreen)))
+ext.storage.local.get({ hideVideoFullscreen: false, videoButtonScale: "normal" })
+  .then((v) => {
+    hideFullscreen.checked = Boolean(v.hideVideoFullscreen);
+    drawScale(v.videoButtonScale);
+  })
   .catch(() => {});
 hideFullscreen.addEventListener("change", () =>
   ext.storage.local.set({ hideVideoFullscreen: hideFullscreen.checked }).catch(() => {}));
+
+// #1923: scale of the download button over videos (80% / 100% / 120%).
+const scaleBox = $("video-scale");
+const scaleButtons = () => [...scaleBox.querySelectorAll("[data-scale]")];
+const SCALE_FACTORS = { small: 0.8, normal: 1, large: 1.2 };
+for (const b of scaleButtons()) {
+  const f = SCALE_FACTORS[b.dataset.scale] || 1;
+  try {
+    b.textContent = new Intl.NumberFormat(lang, { style: "percent" }).format(f);
+  } catch {
+    b.textContent = `${Math.round(f * 100)}%`;
+  }
+}
+function drawScale(value) {
+  const chosen = value === "small" || value === "large" ? value : "normal";
+  for (const b of scaleButtons()) {
+    const on = b.dataset.scale === chosen;
+    b.setAttribute("aria-checked", String(on));
+    b.tabIndex = on ? 0 : -1;
+  }
+}
+function pickScale(value) {
+  const chosen = value === "small" || value === "large" ? value : "normal";
+  drawScale(chosen);
+  ext.storage.local.set({ videoButtonScale: chosen }).catch(() => {});
+}
+roving(scaleBox, scaleButtons, { axis: "x", onMove: (el) => pickScale(el.dataset.scale) });
+scaleBox.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-scale]");
+  if (b) pickScale(b.dataset.scale);
+});
+ext.storage.onChanged?.addListener((changes, area) => {
+  if (area !== "local") return;
+  if (changes.hideVideoFullscreen) hideFullscreen.checked = Boolean(changes.hideVideoFullscreen.newValue);
+  if (changes.videoButtonScale) drawScale(changes.videoButtonScale.newValue);
+});
 
 // #1735: the video button back in its corner and its menu listing everything, on every site
 // (video.js keeps both per site; its pages already open follow at once).

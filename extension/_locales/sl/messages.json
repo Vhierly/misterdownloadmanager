@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Nazaj v kotu, meni prikazuje vse, na vseh spletnih mestih"
+  },
+  "video_size_label": {
+    "message": "Velikost"
   }
 }

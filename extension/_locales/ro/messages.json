@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Înapoi în colțul său, meniul său afișează totul, pe fiecare site"
+  },
+  "video_size_label": {
+    "message": "Dimensiune"
   }
 }

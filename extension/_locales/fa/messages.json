@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "دوباره در گوشه خود، منوی آن همه چیز را در هر سایتی نشان می‌دهد"
+  },
+  "video_size_label": {
+    "message": "اندازه"
   }
 }

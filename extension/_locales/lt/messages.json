@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Grįžo į vietą, meniu rodo viską, visose svetainėse"
+  },
+  "video_size_label": {
+    "message": "Dydis"
   }
 }

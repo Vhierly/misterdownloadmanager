@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "በየጣቢያው፣ በየማዕዘኑ፣ ምናሌው ሁሉንም ነገር እያሳየ"
+  },
+  "video_size_label": {
+    "message": "መጠን"
   }
 }

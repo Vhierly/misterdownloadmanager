@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Tillbaka i hörnet, menyn visar allt, på alla webbplatser"
+  },
+  "video_size_label": {
+    "message": "Storlek"
   }
 }

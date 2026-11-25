@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Späť v rohu, jeho ponuka zobrazuje všetko, na každej lokalite"
+  },
+  "video_size_label": {
+    "message": "Veľkosť"
   }
 }

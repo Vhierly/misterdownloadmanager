@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Przycisk wrócił na swoje miejsce, a jego menu pokazuje wszystko, na każdej stronie"
+  },
+  "video_size_label": {
+    "message": "Rozmiar"
   }
 }

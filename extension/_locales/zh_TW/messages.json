@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "已回到原本角落，功能表在所有網站上顯示所有選項"
+  },
+  "video_size_label": {
+    "message": "大小"
   }
 }

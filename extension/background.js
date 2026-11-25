@@ -1294,10 +1294,14 @@ if (ext.webRequest && ext.webRequest.onResponseStarted) {
     ["responseHeaders"],
   );
 }
-ext.tabs.onRemoved.addListener((id) => mediaBack.then(() => media.delete(id) && keepMedia()));
+ext.tabs.onRemoved.addListener((id) => {
+  tabFullscreen.delete(id);
+  mediaBack.then(() => media.delete(id) && keepMedia());
+});
 // Another page in the tab: what the last one loaded goes (not for a move within the page, #part).
 ext.tabs.onUpdated.addListener((id, change) => {
   if (!change.url) return;
+  tabFullscreen.delete(id);
   mediaBack.then(() => {
     const page = change.url.split("#")[0];
     const tab = media.get(id);
@@ -3502,6 +3506,7 @@ async function injectOpenTabs() {
 // Automatic (video.js sizeMode).
 const PANEL_KEEP_MS = 5000;
 const panelCache = new Map();
+const tabFullscreen = new Set();
 async function panelOn(page, top) {
   // The host name without a port: as video.js names the site, and as the app matches sites.
   const site = new URL(page).hostname;
@@ -3766,9 +3771,19 @@ async function pageMessage(m, sender) {
     }
     return { ok: false };
   }
+  if (m.type === "top-fullscreen") {
+    if (Number.isInteger(tab.id) && sender.frameId === 0) {
+      if (m.on === true) tabFullscreen.add(tab.id);
+      else tabFullscreen.delete(tab.id);
+      ext.tabs.sendMessage(tab.id, { type: "top-fullscreen", on: m.on === true }).catch(() => {});
+      return { ok: true };
+    }
+    return { ok: false };
+  }
   if (m.type === "panel") {
     const top = tab.url && /^https?:/i.test(tab.url) ? tab.url : "";
-    return page ? await panelOn(page, top) : { on: false, compact: false };
+    const ans = page ? await panelOn(page, top) : { on: false, compact: false };
+    return ans.on && sender.frameId !== 0 && tabFullscreen.has(tab.id) ? { ...ans, topFullscreen: true } : ans;
   }
   if (m.type === "link" && typeof m.url === "string") {
     const name = typeof m.name === "string" ? m.name.split(/[\\/]/).pop().slice(0, 255) : "";

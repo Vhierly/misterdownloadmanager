@@ -5835,6 +5835,9 @@ extension	Show in folder	Show in folder
 #. screen readers' name of a download's Show in folder button in the Downloads tab of the toolbar button's popup (the list of Mister Download Manager's newest downloads)
 extension	Show {file} in folder	Show {file} in folder
 #. text in the browser extension
+#. label before the row of scale chips (80%, 100%, 120%) for the download button over videos; short
+extension	Size	Size
+#. text in the browser extension
 #. in the This page tab of the toolbar button's popup, while a smallest width or height is set: how many of the selected pictures the page gives no size for (they are kept, not left out)
 #. {n} = a number (keep the braces as they are)
 extension	Size not given, kept: {n}	Size not given, kept: {n}

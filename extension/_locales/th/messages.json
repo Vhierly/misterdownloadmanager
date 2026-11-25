@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "กลับไปอยู่มุมเดิม เมนูแสดงตัวเลือกทั้งหมดในทุกเว็บไซต์"
+  },
+  "video_size_label": {
+    "message": "ขนาด"
   }
 }

@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Terug op zijn plek, met alles in het menu, op elke site"
+  },
+  "video_size_label": {
+    "message": "Grootte"
   }
 }

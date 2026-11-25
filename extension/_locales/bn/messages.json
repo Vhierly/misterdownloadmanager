@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "তার কোণায় ফিরে এসেছে, তার মেনু সবকিছু দেখাচ্ছে, প্রতিটি সাইটে"
+  },
+  "video_size_label": {
+    "message": "আকার"
   }
 }

@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Tagasi oma kohale, menüüs kuvatakse kõik valikud igal saidil"
+  },
+  "video_size_label": {
+    "message": "Suurus"
   }
 }

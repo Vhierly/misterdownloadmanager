@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "De volta ao seu canto, com o menu a mostrar tudo, em todos os sites"
+  },
+  "video_size_label": {
+    "message": "Tamanho"
   }
 }

@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "חזר למקומו, התפריט שלו מציג הכול, בכל אתר"
+  },
+  "video_size_label": {
+    "message": "גודל"
   }
 }

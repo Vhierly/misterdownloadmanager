@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Takaisin kulmassaan, valikko näyttää kaiken kaikilla sivustoilla"
+  },
+  "video_size_label": {
+    "message": "Koko"
   }
 }

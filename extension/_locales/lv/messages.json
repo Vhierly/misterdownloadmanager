@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Atkal savā stūrī, izvēlnē redzams viss, visās vietnēs"
+  },
+  "video_size_label": {
+    "message": "Lielums"
   }
 }

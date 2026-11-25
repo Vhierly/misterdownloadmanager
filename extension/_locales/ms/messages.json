@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Kembali ke sudutnya, menu menunjukkan segala-galanya, di setiap tapak"
+  },
+  "video_size_label": {
+    "message": "Saiz"
   }
 }

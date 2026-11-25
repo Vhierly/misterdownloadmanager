@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Ha tornat a la seva cantonada i el seu menú ho mostra tot, a tots els llocs"
+  },
+  "video_size_label": {
+    "message": "Mida"
   }
 }

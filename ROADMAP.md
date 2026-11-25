@@ -569,6 +569,8 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 These ship in the next version.
 
+- ✅ The browser add-on's **Download video** button can be scaled (**80%**, **100%**, **120%**) from its menu or the popup's **Settings**, keeps free interior positions when dragged anywhere over the player, offers **Hide the download button in full screen** directly in its menu, and respects DOM full-screen hiding inside embedded frames
+  ([#1923](https://github.com/anefzaoui/misterdownloadmanager/issues/1923))
 - ✅ The browser add-on's scrollbars in its own look: the video button's list of qualities and
   the popup's lists scroll with a thin bar in their own colours, light and dark, not the browser's
   stock grey one

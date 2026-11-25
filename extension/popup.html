@@ -127,6 +127,14 @@
             <span class="toggle-text" data-i18n="popup_video_hide_fullscreen"></span>
             <input id="video-hide-fullscreen" type="checkbox" class="toggle" role="switch">
           </label>
+          <div class="toggle-row plain" id="video-scale-row">
+            <span class="toggle-text"><span data-i18n="popup_video_reset_text"></span><span class="sub" data-i18n="video_size_label"></span></span>
+            <div id="video-scale" class="chips scale-chips" role="radiogroup" data-i18n-label="video_size_label">
+              <button type="button" class="chip" role="radio" aria-checked="false" tabindex="-1" data-scale="small"></button>
+              <button type="button" class="chip" role="radio" aria-checked="true" data-scale="normal"></button>
+              <button type="button" class="chip" role="radio" aria-checked="false" tabindex="-1" data-scale="large"></button>
+            </div>
+          </div>
           <!-- #1735: where the video button was moved, and its menu's filters, per site. -->
           <div class="toggle-row plain" id="video-reset-row">
             <span class="toggle-text"><span data-i18n="popup_video_reset_text"></span><span class="sub" data-i18n="popup_video_reset_sub"></span></span>

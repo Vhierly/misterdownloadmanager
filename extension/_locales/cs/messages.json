@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Zpět v rohu, nabídka zobrazuje vše na všech webech"
+  },
+  "video_size_label": {
+    "message": "Velikost"
   }
 }

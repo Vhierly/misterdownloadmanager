@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Tilbake i hjørnet, med alt i menyen, på alle nettsteder"
+  },
+  "video_size_label": {
+    "message": "Størrelse"
   }
 }

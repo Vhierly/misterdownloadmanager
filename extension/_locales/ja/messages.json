@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "ボタンは元の位置に戻り、メニューにはすべてのサイトですべての品質が表示されます"
+  },
+  "video_size_label": {
+    "message": "サイズ"
   }
 }

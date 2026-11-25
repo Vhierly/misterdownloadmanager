@@ -850,5 +850,8 @@
   },
   "popup_video_reset_done": {
     "message": "Di nuovo al suo posto, il suo menu mostra tutto, su ogni sito"
+  },
+  "video_size_label": {
+    "message": "Dimensione"
   }
 }

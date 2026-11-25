@@ -7717,6 +7717,10 @@ extension	Show in folder	ෆෝල්ඩරයේ පෙන්වන්න
 #, machine
 extension	Show {file} in folder	{file} ෆෝල්ඩරයේ පෙන්වන්න
 #. text in the browser extension
+#. label before the row of scale chips (80%, 100%, 120%) for the download button over videos; short
+#, machine
+extension	Size	ප්‍රමාණය
+#. text in the browser extension
 #. in the This page tab of the toolbar button's popup, while a smallest width or height is set: how many of the selected pictures the page gives no size for (they are kept, not left out)
 #. {n} = a number (keep the braces as they are)
 #, machine
