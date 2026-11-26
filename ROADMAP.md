@@ -571,6 +571,10 @@ These ship in the next version.
 
 - ✅ The browser add-on's **Download video** button can be scaled (**80%**, **100%**, **120%**) beside **Button size** in **Options → General → Download panels**, keeps free interior positions when dragged anywhere over the player, offers **Hide the download button in full screen** directly in its menu, and respects DOM full-screen hiding inside embedded frames
   ([#1923](https://github.com/anefzaoui/misterdownloadmanager/issues/1923))
+- ✅ Windows: closing a dialog of the main window's with **OK**, after bringing it back with
+  MDM's taskbar button, leaves the main window in front with the keyboard instead of the
+  taskbar ([#1852](https://github.com/anefzaoui/misterdownloadmanager/issues/1852); thanks to
+  [@wmwlwmwl](https://github.com/wmwlwmwl))
 - ✅ Fast downloads started while the disk is already busy no longer freeze on their first
   progress save: when writing the download's initial resume state takes seconds and hundreds of
   megabytes have piled up meanwhile, that first save counts both how long the initial state wait
