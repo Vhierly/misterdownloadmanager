@@ -571,6 +571,12 @@ These ship in the next version.
 
 - ✅ The browser add-on's **Download video** button can be scaled (**80%**, **100%**, **120%**) beside **Button size** in **Options → General → Download panels**, keeps free interior positions when dragged anywhere over the player, offers **Hide the download button in full screen** directly in its menu, and respects DOM full-screen hiding inside embedded frames
   ([#1923](https://github.com/anefzaoui/misterdownloadmanager/issues/1923))
+- ✅ Fast downloads started while the disk is already busy no longer freeze on their first
+  progress save: when writing the download's initial resume state takes seconds and hundreds of
+  megabytes have piled up meanwhile, that first save counts both how long the initial state wait
+  took and the buffered bytes at a hard disk's speed instead of no time at all, and is skipped when
+  it wouldn't fit in memory
+  ([#1633](https://github.com/anefzaoui/misterdownloadmanager/issues/1633))
 - ✅ Windows: a crash inside the graphics driver while OpenGL draws (Intel's and AMD's OpenGL
   drivers, NVIDIA's Direct3D 11 thread on laptops with two graphics chips) moves MDM off OpenGL
   from the next start, as a freeze there does: Direct3D 12, on WARP when the card can't, and
@@ -2093,6 +2099,11 @@ These ship in the next version.
   read their numbered list
   ([#1407](https://github.com/anefzaoui/misterdownloadmanager/issues/1407); thanks to
   [@Seyamalam](https://github.com/Seyamalam))
+- ✅ Screen readers speak the **Get ready for video downloads** failure as it comes: the
+  status line is a polite live region while it holds a failure, so a reader says it without
+  the focus; the running percentages aren't one, or they would interrupt endlessly
+  ([#1407](https://github.com/anefzaoui/misterdownloadmanager/issues/1407); thanks to
+  [@Seyamalam](https://github.com/Seyamalam))
 - ✅ Tests: the video checks of an address that expires while downloading (a stream's, and DASH
   pieces') no longer fail now and then on a busy computer: the test server times such a link from
   its first request, not from the look-up that gave it, so a slow start can't kill it before the
@@ -2153,6 +2164,10 @@ These ship in the next version.
   Tests: the feed case of the add-on's real-browser tests checks that the menu is inside the
   window, and waits for the button over the video it points at, not the last one's, still fading
 - ✅ Torrents: magnet links, torrent files and trackers are checked more carefully.
+- ✅ A screen reader says a tab's place on its strip — "Connection 5 of 12" in Options, "2 of 2"
+  in Download progress — where before the tab's position and count weren't published
+  ([#1407](https://github.com/anefzaoui/misterdownloadmanager/issues/1407); thanks to
+  [@Seyamalam](https://github.com/Seyamalam))
 - ✅ One folder for every download: **Options → Save to → Save every download in "General"
   category's folder** sends every new download there, whatever its category, from every place a
   download comes from; the categories still sort the list, and a single download can still go

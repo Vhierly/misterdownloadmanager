@@ -339,6 +339,14 @@ pub fn name(resp: &Response, name: &str) {
         .accesskit_node_builder(resp.id, |node| node.set_label(name.to_owned()));
 }
 
+/// A control's place among its siblings ("tab 3 of 12"): AccessKit counts from 0.
+pub fn position_in_set(resp: &Response, i: usize, n: usize) {
+    resp.ctx.accesskit_node_builder(resp.id, |node| {
+        node.set_position_in_set(i);
+        node.set_size_of_set(n);
+    });
+}
+
 /// A text box's or drop-down's name for screen readers, from its caption ([`caption_for`]).
 fn name_from_caption(resp: &Response) {
     if let Some(name) = caption_for(&resp.ctx, resp.rect) {
@@ -5484,6 +5492,18 @@ pub fn readable(ui: &Ui, rc: Rect, salt: impl std::hash::Hash + std::fmt::Debug,
     resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, true, &text));
 }
 
+/// A [`readable`] Label that is also a polite live region: a screen reader speaks its text as
+/// it changes, without waiting for the focus to reach it. For rare news such as a failure —
+/// never for progress or percentages, which would interrupt endlessly (#1407).
+pub fn readable_live(ui: &Ui, rc: Rect, salt: impl std::hash::Hash + std::fmt::Debug, text: &str) {
+    let resp = ui.interact(rc, widget_id(ui, ("readable", salt)), Sense::hover());
+    let text = text.to_owned();
+    resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, true, &text));
+    resp.ctx.accesskit_node_builder(resp.id, |n| {
+        n.set_live(egui::accesskit::Live::Polite);
+    });
+}
+
 /// The window's own node in the accessibility tree carries the window's title: egui leaves the
 /// root Window node unnamed, so a screen reader met `[frame] ''` where it looks for the window's
 /// name (#1407). The title is passed in, not read back from the OS window — on X11 winit's
@@ -5512,12 +5532,49 @@ pub fn readable_paragraph(
     line_h: f32,
     salt: impl std::hash::Hash + std::fmt::Debug,
 ) -> usize {
+    readable_paragraph_impl(ui, p, x, baseline, s, color, right, line_h, salt, false)
+}
+
+/// A [`readable_paragraph`] that is a polite live region, like [`readable_live`]: its text is
+/// spoken as it changes, without the focus. For rare news such as a failure only (#1407).
+#[allow(clippy::too_many_arguments)]
+pub fn readable_paragraph_live(
+    ui: &Ui,
+    p: &Painter,
+    x: f32,
+    baseline: f32,
+    s: &str,
+    color: Color32,
+    right: f32,
+    line_h: f32,
+    salt: impl std::hash::Hash + std::fmt::Debug,
+) -> usize {
+    readable_paragraph_impl(ui, p, x, baseline, s, color, right, line_h, salt, true)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn readable_paragraph_impl(
+    ui: &Ui,
+    p: &Painter,
+    x: f32,
+    baseline: f32,
+    s: &str,
+    color: Color32,
+    right: f32,
+    line_h: f32,
+    salt: impl std::hash::Hash + std::fmt::Debug,
+    live: bool,
+) -> usize {
     let lines = paragraph(p, x, baseline, s, color, right, line_h);
     let rc = rect(Rect::from_min_max(
         pos2(x, baseline - 12.0),
         pos2(right, baseline + line_h * (lines as f32 - 1.0) + 4.0),
     ));
-    readable(ui, rc, salt, s);
+    if live {
+        readable_live(ui, rc, salt, s);
+    } else {
+        readable(ui, rc, salt, s);
+    }
     lines
 }
 
@@ -6299,6 +6356,18 @@ pub fn tabs_light(
             .collect()
     };
     let mut clicked = None;
+    // The strip as a tab list in the accessibility tree, the tabs its children: UI Automation
+    // and AT-SPI read a tab's "of n" from its container, never from the tab itself — so the
+    // count is the strip's, as the download list carries its rows' (list.rs, #1407).
+    let mut strip_ui = ui.new_child(
+        egui::UiBuilder::new()
+            .max_rect(Rect::from_min_max(rc.min, pos2(rc.right(), t)))
+            .accessibility_role(egui::accesskit::Role::TabList),
+    );
+    ui.ctx().accesskit_node_builder(strip_ui.unique_id(), |n| {
+        n.set_size_of_set(tabs.len());
+    });
+    let ui = &mut strip_ui;
     let mut draw = |i: usize, tab: &LightTab, sel: bool| {
         let (sel_x, unsel_x, label_x, shown) = &placed[i];
         let (x0, x1) = if sel { *sel_x } else { *unsel_x };
@@ -6322,6 +6391,8 @@ pub fn tabs_light(
             true,
             Some(sel),
         );
+        // "tab i of n", as a Windows tab control says it (#1407).
+        position_in_set(&resp, i, tabs.len());
         let resp = enter_is_not_a_click(ui, resp);
         if resp.clicked() && !sel {
             clicked = Some(i);
@@ -6386,6 +6457,71 @@ pub fn tabs_light(
         draw(selected, tab, true);
     }
     clicked
+}
+
+#[cfg(test)]
+mod tab_list_tests {
+    use super::*;
+    use egui::accesskit::{Role, TreeUpdate};
+
+    fn pass(count: usize, selected: usize) -> TreeUpdate {
+        let ctx = egui::Context::default();
+        let mut defs = egui::FontDefinitions::default();
+        install_fonts(&mut defs, None);
+        ctx.set_fonts(defs);
+        ctx.enable_accesskit();
+        let labels = ["One", "Two", "Three", "Four"];
+        let tabs: Vec<LightTab> = (0..count)
+            .map(|i| LightTab {
+                label: labels[i],
+                sel: (i as f32 * 60.0, i as f32 * 60.0 + 62.0),
+                unsel: (i as f32 * 60.0 + 2.0, i as f32 * 60.0 + 60.0),
+            })
+            .collect();
+        let input = egui::RawInput {
+            screen_rect: Some(Rect::from_min_size(Pos2::ZERO, egui::vec2(500.0, 400.0))),
+            ..Default::default()
+        };
+        let mut out = ctx.run_ui(input, |ui| {
+            let rc = Rect::from_min_size(pos2(10.0, 10.0), egui::vec2(400.0, 300.0));
+            tabs_light(ui, pos2(10.0, 10.0), rc, &tabs, selected);
+        });
+        out.textures_delta.clear();
+        out.platform_output
+            .accesskit_update
+            .expect("AccessKit is on")
+    }
+
+    #[test]
+    fn the_strip_is_a_tab_list_holding_its_tabs() {
+        // UI Automation and AT-SPI read a tab's "of n" from its container (#1407): the strip
+        // says the count, the tabs are its children, each with its place.
+        let u = pass(3, 1);
+        let strip = u
+            .nodes
+            .iter()
+            .find(|(_, n)| n.role() == Role::TabList)
+            .map(|(_, n)| n)
+            .expect("the strip is a tab list");
+        assert_eq!(strip.size_of_set(), Some(3));
+        let mut tabs: Vec<&egui::accesskit::Node> = u
+            .nodes
+            .iter()
+            .filter(|(_, n)| n.role() == Role::Tab)
+            .map(|(_, n)| n)
+            .collect();
+        assert_eq!(tabs.len(), 3);
+        tabs.sort_by_key(|n| n.position_in_set());
+        for (i, tab) in tabs.iter().enumerate() {
+            assert_eq!(tab.position_in_set(), Some(i));
+        }
+        for (id, _) in u.nodes.iter().filter(|(_, n)| n.role() == Role::Tab) {
+            assert!(
+                strip.children().contains(id),
+                "every tab is the tab list's child"
+            );
+        }
+    }
 }
 
 /// The 8 × 5 "v" of drop-downs, its top-left at `at`.
