@@ -850,8 +850,5 @@
   },
   "popup_video_reset_done": {
     "message": "모든 사이트에서 메뉴에 모든 항목이 표시되고 제자리로 돌아왔습니다."
-  },
-  "video_size_label": {
-    "message": "크기"
   }
 }

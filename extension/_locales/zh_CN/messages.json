@@ -850,8 +850,5 @@
   },
   "popup_video_reset_done": {
     "message": "已回到原位，菜单显示所有内容，适用于所有网站"
-  },
-  "video_size_label": {
-    "message": "大小"
   }
 }

@@ -182,9 +182,6 @@ button, input { font: inherit; color: inherit; }
 .toggle-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .toggle-text .sub { color: var(--text-2); font-size: 12px; }
 .toggle-row.plain { cursor: default; }
-#video-scale-row { flex-wrap: wrap; }
-.scale-chips { flex: none; gap: 4px; margin-inline-start: auto; }
-.scale-chips .chip { height: 24px; padding: 0 8px; }
 .toggle {
   appearance: none; -webkit-appearance: none; flex: none; position: relative; margin: 0;
   width: 40px; height: 20px; border-radius: 10px; border: 1px solid var(--control-under);

@@ -850,8 +850,5 @@
   },
   "popup_video_reset_done": {
     "message": "Köşesine geri döndü, menüsü her sitede her şeyi gösteriyor"
-  },
-  "video_size_label": {
-    "message": "Boyut"
   }
 }

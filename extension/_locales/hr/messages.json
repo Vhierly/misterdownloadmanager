@@ -850,8 +850,5 @@
   },
   "popup_video_reset_done": {
     "message": "Vraćeno u kut, izbornik prikazuje sve, na svakoj web-lokaciji"
-  },
-  "video_size_label": {
-    "message": "Veličina"
   }
 }

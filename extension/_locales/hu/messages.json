@@ -850,8 +850,5 @@
   },
   "popup_video_reset_done": {
     "message": "Vissza a sarokba, a menü mindent mutat, minden webhelyen"
-  },
-  "video_size_label": {
-    "message": "Méret"
   }
 }
