@@ -1838,6 +1838,52 @@ async function calmButton(session) {
     else near(b.r, v.r - 8, "back in its corner: its right edge");
     done.push("back in its corner from its menu");
 
+    // 5b. #1923: dropped in the middle of the player, it stays there (a free spot, no edge it
+    // snaps to), and there after a reload; its menu puts it back in its corner again.
+    {
+      const mx = (v.l + v.r) / 2, my = (v.t + v.b) / 2;
+      b = await drag(b, mx + (b.r - b.l) / 2 - 10, my);
+      if (!b) throw new Error("the button went with the drag to the middle");
+      const cx = (b.l + b.r) / 2, cy = (b.t + b.b) / 2;
+      if (Math.abs(cy - my) > 40 || b.t < v.t + 30 || b.b > v.b - 30 || b.l < v.l + 30 || b.r > v.r - 30) throw new Error(`dropped in the middle, it went to ${JSON.stringify(b)} (player ${JSON.stringify(v)})`);
+      await shoot("middle", { l: v.l - 16, t: v.t - 16, r: v.r + 16, b: v.b + 16 });
+      await draw("watch");
+      const kept = await hover(session, v);
+      if (!kept || Math.abs((kept.t + kept.b) / 2 - cy) > 6 || Math.abs((kept.l + kept.r) / 2 - cx) > 6) throw new Error(`after a reload the middle spot wasn't kept: ${JSON.stringify(kept)}`);
+      done.push(`dropped in the middle of the player: stays there (${Math.round(cx - v.l)}, ${Math.round(cy - v.t)} px in), and after a reload`);
+      await clickArrow(session);
+      const home2 = await until("Put the button back in its corner, in its menu", 5000, () => session.pill(MENU_ITEM_AT("home")));
+      await session.mouse(home2.x, home2.y, "click");
+      await sleep(300);
+      b = await hover(session, v);
+      near(b.t, v.t + 8, "back in its corner again: its top");
+    }
+    // 5c. #1923: the menu's "Hide the download button in full screen", the popup's same setting.
+    {
+      const stored = async () => {
+        const popup = await session.tab(`${session.base}popup.html`);
+        try {
+          return await until("the add-on's storage", 10000, () => popup.evaluate("(globalThis.browser ?? chrome).storage.local.get({ hideVideoFullscreen: null }).then((v) => String(v.hideVideoFullscreen))").catch(() => false));
+        } finally {
+          await popup.close();
+        }
+      };
+      const was = await stored();
+      await hover(session, v);
+      await clickArrow(session);
+      const fs1 = await until("Hide the download button in full screen, in its menu", 5000, () => session.pill(MENU_ITEM_AT("fullscreen")));
+      await session.mouse(fs1.x, fs1.y, "click");
+      await sleep(400);
+      const on = await stored();
+      await session.mouse(fs1.x, fs1.y, "click");
+      await sleep(400);
+      const off = await stored();
+      await session.mouse(5, 5);
+      if (on !== "true" || off !== "false") throw new Error(`the menu's full-screen item: ${was} -> ${on} -> ${off}`);
+      done.push(`the menu's "Hide the download button in full screen": ${was} -> ${on} -> ${off} (the popup's setting)`);
+      b = await hover(session, v);
+    }
+
     // 6. Outside again, then the popup's Reset: back in its corner in the open tab, no reload.
     b = await drag(b, corner, v.t - 30);
     near(b.b, v.t - 6, "outside again");
