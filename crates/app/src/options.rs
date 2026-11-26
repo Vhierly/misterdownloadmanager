@@ -1390,7 +1390,8 @@ impl OptionsDialog {
             ButtonKind::Disabled,
             false,
         );
-        winui::paragraph(
+        winui::paragraph_until(
+            ui,
             &p,
             o.x + 30.0,
             o.y + 409.0,
@@ -1399,6 +1400,7 @@ impl OptionsDialog {
             ),
             LIGHT_TEXT(),
             o.x + 426.0,
+            o.y + 452.0,
             13.0,
         );
         // #93: the built-in categories by file type as shipped again (beside OK, on this page).
@@ -2786,8 +2788,19 @@ impl OptionsDialog {
                 LIGHT_DISABLED(),
             )
         };
-        // Two lines at most: a longer language wraps rather than being cut.
-        winui::paragraph(&p, o.x + 30.0, o.y + 380.0, note, ink, o.x + 400.0, 13.0);
+        // Three lines at most: the room above the check box below (a longer language's note is
+        // cut with "..." and shown whole on hover, never drawn over it).
+        winui::paragraph_until(
+            ui,
+            &p,
+            o.x + 30.0,
+            o.y + 380.0,
+            note,
+            ink,
+            o.x + 400.0,
+            o.y + 410.0,
+            13.0,
+        );
         winui::checkbox_light(
             ui,
             o + vec2(22.0, 414.0),
@@ -2939,7 +2952,8 @@ impl OptionsDialog {
             "opt-rar-tool",
         );
         let has_hatchzip = self.hatch_zip.is_some();
-        winui::checkbox_light(
+        // Its caption is long in some languages: it ends inside the group box, whole on hover.
+        winui::checkbox_light_until(
             ui,
             o + vec2(30.0, 300.0),
             &mut s.extract_in_place,
@@ -2951,6 +2965,7 @@ impl OptionsDialog {
                 "Extract in place with HatchZip (hatchzip.dev, not installed)"
             },
             has_hatchzip,
+            Some(o.x + 402.0),
         );
         // The passwords tried on an encrypted archive before it is asked (#37).
         let (pw_x, pw_w) = winui::button_row_from_left(
@@ -3777,7 +3792,8 @@ impl OptionsDialog {
             r.remove(&d.id);
             self.device_rows.selected = None;
         }
-        winui::paragraph(
+        winui::paragraph_until(
+            ui,
             &p,
             o.x + 21.0,
             o.y + 438.0,
@@ -3787,6 +3803,7 @@ impl OptionsDialog {
             ),
             LIGHT_TEXT(),
             o.x + 406.0,
+            o.y + 474.0,
             13.0,
         );
     }
