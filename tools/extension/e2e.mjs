@@ -2093,6 +2093,25 @@ async function videoButtonFollowsOptions(session) {
     };
     const full = await size(false);
     await shoot("full");
+    // #1923: its scale beside Button size, 120% then 80%, in the open tab without a reload.
+    const scaled = async (scale, wider) =>
+      until(`the button at ${scale}%`, 15000, async () => {
+        await hover(session, v);
+        const p = await session.pill(PILL_COMPACT);
+        return p && !p.compact && (wider ? p.w > full.w * 1.1 : p.w < full.w * 0.9) ? p : null;
+      });
+    await panelSettings({ video_panel_scale: 120 });
+    await away();
+    const big = await scaled(120, true);
+    await shoot("scale-120");
+    await panelSettings({ video_panel_scale: 80 });
+    await away();
+    const little = await scaled(80, false);
+    await shoot("scale-80");
+    await panelSettings({ video_panel_scale: 100 });
+    await away();
+    await size(false);
+    done.push(`scale: ${Math.round(big.w)} px at 120%, ${Math.round(little.w)} px at 80%, ${Math.round(full.w)} px at 100%, in the open tab`);
     await panelSettings({ video_panel_compact: true });
     await away();
     const small = await size(true);
@@ -2125,7 +2144,7 @@ async function videoButtonFollowsOptions(session) {
     done.push("the site listed: gone in the open tab");
   } finally {
     await session.mouse(5, 5);
-    await panelSettings({ video_panel: true, video_panel_sites: "", video_panel_compact: false, video_panel_full: false });
+    await panelSettings({ video_panel: true, video_panel_sites: "", video_panel_compact: false, video_panel_full: false, video_panel_scale: 100 });
   }
   return done.join("; ");
 }
