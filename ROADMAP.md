@@ -571,8 +571,9 @@ These ship in the next version.
 
 - ✅ Fast downloads started while the disk is already busy no longer freeze on their first
   progress save: when writing the download's initial resume state takes seconds and hundreds of
-  megabytes have piled up meanwhile, that first save is judged at a hard disk's speed instead of
-  no time at all, and skipped when it wouldn't fit in memory
+  megabytes have piled up meanwhile, that first save counts both how long the initial state wait
+  took and the buffered bytes at a hard disk's speed instead of no time at all, and is skipped when
+  it wouldn't fit in memory
   ([#1633](https://github.com/anefzaoui/misterdownloadmanager/issues/1633))
 - ✅ Hugging Face models and datasets (a whole repository or a folder, at a branch, tag or commit)
   and GitHub releases and tags pasted in Add URL or Link grabber: every file listed with its size
