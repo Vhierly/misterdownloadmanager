@@ -739,6 +739,60 @@ async fn no_range_server_uses_one_connection() {
     assert_eq!(complete[0].range, None, "the probe is a plain GET");
 }
 
+/// #1859: a server without ranges whose probe stops partway starts over on one connection, and a
+/// kind of file that is never a web page (a .zip) has its first bytes read before it is written
+/// (#701). Those bytes count toward the size the answer announced: the whole file isn't taken
+/// for a short one.
+#[tokio::test]
+async fn a_fresh_start_on_one_connection_counts_the_bytes_read_first() {
+    // The probe holds back the byte at 1 MiB until the engine knows the server has no ranges,
+    // then goes on and is cut at 2 MiB (its own drop, set when it was asked): the download has
+    // to start over, under faults that let the new answer through whole.
+    let s = server("no_range=true&rate=8M&stall_at=1M&drop_after=2M").await;
+    let dir = tempfile::tempdir().unwrap();
+    let req = Request {
+        url: s.url("/gen/3M/pack.zip?seed=59").parse().unwrap(),
+        headers: Default::default(),
+        dest: Destination::Dir(dir.path().to_owned()),
+    };
+    let dl = Download::start(req, fast_opts());
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    while dl.snapshot().resumable != Some(false) {
+        assert!(
+            std::time::Instant::now() < deadline,
+            "never learned the server has no ranges"
+        );
+        tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+    }
+    s.set_faults(Faults::parse("no_range=true&rate=8M").unwrap());
+    let out = dl.wait().await.expect("download succeeds");
+    assert_eq!(out.size, 3 << 20);
+    let mut want = vec![0; 3 << 20];
+    content::fill(59, 0, &mut want);
+    assert!(
+        std::fs::read(&out.path).unwrap() == want,
+        "content mismatch"
+    );
+    tokio::time::timeout(SETTLE, s.settled())
+        .await
+        .expect("every request ends");
+    let log = s.log();
+    let requests: Vec<_> = log
+        .iter()
+        .map(|e| (e.range.clone(), e.outcome.clone(), e.bytes_sent))
+        .collect();
+    // The probe and the fresh start: plain GETs, the last one sent whole.
+    assert!(
+        log.iter().filter(|e| e.range.is_none()).count() >= 2,
+        "{requests:#?}"
+    );
+    assert!(
+        log.iter()
+            .any(|e| e.range.is_none() && e.outcome == "complete"),
+        "{requests:#?}"
+    );
+}
+
 /// Part of #136: a server without ranges sends the file once, even when the range attempts are
 /// answered after the probe's plain GET has run on (a busy machine): every part is taken by the
 /// probe, none is fetched again by a fresh start on one connection.
@@ -1165,6 +1219,24 @@ async fn the_view_names_the_file_when_a_resume_finds_its_place_taken() {
     assert_eq!(std::fs::metadata(&path).unwrap().len(), 8 << 20);
     assert!(!state.exists(), "state file removed on completion");
     assert_eq!(std::fs::read(&dest).unwrap(), b"someone else's");
+}
+
+/// #1872: a resumed download's first snapshot shows the bytes already on disk, before the run
+/// has read its state again: a watcher's speed (the command line's) doesn't count them as new.
+#[tokio::test]
+async fn a_resume_shows_the_bytes_on_disk_from_its_first_snapshot() {
+    let s = server("rate=1M").await;
+    let (_dir, state) = paused(&s, "/gen/8M/shown.bin?seed=73").await;
+    let before = mdm_engine::state::ResumeState::load(&state)
+        .unwrap()
+        .downloaded();
+    assert!(before > 0, "partial progress saved");
+    s.set_faults(Faults::default());
+    // The test's runtime runs one task at a time: the download's own task hasn't started yet.
+    let dl = Download::resume(state, Default::default(), fast_opts()).unwrap();
+    assert_eq!(dl.snapshot().downloaded, before);
+    let out = dl.wait().await.expect("the resume goes on");
+    assert_eq!(out.size, 8 << 20);
 }
 
 #[tokio::test]
@@ -3559,10 +3631,13 @@ async fn the_other_family_is_asked_once_without_retries() {
 /// #1660: the family is the choice of the download that met the 403, never the host's for
 /// every download. While a download whose link works over IPv6 only runs, another one of the
 /// same host switches to IPv4: the first one's new connections (it loses its own again and
-/// again here) still go over IPv6, and none of them meets a 403.
+/// again here) still go over IPv6, and none of them meets a 403. The first one's byte at 2 MiB
+/// (past the second one's end) is held back until the second one has ended: on a slow machine
+/// the first one could otherwise end first, and its new connections after the switch go
+/// untested.
 #[tokio::test]
 async fn one_downloads_family_never_changes_another_download_of_the_host() {
-    let s = on_both_families("").await;
+    let s = on_both_families("stall_at=2M").await;
     let (host, ips) = ("two-links.mdm.test", ["::1", "127.0.0.1"]);
     let dir = tempfile::tempdir().unwrap();
     let start = |path: &str| {
@@ -3587,6 +3662,7 @@ async fn one_downloads_family_never_changes_another_download_of_the_host() {
         still.downloaded < 4 << 20,
         "the first one was still running"
     );
+    s.set_faults(Faults::default());
     assert_eq!(over_v6.wait().await.expect("over IPv6").size, 4 << 20);
     tokio::time::timeout(SETTLE, s.settled())
         .await
@@ -3967,4 +4043,91 @@ async fn changed_on_the_server(dated: bool) {
                 .any(|e| e.if_range.is_some() && e.status == 200)
         );
     }
+}
+
+/// #1778: what a paused download's Properties change (its headers and User-Agent, a proxy, the
+/// number of connections), as the app gives them to its resume.
+fn edited(proxy: &LabServer, connections: u32) -> (reqwest::header::HeaderMap, Options) {
+    let mut headers = reqwest::header::HeaderMap::new();
+    headers.insert("x-edited", "after-pause".parse().unwrap());
+    let opts = Options {
+        max_connections: connections,
+        user_agent: "Edited/1.0".into(),
+        proxy: mdm_engine::Proxy::Manual {
+            url: proxy.url("").trim_end_matches('/').to_owned(),
+            login: None,
+            http: true,
+            https: true,
+        },
+        ..fast_opts()
+    };
+    (headers, opts)
+}
+
+/// #1778: a paused download resumed after its settings changed goes on with them, for the same
+/// file: every request of the resume carries the new header and User-Agent, goes through the new
+/// proxy (the lab answers as one, by the address's path) on at most the new number of
+/// connections, and the file is whole.
+#[tokio::test]
+async fn a_resume_after_an_edit_goes_on_with_the_new_settings() {
+    let s = server("rate=1M").await;
+    let (dir, state) = paused(&s, "/gen/8M/edited.bin?seed=1778").await;
+    s.clear_log();
+    let proxy = server("rate=1M").await;
+    let (headers, opts) = edited(&proxy, 2);
+    let out = Download::resume(state, headers, opts)
+        .unwrap()
+        .wait()
+        .await
+        .expect("the same file goes on");
+    assert_eq!(out.path, dir.path().join("edited.bin"));
+    assert!(std::fs::read(&out.path).unwrap() == generated(1778, 8 << 20));
+    tokio::time::timeout(SETTLE, proxy.settled()).await.unwrap();
+    let log = proxy.log();
+    assert!(!log.is_empty());
+    for e in &log {
+        assert_eq!(e.user_agent.as_deref(), Some("Edited/1.0"), "{e:?}");
+        assert_eq!(
+            e.x_headers,
+            vec![("x-edited".to_owned(), "after-pause".to_owned())],
+            "{e:?}"
+        );
+        assert!(
+            e.range.is_some(),
+            "a part of the file, not all of it again: {e:?}"
+        );
+    }
+    assert!(max_concurrent(&log) <= 2, "{}", max_concurrent(&log));
+    tokio::time::timeout(SETTLE, s.settled()).await.unwrap();
+    assert!(s.log().is_empty(), "nothing asked around the new proxy");
+}
+
+/// #1778: changed settings never join two files. Resumed through a proxy that now gives another
+/// version of the file (its ETag and date changed, `etag_change_every=1`), the download stops on
+/// `FileChanged` before writing anything: what was on the disk stays as it was, for the user to
+/// keep or start over.
+#[tokio::test]
+async fn a_resume_after_an_edit_refuses_a_changed_file() {
+    let s = server("rate=1M").await;
+    let (dir, state) = paused(&s, "/gen/8M/edited.bin?seed=1779").await;
+    let part = mdm_engine::naming::part_path(&dir.path().join("edited.bin"));
+    let before = std::fs::read(&part).unwrap();
+    let proxy = server("rate=1M&etag_change_every=1").await;
+    let (headers, opts) = edited(&proxy, 4);
+    let err = Download::resume(state.clone(), headers, opts)
+        .unwrap()
+        .wait()
+        .await
+        .unwrap_err();
+    assert!(matches!(err, mdm_engine::Error::FileChanged), "{err}");
+    assert!(std::fs::read(&part).unwrap() == before, "nothing written");
+    assert!(state.exists(), "kept, as any stopped download's");
+    tokio::time::timeout(SETTLE, proxy.settled()).await.unwrap();
+    assert!(
+        proxy
+            .log()
+            .iter()
+            .all(|e| e.user_agent.as_deref() == Some("Edited/1.0")),
+        "asked with the new settings"
+    );
 }
