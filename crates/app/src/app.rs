@@ -3656,7 +3656,14 @@ impl App {
                 });
                 self.setup_weighed = true;
             }
-            "torrent-settings" => self.run(Cmd::TorrentSettings, None, ctx),
+            "torrent-settings" => {
+                self.run(Cmd::TorrentSettings, None, ctx);
+                if tab == "trackers"
+                    && let Some(t) = &mut self.torrent_settings
+                {
+                    t.open_own_trackers();
+                }
+            }
             // The first download's: Add trackers (a torrent), its right-click menu.
             "add-trackers" if first.is_some() => self.run(Cmd::TorrentAddTrackers, first, ctx),
             // The first download's Torrent → Files... (a torrent).

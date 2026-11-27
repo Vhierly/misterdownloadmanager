@@ -392,7 +392,8 @@
 	Add to queue:	Add to queue:
 #. message or event log entry in the main window; window title in the Add torrent window
 	Add torrent	Add torrent
-#. window title in the Add torrent window
+#. text in the Add torrent window
+#. Add trackers window title
 	Add trackers	Add trackers
 #. text in playlistdlg.rs
 #. asked before a playlist adds many downloads at once; {n} is how many
@@ -2692,7 +2693,7 @@
 #. text in errors.rs
 	network error	network error
 #. text in the Add torrent window
-#. Torrent settings: under the user's own trackers box
+#. Own trackers: under the box
 	Never added to private torrents. Existing torrents stay as they are.	Never added to private torrents. Existing torrents stay as they are.
 #. text in the Options window
 	Never show it on these sites:	Never show it on these sites:
@@ -3067,6 +3068,13 @@
 #. text in the Options window
 #. Options → Add an account: label before the field for the service's API token (the other way to sign in)
 	Or paste your API token:	Or paste your API token:
+#. text in the Add torrent window
+#. Own trackers window title
+	Own trackers	Own trackers
+#. button in the Add torrent window
+#. Torrent settings: button opening the Own trackers window
+#. the trailing ... means it opens a window: keep it
+	Own trackers...	Own trackers...
 #. text in the Link grabber window
 #. Link grabber: the box that edits the selected package
 	Package	Package
@@ -5170,7 +5178,7 @@
 #. {version} = a version number (keep the braces as they are)
 	Your own program: {path} ({version})	Your own program: {path} ({version})
 #. text in the Add torrent window
-#. Torrent settings: above the multi-line box for user's own trackers
+#. Own trackers: above the multi-line box
 	Your own trackers for new public torrents, one address a line:	Your own trackers for new public torrents, one address a line:
 #. text in helpers.rs
 #. Video helpers: {path} = the system's yt-dlp, ffmpeg or gallery-dl

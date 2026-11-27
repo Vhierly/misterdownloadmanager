@@ -569,7 +569,7 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 These ship in the next version.
 
-- ✅ **Tasks → Torrent settings...** has a box for your own trackers (one address a line, `http`,
+- ✅ **Tasks → Torrent settings... → Own trackers...** opens a window for your own trackers (one address a line, `http`,
   `https`, or `udp`), added after a new public torrent's own trackers (never to private torrents,
   and local-network trackers are refused). Existing torrents keep their trackers, it works beside
   the public tracker list without duplicates, and `misterdownloadmanager-cli torrent-get` follows it
