@@ -569,6 +569,7 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 Everything below ships together, in version 0.6.0, the next release.
 
+- ✅ Magnet links clicked in the browser reach MDM's **Add torrent** window while Torrent settings take torrents, even without OS protocol association; right-click **Download with Mister Download Manager** sends a magnet link regardless of that setting ([#2025](https://github.com/anefzaoui/misterdownloadmanager/issues/2025))
 - ✅ Each browser's logo before its name in the browser extension's window, the first start's
   browser step and Options → General's browser list, sharp at every display scale; a globe for a
   browser without one
