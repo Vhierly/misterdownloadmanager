@@ -356,6 +356,10 @@
 #. RSS feeds window, Download rules: shown when there are no rules yet
 #, machine
 	A rule adds the new articles whose titles it matches, as they come.	En regel legger til nye artikler etter hvert som de kommer, hvis titlene samsvarer med regelen.
+#. text in the Options window
+#. Site rules window: in the empty list of rules, under its title
+#, machine
+	A rule sets the connections, User-Agent or headers for one site.	En regel angir tilkoblinger, User-Agent eller topptekster for ett nettsted.
 #. text in errors.rs
 #. an error: a server on this computer redirected the download to the internet, which would not go through the chosen network adapter; {adapter} its name
 #, machine
@@ -463,6 +467,10 @@
 #. link in the empty download list: opens Add URL
 #, machine
 	Add new download	Legg til ny nedlasting
+#. text in the Options window
+#. Options → Accounts: in the empty list of accounts, under its title
+#, machine
+	Add one to download file-host links through it.	Legg til en konto for å laste ned lenker fra filverter via den.
 #. text in the Options window
 #, machine
 	Add the duplicate and overwrite the existing file	Legg til duplikaten og overskriv den eksisterende filen
@@ -617,6 +625,10 @@
 #. Click'n'Load window, under the question: nothing happens to the links before the user adds them in Link grabber
 #, machine
 	Allow only sites you use. Nothing is looked up or downloaded before you add it in Link grabber.	Tillat bare nettsteder du bruker. Ingenting blir slått opp eller lastet ned før du legger det til i Koblingsfanger.
+#. text in the Options window; window title in the Options window
+#. window title: HTTPS sites whose certificate the user chose to trust
+#, machine
+	Allowed certificates	Tillatte sertifikater
 #. text in errors.rs
 #, machine
 	already being downloaded: {path}	lastes allerede ned: {path}
@@ -650,6 +662,9 @@
 #. View menu: a check item; dark mode on, whatever the system's setting
 #, machine
 	Always dark	Alltid mørk
+#. button in a dialog box
+#, machine
+	Always for this site	Alltid for dette nettstedet
 #. text in the Options window
 #. Options → Archives: where extracted files go
 #, machine
@@ -1059,6 +1074,11 @@
 #, machine
 	Central African Republic	Den sentralafrikanske republikk
 #. text in the Options window
+#. column title: SHA-256 certificate fingerprint
+#, machine
+	Certificate (SHA-256)	Sertifikat (SHA-256)
+#. text in a dialog box; text in the Options window
+#. Certificate warning: the certificate's SHA-256 fingerprint
 #. Options → Remote → Status: the certificate's fingerprint, which the phone's browser shows when it warns about it; {fingerprint} = hex digits
 #, machine
 	Certificate (SHA-256): {fingerprint}	Sertifikat (SHA-256): {fingerprint}
@@ -1066,6 +1086,11 @@
 #. Options → DNS over TLS: label before the name the server's certificate shows
 #, machine
 	Certificate name:	Sertifikatnavn:
+#. text in the Options window
+#. Options → Sites Logins: button: opens the list of allowed HTTPS site certificates
+#. the trailing ... means it is still going on: keep it
+#, machine
+	Certificates...	Sertifikater...
 #. text in countries.rs
 #. a country's name (where a download's server is)
 #, machine
@@ -1164,6 +1189,10 @@
 #. remote control page (on a phone): what the ".torrent file" button does (screen readers)
 #, machine
 	Choose a .torrent file	Velg en .torrent-fil
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles, under its title
+#, machine
+	Choose a feed to see its articles.	Velg en feed for å se artiklene.
 #. message or event log entry in the main window
 #. title of the file dialog of View → Font → Choose a font file
 #. title of the message when the font picked in View → Font can't be used
@@ -1335,6 +1364,13 @@
 #. text in the Options window
 #, machine
 	Connections:	Tilkoblinger:
+#. text in a dialog box
+#. Certificate warning: question before Continue once / Always for this site / Cancel
+#, machine
+	Continue anyway?	Fortsette likevel?
+#. button in a dialog box
+#, machine
+	Continue once	Fortsett én gang
 #. link (opens a web page) in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
 	Contributors	Bidragsytere
@@ -1598,6 +1634,9 @@
 #. button in the browser extension's window: stop offering it at each start
 #, machine
 	Don't ask again	Ikke spør igjen
+#. option (radio button) in the Options window
+#, machine
+	Don't show	Ikke vis
 #. text in the Options window
 #. checkbox, Options → Downloads: Download complete and MDM's other windows that open by themselves wait while a full-screen game, app or video, a presentation or the locked screen is on, and show when the user is back
 #, machine
@@ -1781,6 +1820,10 @@
 #. tab title: download settings
 #, machine
 	Downloads	Nedlastinger
+#. text in the Scheduler window
+#. Scheduler → Files in the queue: in the empty list, under its title
+#, machine
+	Downloads added to this queue show here.	Nedlastinger som legges til denne køen, vises her.
 #. window title in a dialog box
 #. title of the window that sums up downloads added together (a playlist, a batch) once all are done
 #, machine
@@ -1938,7 +1981,6 @@
 #, machine
 	Eritrea	Eritrea
 #. text in a dialog box; item in the Categories tree in the download list; value in a column's filter list in the download list; text in the download list (sizes, speeds, status); text in a download's progress window; text in remote.rs
-#. in Download File Info, where the size goes: the address didn't answer
 #. a download's status (state it is in, not a command)
 #. a download's status (state it is in, not a command): it failed
 #, machine
@@ -2008,6 +2050,10 @@
 #. Options → Accounts: a note that the debrid services' support (Real-Debrid, AllDebrid, Premiumize) is new and not yet tried with real paid accounts
 #, machine
 	Experimental: built from the services' public API documentation, not yet confirmed with real accounts.	Eksperimentelt: bygget fra tjenestenes offentlige API-dokumentasjon, ikke bekreftet med ekte kontoer ennå.
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Expired	Utløpt
 #. message or event log entry in the main window; text in the Options window
 #, machine
 	Export	Eksporter
@@ -2784,6 +2830,10 @@
 #. a country's name (where a download's server is)
 #, machine
 	Italy	Italia
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles of a feed not read yet
+#, machine
+	Its articles show here once the feed is read.	Artiklene vises her når feeden er lest.
 #. text in extracting archives (a download's log, the Archive password window)
 #. why an archive wasn't extracted in place (after "Couldn't extract {name}: "); HatchZip took its files out (the archive is gone), but moving them stopped: {to} holds those moved, {left} the others, {error} the system's reason
 #. {error} = an error message (keep the braces as they are)
@@ -3334,6 +3384,9 @@
 #. checkbox: the Minimize button hides MDM's windows to the notification area (system tray) instead of the taskbar
 #, machine
 	Minimize to the notification area	Minimer til systemstatusfeltet
+#. text in the Options window
+#, machine
+	Minimized, the window waits on the taskbar and doesn't take the focus.	Minimert venter vinduet på oppgavelinjen og tar ikke fokus.
 #. text in rssdlg.rs; text in the Add torrent window
 #. RSS feeds window: the unit after the minutes box
 #. Torrent settings: the unit after the minutes box
@@ -3654,6 +3707,10 @@
 #. button in a dialog box; text in a download's progress window
 #, machine
 	No	Nei
+#. text in the Options window
+#. Options → Accounts: the title in the empty list of debrid service accounts
+#, machine
+	No accounts yet	Ingen kontoer ennå
 #. text in a dialog box
 #, machine
 	No addresses yet	Ingen adresser ennå
@@ -3661,6 +3718,10 @@
 #. Options → Proxy / Socks: Test got no answer in time
 #, machine
 	No answer within 20 seconds.	Intet svar innen 20 sekunder.
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of articles of a feed that has none
+#, machine
+	No articles	Ingen artikler
 #. text in extension.rs
 #. a check of Test browser integration (Linux, macOS): MDM found no browser it can connect to (one installed as a Flatpak isn't found)
 #, machine
@@ -3708,6 +3769,18 @@
 #. title in the empty download list when there are no downloads at all
 #, machine
 	No downloads yet	Ingen nedlastinger ennå
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of articles, no feed chosen
+#, machine
+	No feed chosen	Ingen feed valgt
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of feeds
+#, machine
+	No feeds yet	Ingen feeder ennå
+#. text in the Scheduler window
+#. Scheduler → Files in the queue: the title in the empty list
+#, machine
+	No files in this queue	Ingen filer i denne køen
 #. text in a dialog box
 #, machine
 	No folders yet	Ingen mapper ennå
@@ -3721,6 +3794,10 @@
 #. text in langpick.rs
 #, machine
 	No language matches.	Ingen språk samsvarer.
+#. text in the Link grabber window
+#. Link grabber: the title in its empty list
+#, machine
+	No links yet	Ingen koblinger ennå
 #. text in the Options window
 #. Options → Remote → Status: on, but the computer has no local network address now
 #, machine
@@ -3752,9 +3829,17 @@
 #, machine
 	No proxy/socks	Ingen proxy/SOCKS
 #. text in the Options window
+#. Site rules window: the title in the empty list of rules
+#, machine
+	No site rules yet	Ingen nettstedregler ennå
+#. text in the Options window
 #. Options → Accounts: no system keyring/keychain answered (none runs, e.g. a desktop without one), so the sign-ins stay in MDM's settings folder, which only the user's account may read
 #, machine
 	No system keyring answered, so sign-ins and passwords are kept in MDM's settings, which only you can read.	Ingen systemnøkkelring svarte, så pålogginger og passord lagres i MDMs innstillinger, som bare du kan lese.
+#. text in the Add torrent window
+#. Add torrent: the title in the empty list of files, before a torrent is read
+#, machine
+	No torrent yet	Ingen torrent ennå
 #. message or event log entry in the main window
 #. event log entry: Add trackers changed nothing, the torrent had them all
 #, machine
@@ -3873,8 +3958,16 @@
 #, machine
 	Not tested: it is larger than {limit} (Options → Archives). Right-click → Test archive tests it	Ikke testet: det er større enn {limit} (Alternativer → Arkiver). Høyreklikk → Test arkiv for å teste det
 #. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Not trusted	Ikke klarert
+#. text in the Options window
 #, machine
 	Not used: file parts are written next to the file	Ikke brukt: fildelene skrives ved siden av filen
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Not yet valid	Ikke gyldig ennå
 #. text in a dialog box
 #. \\n starts a new line: break lines where they fit the translation
 #, machine
@@ -4096,6 +4189,9 @@
 #. Options → Add an account: label before the field for the service's API token (the other way to sign in)
 #, machine
 	Or paste your API token:	Eller lim inn din API-token:
+#. text in the Options window
+#, machine
+	Other	Annet
 #. text in the Link grabber window
 #. Link grabber: the box that edits the selected package
 #, machine
@@ -4169,6 +4265,7 @@
 #, machine
 	Password:	Passord:
 #. text in the Add torrent window
+#. "Look up" is the button that reads the torrent: use its translation
 #, machine
 	Paste a magnet link or choose a .torrent file, then Look up.	Lim inn en magnetlenke eller velg en .torrent-fil, og klikk deretter Slå opp.
 #. text in the Link grabber window
@@ -4402,6 +4499,10 @@
 #. {error} = an error message (keep the braces as they are)
 #, machine
 	Reannounce failed: {error}	Kunne ikke kunngjøre på nytt: {error}
+#. text in the Options window
+#. column title: certificate refusal reason allowed
+#, machine
+	Reason	Årsak
 #. text in a download's progress window
 #. column title: how much came from the peer
 #, machine
@@ -4673,6 +4774,10 @@
 #. text in the Batch download window
 #, machine
 	Second file:	Andre fil:
+#. text in a dialog box
+#. window title when a server's HTTPS certificate is refused
+#, machine
+	Security Alert	Sikkerhetsvarsel
 #. text in preview.rs
 #. the preview pane when no download is selected, under its title
 #, machine
@@ -4854,7 +4959,7 @@
 #. checkbox in the Options window; checkbox in a download's progress window
 #, machine
 	Show download complete dialog	Vis dialogboks for fullført nedlasting
-#. checkbox in the Options window
+#. text in the Options window
 #, machine
 	Show download progress dialog when a download starts	Vis dialogboks for nedlastingsfremdrift når en nedlasting starter
 #. text in the Options window
@@ -4869,6 +4974,12 @@
 #. button in the browser extension's window: open the tutorial that adds the extension
 #, machine
 	Show me how	Vis meg hvordan
+#. option (radio button) in the Options window
+#, machine
+	Show minimized	Vis minimert
+#. option (radio button) in the Options window
+#, machine
+	Show normally	Vis normalt
 #. what a keyboard shortcut does in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
 	Show or hide the preview pane	Vis eller skjul forhåndsvisningsruten
@@ -4961,6 +5072,7 @@
 	Sint Maarten	Sint Maarten
 #. text in the Options window
 #. Site rules: column title: the site pattern
+#. column title: site name and port
 #, machine
 	Site	Nettsted
 #. checkbox in the Find window
@@ -4987,6 +5099,11 @@
 #. Site rule: label before the site pattern box (example.com, *.example.com)
 #, machine
 	Site:	Nettsted:
+#. text in a dialog box
+#. Certificate warning: the site whose certificate was refused; {site} = host or host:port
+#. {site} = a web site's name such as "example.com" (keep the braces as they are)
+#, machine
+	Site: {site}	Nettsted: {site}
 #. text in the Options window
 #. tab title: user names and passwords for sites
 #, machine
@@ -4997,6 +5114,14 @@
 #. text in helpers.rs
 #, machine
 	Sites send their best quality as separate video and audio. ffmpeg puts them together into one file that plays anywhere.	Nettsteder sender video og lyd separat i beste kvalitet. ffmpeg setter dem sammen til én fil som kan spilles av hvor som helst.
+#. text in the Options window
+#. Options → Sites Logins: beside the Certificates... button
+#, machine
+	Sites whose certificate you chose to trust	Nettsteder hvis sertifikat du valgte å klarere
+#. text in the Options window
+#. Allowed certificates window: explanation
+#, machine
+	Sites whose security certificate you chose to trust. Each entry is pinned to that certificate's SHA-256 fingerprint.	Nettsteder hvis sikkerhetssertifikat du valgte å klarere. Hver oppføring er festet til sertifikatets SHA-256-fingeravtrykk.
 #. text in the Link grabber window; text in a download's progress window; text in the Scheduler window; text in the Add torrent window
 #. column title: the file's size
 #. column title: file size
@@ -5804,6 +5929,9 @@
 #, machine
 	The site's certificate isn't trusted, by yt-dlp nor by this computer: an antivirus's web filter or a proxy that reads HTTPS may be in the way. Turn its HTTPS scanning off, or add its certificate to the computer's, then look the page up again.	Nettstedets sertifikat er ikke klarert, verken av yt-dlp eller av denne datamaskinen: et antivirus' nettfilter eller en proxy som leser HTTPS, kan være i veien. Slå av HTTPS-skanningen, eller legg til sertifikatet i datamaskinens, og slå deretter opp siden igjen.
 #. text in errors.rs
+#, machine
+	the site's security certificate expired on {date}, so MDM can't be sure it's the real site (your browser warns about it too)	nettstedets sikkerhetssertifikat utløp {date}, så MDM kan ikke være sikker på at det er det ekte nettstedet (nettleseren din advarer også om det)
+#. text in errors.rs
 #. why a download failed: the site's security certificate (what proves a secure, HTTPS, site is the one it says) is past its end date. Browsers warn about the same site
 #, machine
 	the site's security certificate has expired, so MDM can't be sure it's the real site (your browser warns about it too)	nettstedets sikkerhetssertifikat er utløpt, så MDM kan ikke være sikker på at det er det virkelige nettstedet (nettleseren din advarer også om det)
@@ -5811,6 +5939,10 @@
 #. why a download failed: the site's security certificate was made for other site names than the one in the address
 #, machine
 	the site's security certificate is for another site name, so MDM can't be sure it's the real site (your browser warns about it too)	nettstedets sikkerhetssertifikat er for et annet nettstedsnavn, så MDM kan ikke være sikker på at det er det virkelige nettstedet (nettleseren din advarer også om det)
+#. text in errors.rs
+#. why a download failed: the site's security certificate is self-signed
+#, machine
+	the site's security certificate is self-signed, so MDM can't be sure it's the real site (your browser warns about it too)	nettstedets sikkerhetssertifikat er selvsignert, så MDM kan ikke være sikker på at det er det ekte nettstedet (nettleseren din advarer også om det)
 #. text in errors.rs
 #. why a download failed: the site's security certificate is made for other uses than a website (its "extended key usage" leaves out web servers)
 #, machine
@@ -5980,6 +6112,10 @@
 #. remote control page (on a phone): label of the box naming this phone (shown in MDM's list of paired devices)
 #, machine
 	This device's name	Navn på denne enheten
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles of a feed that has none
+#, machine
+	This feed has no articles right now.	Denne feeden har ingen artikler akkurat nå.
 #. message or event log entry in the main window
 #. the message when a file picked in View → Font isn't a TrueType or OpenType font MDM can read
 #, machine
@@ -6850,6 +6986,10 @@
 #. {n} = a number (keep the braces as they are)
 #, machine
 	Wrong code. Tries left: {n}	Feil kode. Antall forsøk igjen: {n}
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Wrong name	Feil navn
 #. text in extracting archives (a download's log, the Archive password window)
 #. in Archive password: {name} is the archive's file name
 #. {name} = a file name (keep the braces as they are)

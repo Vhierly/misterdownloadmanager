@@ -3,6 +3,7 @@
 mod app;
 mod archtest;
 mod batch;
+mod browsericons;
 mod categories;
 mod checksum;
 mod chrome;
@@ -71,6 +72,7 @@ mod secrets;
 mod selection;
 mod settings;
 mod setup;
+mod sitewait;
 mod store;
 mod sysprogress;
 mod theme;

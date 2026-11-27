@@ -29,7 +29,10 @@
 </p>
 
 <p align="center">
-  <a href="https://trendshift.io/repositories/337427" target="_blank"><img src="https://trendshift.io/api/badge/trendshift/repositories/337427/daily?language=Rust" alt="Mister Download Manager on Trendshift: number 1 Rust repository of the day" width="200" height="44"></a><br>
+  <a href="https://trendshift.io/repositories/337427" target="_blank"><img src="https://trendshift.io/api/badge/trendshift/repositories/337427/daily?language=Rust" alt="Mister Download Manager on Trendshift: number 1 Rust repository of the day" width="200" height="44"></a>
+  <a href="https://trendshift.io/repositories/337427" target="_blank"><img src="https://trendshift.io/api/badge/trendshift/repositories/337427/weekly?language=Rust" alt="Mister Download Manager on Trendshift: number 1 Rust repository of the week" width="200" height="44"></a><br>
+  <a href="https://trendshift.io/repositories/337427" target="_blank"><img src="https://trendshift.io/api/badge/trendshift/repositories/337427/weekly" alt="Mister Download Manager on Trendshift: number 3 repository of the week, all languages" width="200" height="44"></a>
+  <a href="https://trendshift.io/repositories/337427" target="_blank"><img src="https://trendshift.io/api/badge/trendshift/repositories/337427/daily" alt="Mister Download Manager on Trendshift: number 4 repository of the day, all languages" width="200" height="44"></a><br>
   <a href="https://github.com/anefzaoui/misterdownloadmanager/stargazers"><img src="https://img.shields.io/github/stars/anefzaoui/misterdownloadmanager?style=social&label=Star%20MDM" alt="Star Mister Download Manager on GitHub" height="28"></a><br>
   <sub>⭐ <b>Like it? Give it a star.</b> MDM has no ads and no marketing budget: stars are how people find it.</sub>
 </p>
@@ -116,7 +119,7 @@ one:
 | `...-setup-x86.exe`, `...-portable-x86.zip`, `...-x86.zip` | The same three for **32-bit Windows 10**. There, choose your own ffmpeg in **Helpers** for the best video qualities: none is built for it that MDM can check. |
 | `...-extension-chromium.zip` | You want to add the browser extension by hand (Chrome, Edge, Brave, Opera, Vivaldi). From the stores is easier: [Add to Chrome](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp), [Add to Firefox](https://addons.mozilla.org/firefox/addon/mister-download-manager/). |
 
-The ARM64 and 32-bit files come with every release after 0.5.2; **Check for updates** keeps each
+The ARM64 and 32-bit files come with every release from 0.6.0; **Check for updates** keeps each
 copy on its own processor's files.
 
 > [!NOTE]
@@ -170,7 +173,7 @@ Up to version 0.2.4, the files' names end in `-experimental`.
 | `...-linux-x86_64.rpm` | Fedora, openSUSE, RHEL: `sudo dnf install ./<file>.rpm`. |
 | `...-linux-x86_64.AppImage` | Any Linux. Make it executable and run it. |
 | `...-linux-x86_64.tar.gz` | The plain programs, for any distribution. |
-| `...-linux-arm64.*` | The same four for 64-bit ARM computers, from the release after 0.5.2 (built and tested on GitHub's ARM machines). |
+| `...-linux-arm64.*` | The same four for 64-bit ARM computers, from version 0.6.0 (built and tested on GitHub's ARM machines). |
 
 <p align="center">
   <picture>
@@ -512,6 +515,8 @@ Bug reports are welcome in
 [Issues](https://github.com/anefzaoui/misterdownloadmanager/issues/new/choose): **Help → Report a problem**
 in the app fills in your version and system. Ideas are welcome in
 [Discussions](https://github.com/anefzaoui/misterdownloadmanager/discussions/categories/ideas). Pull requests are accepted under the same licence: start with [CONTRIBUTING.md](CONTRIBUTING.md).
+How the project is run, from reviews to releases, is in [GOVERNANCE.md](GOVERNANCE.md), and everyone
+who takes part follows the [Code of conduct](CODE_OF_CONDUCT.md).
 
 ## Made possible by these amazing humans
 

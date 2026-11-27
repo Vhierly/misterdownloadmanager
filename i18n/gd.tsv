@@ -356,6 +356,10 @@
 #. RSS feeds window, Download rules: shown when there are no rules yet
 #, machine
 	A rule adds the new articles whose titles it matches, as they come.	Cuiridh riaghailt na h-artaigilean ùra ris a bheil an tiotal aice a’ freagairt, mar a thig iad.
+#. text in the Options window
+#. Site rules window: in the empty list of rules, under its title
+#, machine
+	A rule sets the connections, User-Agent or headers for one site.	Bidh riaghailt a’ suidheachadh nan ceanglaichean, User-Agent no cinn-cinn airson aon làrach.
 #. text in errors.rs
 #. an error: a server on this computer redirected the download to the internet, which would not go through the chosen network adapter; {adapter} its name
 #, machine
@@ -463,6 +467,10 @@
 #. link in the empty download list: opens Add URL
 #, machine
 	Add new download	Cuir luchdadh a-nuas ùr ris
+#. text in the Options window
+#. Options → Accounts: in the empty list of accounts, under its title
+#, machine
+	Add one to download file-host links through it.	Cuir cunntas ris gus ceanglaichean aoigheachd fhaidhlichean a luchdachadh a-nuas troimhe.
 #. text in the Options window
 #, machine
 	Add the duplicate and overwrite the existing file	Cuir an dùblachadh ris agus sgrìobh thairis air an fhaidhle a th’ ann
@@ -617,6 +625,10 @@
 #. Click'n'Load window, under the question: nothing happens to the links before the user adds them in Link grabber
 #, machine
 	Allow only sites you use. Nothing is looked up or downloaded before you add it in Link grabber.	Na ceadaich ach làraich a chleachdas tu. Cha tèid dad a lorg no a luchdadh a-nuas mus cuir thu ris ann an Link grabber e.
+#. text in the Options window; window title in the Options window
+#. window title: HTTPS sites whose certificate the user chose to trust
+#, machine
+	Allowed certificates	Teisteanasan ceadaichte
 #. text in errors.rs
 #, machine
 	already being downloaded: {path}	ga luchdadh a-nuas mu thràth: {path}
@@ -650,6 +662,9 @@
 #. View menu: a check item; dark mode on, whatever the system's setting
 #, machine
 	Always dark	An-còmhnaidh dorcha
+#. button in a dialog box
+#, machine
+	Always for this site	Cuir earbsa ann an-còmhnaidh airson na làraich seo
 #. text in the Options window
 #. Options → Archives: where extracted files go
 #, machine
@@ -1059,6 +1074,11 @@
 #, machine
 	Central African Republic	Poblachd Meadhan Afraga
 #. text in the Options window
+#. column title: SHA-256 certificate fingerprint
+#, machine
+	Certificate (SHA-256)	Teisteanas (SHA-256)
+#. text in a dialog box; text in the Options window
+#. Certificate warning: the certificate's SHA-256 fingerprint
 #. Options → Remote → Status: the certificate's fingerprint, which the phone's browser shows when it warns about it; {fingerprint} = hex digits
 #, machine
 	Certificate (SHA-256): {fingerprint}	Teisteanas (SHA-256): {fingerprint}
@@ -1066,6 +1086,11 @@
 #. Options → DNS over TLS: label before the name the server's certificate shows
 #, machine
 	Certificate name:	Ainm an teisteanais:
+#. text in the Options window
+#. Options → Sites Logins: button: opens the list of allowed HTTPS site certificates
+#. the trailing ... means it is still going on: keep it
+#, machine
+	Certificates...	Teisteanasan...
 #. text in countries.rs
 #. a country's name (where a download's server is)
 #, machine
@@ -1164,6 +1189,10 @@
 #. remote control page (on a phone): what the ".torrent file" button does (screen readers)
 #, machine
 	Choose a .torrent file	Tagh faidhle .torrent
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles, under its title
+#, machine
+	Choose a feed to see its articles.	Tagh biadhadh gus na h-artaigilean aige fhaicinn.
 #. message or event log entry in the main window
 #. title of the file dialog of View → Font → Choose a font file
 #. title of the message when the font picked in View → Font can't be used
@@ -1335,6 +1364,13 @@
 #. text in the Options window
 #, machine
 	Connections:	Ceanglaichean:
+#. text in a dialog box
+#. Certificate warning: question before Continue once / Always for this site / Cancel
+#, machine
+	Continue anyway?	Lean air adhart co-dhiù?
+#. button in a dialog box
+#, machine
+	Continue once	Lean air adhart aon uair
 #. link (opens a web page) in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
 	Contributors	Luchd-cuideachaidh
@@ -1598,6 +1634,9 @@
 #. button in the browser extension's window: stop offering it at each start
 #, machine
 	Don't ask again	Na faighnich a-rithist
+#. option (radio button) in the Options window
+#, machine
+	Don't show	Na seall
 #. text in the Options window
 #. checkbox, Options → Downloads: Download complete and MDM's other windows that open by themselves wait while a full-screen game, app or video, a presentation or the locked screen is on, and show when the user is back
 #, machine
@@ -1781,6 +1820,10 @@
 #. tab title: download settings
 #, machine
 	Downloads	Luchdaidhean sìos
+#. text in the Scheduler window
+#. Scheduler → Files in the queue: in the empty list, under its title
+#, machine
+	Downloads added to this queue show here.	Chithear luchdachaidhean a-nuas a chaidh a chur ris a’ chiudha seo an seo.
 #. window title in a dialog box
 #. title of the window that sums up downloads added together (a playlist, a batch) once all are done
 #, machine
@@ -1938,7 +1981,6 @@
 #, machine
 	Eritrea	Eritrea
 #. text in a dialog box; item in the Categories tree in the download list; value in a column's filter list in the download list; text in the download list (sizes, speeds, status); text in a download's progress window; text in remote.rs
-#. in Download File Info, where the size goes: the address didn't answer
 #. a download's status (state it is in, not a command)
 #. a download's status (state it is in, not a command): it failed
 #, machine
@@ -2008,6 +2050,10 @@
 #. Options → Accounts: a note that the debrid services' support (Real-Debrid, AllDebrid, Premiumize) is new and not yet tried with real paid accounts
 #, machine
 	Experimental: built from the services' public API documentation, not yet confirmed with real accounts.	Deuchainneach: air a thogail bho sgrìobhainnean API poblach nan seirbheisean, gun a bhith air a dhearbhadh le fìor chunntasan fhathast.
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Expired	Air tighinn gu crìch
 #. message or event log entry in the main window; text in the Options window
 #, machine
 	Export	Às-phortaich
@@ -2780,6 +2826,10 @@
 #. a country's name (where a download's server is)
 #, machine
 	Italy	An Eadailt
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles of a feed not read yet
+#, machine
+	Its articles show here once the feed is read.	Chithear na h-artaigilean aige an seo aon uair ‘s gun tèid am biadhadh a leughadh.
 #. text in extracting archives (a download's log, the Archive password window)
 #. why an archive wasn't extracted in place (after "Couldn't extract {name}: "); HatchZip took its files out (the archive is gone), but moving them stopped: {to} holds those moved, {left} the others, {error} the system's reason
 #. {error} = an error message (keep the braces as they are)
@@ -3330,6 +3380,9 @@
 #. checkbox: the Minimize button hides MDM's windows to the notification area (system tray) instead of the taskbar
 #, machine
 	Minimize to the notification area	Lùghdaich dhan raon-fiosrachaidh
+#. text in the Options window
+#, machine
+	Minimized, the window waits on the taskbar and doesn't take the focus.	Nuair a tha an uinneag air a lughdachadh, bidh i a’ feitheamh air a’ bhàr-tasg agus cha ghabh i am fòcas.
 #. text in rssdlg.rs; text in the Add torrent window
 #. RSS feeds window: the unit after the minutes box
 #. Torrent settings: the unit after the minutes box
@@ -3650,6 +3703,10 @@
 #. button in a dialog box; text in a download's progress window
 #, machine
 	No	Chan eil
+#. text in the Options window
+#. Options → Accounts: the title in the empty list of debrid service accounts
+#, machine
+	No accounts yet	Gun chunntasan fhathast
 #. text in a dialog box
 #, machine
 	No addresses yet	Chan eil seòlaidhean ann fhathast
@@ -3657,6 +3714,10 @@
 #. Options → Proxy / Socks: Test got no answer in time
 #, machine
 	No answer within 20 seconds.	Cha tàinig freagairt taobh a-staigh 20 diogan.
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of articles of a feed that has none
+#, machine
+	No articles	Gun artaigilean
 #. text in extension.rs
 #. a check of Test browser integration (Linux, macOS): MDM found no browser it can connect to (one installed as a Flatpak isn't found)
 #, machine
@@ -3704,6 +3765,18 @@
 #. title in the empty download list when there are no downloads at all
 #, machine
 	No downloads yet	Chan eil luchdachadh a-nuas ann fhathast
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of articles, no feed chosen
+#, machine
+	No feed chosen	Gun bhiadhadh air a thaghadh
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of feeds
+#, machine
+	No feeds yet	Gun bhiadhan fhathast
+#. text in the Scheduler window
+#. Scheduler → Files in the queue: the title in the empty list
+#, machine
+	No files in this queue	Gun fhaidhlichean sa chiudha seo
 #. text in a dialog box
 #, machine
 	No folders yet	Chan eil pasganan ann fhathast
@@ -3717,6 +3790,10 @@
 #. text in langpick.rs
 #, machine
 	No language matches.	Chan eil cànan a’ freagairt.
+#. text in the Link grabber window
+#. Link grabber: the title in its empty list
+#, machine
+	No links yet	Gun cheanglaichean fhathast
 #. text in the Options window
 #. Options → Remote → Status: on, but the computer has no local network address now
 #, machine
@@ -3748,9 +3825,17 @@
 #, machine
 	No proxy/socks	Gun proxy/socks
 #. text in the Options window
+#. Site rules window: the title in the empty list of rules
+#, machine
+	No site rules yet	Gun riaghailtean làraich fhathast
+#. text in the Options window
 #. Options → Accounts: no system keyring/keychain answered (none runs, e.g. a desktop without one), so the sign-ins stay in MDM's settings folder, which only the user's account may read
 #, machine
 	No system keyring answered, so sign-ins and passwords are kept in MDM's settings, which only you can read.	Cha do fhreagair iuchrach-fhàinne an t-siostaim, mar sin tha logaichean is faclan-faire gan cumail ann an roghainnean MDM, nach urrainn ach thusa a leughadh.
+#. text in the Add torrent window
+#. Add torrent: the title in the empty list of files, before a torrent is read
+#, machine
+	No torrent yet	Gun torrent fhathast
 #. message or event log entry in the main window
 #. event log entry: Add trackers changed nothing, the torrent had them all
 #, machine
@@ -3869,8 +3954,16 @@
 #, machine
 	Not tested: it is larger than {limit} (Options → Archives). Right-click → Test archive tests it	Gun deuchainn: tha e nas motha na {limit} (Roghainnean → Tasglannan). Dèan briogadh deas → Dearbhaich tasglann gus a dhearbhadh
 #. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Not trusted	Gun earbsa
+#. text in the Options window
 #, machine
 	Not used: file parts are written next to the file	Gun chleachdadh: tha pàirtean faidhle sgrìobhte ri taobh an fhaidhle
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Not yet valid	Gun a bhith dligheach fhathast
 #. text in a dialog box
 #. \\n starts a new line: break lines where they fit the translation
 #, machine
@@ -4092,6 +4185,9 @@
 #. Options → Add an account: label before the field for the service's API token (the other way to sign in)
 #, machine
 	Or paste your API token:	Air neo, cuir a-steach an tòcan API agad:
+#. text in the Options window
+#, machine
+	Other	Eile
 #. text in the Link grabber window
 #. Link grabber: the box that edits the selected package
 #, machine
@@ -4165,6 +4261,7 @@
 #, machine
 	Password:	Facal-faire:
 #. text in the Add torrent window
+#. "Look up" is the button that reads the torrent: use its translation
 #, machine
 	Paste a magnet link or choose a .torrent file, then Look up.	Cuir a-steach ceangal magnet no tagh faidhle .torrent, an uairsin Lorg.
 #. text in the Link grabber window
@@ -4398,6 +4495,10 @@
 #. {error} = an error message (keep the braces as they are)
 #, machine
 	Reannounce failed: {error}	Dh’fhàillig ath-fhoillseachadh: {error}
+#. text in the Options window
+#. column title: certificate refusal reason allowed
+#, machine
+	Reason	Adhbhar
 #. text in a download's progress window
 #. column title: how much came from the peer
 #, machine
@@ -4669,6 +4770,10 @@
 #. text in the Batch download window
 #, machine
 	Second file:	Dàrna faidhle:
+#. text in a dialog box
+#. window title when a server's HTTPS certificate is refused
+#, machine
+	Security Alert	Rabhadh Tèarainteachd
 #. text in preview.rs
 #. the preview pane when no download is selected, under its title
 #, machine
@@ -4850,7 +4955,7 @@
 #. checkbox in the Options window; checkbox in a download's progress window
 #, machine
 	Show download complete dialog	Seall bogsa-còmhraidh crìochnachaidh luchdaich a-nuas
-#. checkbox in the Options window
+#. text in the Options window
 #, machine
 	Show download progress dialog when a download starts	Seall còmhradh adhartais an luchdadh a-nuas nuair a thòisicheas luchdadh a-nuas
 #. text in the Options window
@@ -4865,6 +4970,12 @@
 #. button in the browser extension's window: open the tutorial that adds the extension
 #, machine
 	Show me how	Seall dhomh ciamar
+#. option (radio button) in the Options window
+#, machine
+	Show minimized	Seall air a lughdachadh
+#. option (radio button) in the Options window
+#, machine
+	Show normally	Seall gu h-àbhaisteach
 #. what a keyboard shortcut does in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
 	Show or hide the preview pane	Seall no falaich am pana ro-sheallaidh
@@ -4957,6 +5068,7 @@
 	Sint Maarten	Sint Maarten
 #. text in the Options window
 #. Site rules: column title: the site pattern
+#. column title: site name and port
 #, machine
 	Site	Làrach
 #. checkbox in the Find window
@@ -4983,6 +5095,11 @@
 #. Site rule: label before the site pattern box (example.com, *.example.com)
 #, machine
 	Site:	Làrach:
+#. text in a dialog box
+#. Certificate warning: the site whose certificate was refused; {site} = host or host:port
+#. {site} = a web site's name such as "example.com" (keep the braces as they are)
+#, machine
+	Site: {site}	Làrach: {site}
 #. text in the Options window
 #. tab title: user names and passwords for sites
 #, machine
@@ -4993,6 +5110,14 @@
 #. text in helpers.rs
 #, machine
 	Sites send their best quality as separate video and audio. ffmpeg puts them together into one file that plays anywhere.	Cuiridh làraich an càileachd as fheàrr aca mar bhidio is claisneachd air leth. Cuiridh ffmpeg ri chèile iad ann an aon fhaidhle a chluicheas an àite sam bith.
+#. text in the Options window
+#. Options → Sites Logins: beside the Certificates... button
+#, machine
+	Sites whose certificate you chose to trust	Làraich aig a bheil an teisteanas a thagh thu earbsa a chur ann
+#. text in the Options window
+#. Allowed certificates window: explanation
+#, machine
+	Sites whose security certificate you chose to trust. Each entry is pinned to that certificate's SHA-256 fingerprint.	Làraich aig a bheil an teisteanas tèarainteachd a thagh thu earbsa a chur ann. Tha gach inntrigeadh ceangailte ri lorgan-meòir SHA-256 an teisteanais sin.
 #. text in the Link grabber window; text in a download's progress window; text in the Scheduler window; text in the Add torrent window
 #. column title: the file's size
 #. column title: file size
@@ -5800,6 +5925,9 @@
 #, machine
 	The site's certificate isn't trusted, by yt-dlp nor by this computer: an antivirus's web filter or a proxy that reads HTTPS may be in the way. Turn its HTTPS scanning off, or add its certificate to the computer's, then look the page up again.	Chan eil teisteanas na làraich earbsach, le yt-dlp no leis a’ choimpiutair seo: dh’fhaodadh sìoltachan-lìn an anti-bhìoras no proxy a leughas HTTPS a bhith sa rathad. Cuir dheth an sganadh HTTPS aige, no cuir an teisteanas aige ri teisteanasan a’ choimpiutair, an uairsin sgrùdaich an duilleag a-rithist.
 #. text in errors.rs
+#, machine
+	the site's security certificate expired on {date}, so MDM can't be sure it's the real site (your browser warns about it too)	thàinig teisteanas tèarainteachd na làraich gu crìch air {date}, mar sin chan urrainn do MDM a bhith cinnteach gur e an fhìor làrach a th’ ann (tha am brabhsair agad a’ toirt rabhadh mu dheidhinn cuideachd)
+#. text in errors.rs
 #. why a download failed: the site's security certificate (what proves a secure, HTTPS, site is the one it says) is past its end date. Browsers warn about the same site
 #, machine
 	the site's security certificate has expired, so MDM can't be sure it's the real site (your browser warns about it too)	tha teisteanas tèarainteachd na làraich air tighinn gu crìch, mar sin chan urrainn do MDM a bhith cinnteach gur e an fhìor làrach a th’ ann (tha am brabhsair agad a’ toirt rabhadh mu dheidhinn cuideachd)
@@ -5807,6 +5935,10 @@
 #. why a download failed: the site's security certificate was made for other site names than the one in the address
 #, machine
 	the site's security certificate is for another site name, so MDM can't be sure it's the real site (your browser warns about it too)	tha teisteanas tèarainteachd na làraich airson ainm làraich eile, mar sin chan urrainn do MDM a bhith cinnteach gur e an fhìor làrach a th’ ann (tha am brabhsair agad a’ toirt rabhadh mu dheidhinn cuideachd)
+#. text in errors.rs
+#. why a download failed: the site's security certificate is self-signed
+#, machine
+	the site's security certificate is self-signed, so MDM can't be sure it's the real site (your browser warns about it too)	tha teisteanas tèarainteachd na làraich fèin-shoidhnichte, mar sin chan urrainn do MDM a bhith cinnteach gur e an fhìor làrach a th’ ann (tha am brabhsair agad a’ toirt rabhadh mu dheidhinn cuideachd)
 #. text in errors.rs
 #. why a download failed: the site's security certificate is made for other uses than a website (its "extended key usage" leaves out web servers)
 #, machine
@@ -5976,6 +6108,10 @@
 #. remote control page (on a phone): label of the box naming this phone (shown in MDM's list of paired devices)
 #, machine
 	This device's name	Ainm an inneil seo
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles of a feed that has none
+#, machine
+	This feed has no articles right now.	Chan eil artaigilean aig a’ bhiadhadh seo an-dràsta.
 #. message or event log entry in the main window
 #. the message when a file picked in View → Font isn't a TrueType or OpenType font MDM can read
 #, machine
@@ -6846,6 +6982,10 @@
 #. {n} = a number (keep the braces as they are)
 #, machine
 	Wrong code. Tries left: {n}	Còd ceàrr. Deuchainnean air fhàgail: {n}
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Wrong name	Ainm ceàrr
 #. text in extracting archives (a download's log, the Archive password window)
 #. in Archive password: {name} is the archive's file name
 #. {name} = a file name (keep the braces as they are)

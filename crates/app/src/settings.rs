@@ -402,6 +402,10 @@ pub struct Settings {
     /// Downloads → Customize "Download progress" dialog → Edit... (#1041): a download's
     /// progress window opens when it starts. Off, it runs in the list (double-click opens it).
     pub show_progress: bool,
+    /// The same dialog's third choice (#1966): the progress window starts minimized, on the
+    /// taskbar, and doesn't take the focus. Only when `show_progress` is on; a list from before
+    /// has neither it nor the choice: it opens normally.
+    pub show_progress_minimized: bool,
     pub only_add_to_queue: bool,
     pub start_immediately: bool,
     pub queue_panel_later: bool,
@@ -473,6 +477,11 @@ pub struct Settings {
     /// Windows account (`sealed_logins`).
     #[serde(with = "sealed_logins")]
     pub site_logins: Vec<(String, String, String)>,
+    /// HTTPS sites whose refused certificate the user chose "Always for this site" for (#1964),
+    /// pinned to `(host, port, sha256)`. Written even when empty: Options' OK applies only
+    /// the keys it changed (`merge_changes`), so a list emptied there must still be a key.
+    #[serde(default)]
+    pub allowed_certs: Vec<mdm_engine::AllowedCert>,
     /// Options → Accounts (#44): debrid service accounts, in the order they are asked.
     pub debrid_accounts: Vec<DebridAccount>,
     /// "Download supported file-host links through these accounts".
@@ -724,6 +733,7 @@ impl Default for Settings {
             mark_downloads: true,
             show_start_dialog: true,
             show_progress: true,
+            show_progress_minimized: false,
             only_add_to_queue: false,
             start_immediately: true,
             queue_panel_later: true,
@@ -756,6 +766,7 @@ impl Default for Settings {
             net_adapter: String::new(),
             ftp_passive: true,
             site_logins: Vec::new(),
+            allowed_certs: Vec::new(),
             debrid_accounts: Vec::new(),
             debrid_on: true,
             debrid_torrents: false,
@@ -1545,6 +1556,14 @@ impl Settings {
                 (true, Some(p)) => mdm_cli::TorrentProxy::Through(p),
                 (true, None) => mdm_cli::TorrentProxy::Missing,
             },
+            // As the app's session takes them (`torrent_config`).
+            torrent_net: mdm_cli::TorrentNet {
+                dht: self.torrent_dht,
+                lsd: self.torrent_lsd,
+                upnp: self.torrent_upnp,
+                listen: self.torrent_incoming,
+                utp: self.torrent_utp,
+            },
             // The same switch, address and cache as the app's (#1776).
             public_trackers: self
                 .torrent_public_trackers
@@ -1562,6 +1581,33 @@ impl Settings {
                 exceptions: self.conn_exceptions.clone(),
             },
         }
+    }
+}
+
+impl Settings {
+    /// Pin `sha256` for `(host, port, problem)` (#1964), replacing any previous certificate for
+    /// that site and refusal reason.
+    pub fn allow_cert(
+        &mut self,
+        host: String,
+        port: u16,
+        sha256: String,
+        problem: mdm_engine::CertProblem,
+    ) {
+        if !problem.can_allow() {
+            return;
+        }
+        let host = host.to_ascii_lowercase();
+        let sha256 = sha256.to_ascii_lowercase();
+        self.allowed_certs.retain(|c| {
+            !(c.port == port && c.host.eq_ignore_ascii_case(&host) && c.problem == problem)
+        });
+        self.allowed_certs.push(mdm_engine::AllowedCert {
+            host,
+            port,
+            sha256,
+            problem,
+        });
     }
 }
 
@@ -1645,6 +1691,24 @@ mod tests {
         let again: Settings = serde_json::from_value(serde_json::to_value(&s).unwrap()).unwrap();
         assert_eq!(again.torrent_extra_trackers, want);
         assert_eq!(again.cli_net().extra_trackers, want);
+    }
+
+    /// #1966: a settings file from before has only the bool (shown normally, never minimized);
+    /// the choice of three is saved as it was made.
+    #[test]
+    fn the_progress_window_is_shown_normally_until_asked_to_start_minimized() {
+        use super::Settings;
+        let old: Settings =
+            serde_json::from_value(serde_json::json!({ "show_progress": false })).unwrap();
+        assert!(!old.show_progress);
+        assert!(!old.show_progress_minimized);
+        let s = Settings {
+            show_progress: true,
+            show_progress_minimized: true,
+            ..Settings::default()
+        };
+        let again: Settings = serde_json::from_value(serde_json::to_value(&s).unwrap()).unwrap();
+        assert!(again.show_progress && again.show_progress_minimized);
     }
 
     /// #668: the User-Agent for links added by hand is the default browser's unless one is set.
@@ -2624,6 +2688,71 @@ pub(crate) mod sealed {
             let s: crate::settings::Settings =
                 serde_json::from_value(serde_json::json!({ "close_to_tray": false })).unwrap();
             assert!(!s.close_to_tray);
+        }
+
+        #[test]
+        fn allowed_certs_are_saved_per_site_port_and_fingerprint() {
+            use mdm_engine::CertProblem;
+            let mut s = crate::settings::Settings::default();
+            s.allow_cert(
+                "NAS.Local".into(),
+                8443,
+                "AA".repeat(32),
+                CertProblem::Untrusted,
+            );
+            s.allow_cert(
+                "nas.local".into(),
+                8443,
+                "BB".repeat(32),
+                CertProblem::Untrusted,
+            );
+            s.allow_cert(
+                "nas.local".into(),
+                8443,
+                "BB".repeat(32),
+                CertProblem::Expired,
+            );
+            s.allow_cert(
+                "nas.local".into(),
+                443,
+                "CC".repeat(32),
+                CertProblem::WrongName,
+            );
+            // Revoked / NotForWebsites / Other are never allowed.
+            s.allow_cert(
+                "nas.local".into(),
+                443,
+                "DD".repeat(32),
+                CertProblem::Revoked,
+            );
+            assert_eq!(s.allowed_certs.len(), 3);
+            assert_eq!(s.allowed_certs[0].port, 8443);
+            assert_eq!(s.allowed_certs[0].sha256, "bb".repeat(32));
+            assert_eq!(s.allowed_certs[0].problem, CertProblem::Untrusted);
+            assert_eq!(s.allowed_certs[1].problem, CertProblem::Expired);
+            let json = serde_json::to_string(&s).unwrap();
+            let back: crate::settings::Settings = serde_json::from_str(&json).unwrap();
+            assert_eq!(back.allowed_certs, s.allowed_certs);
+        }
+
+        /// #1964: Options → Sites Logins → Certificates... removing the last allowed certificate
+        /// takes effect when OK merges the dialog's changes into the live settings.
+        #[test]
+        fn removing_the_last_allowed_cert_in_options_sticks() {
+            use crate::settings::Settings;
+            use mdm_engine::CertProblem;
+            let mut live = Settings::default();
+            live.allow_cert(
+                "nas.local".into(),
+                8443,
+                "ab".repeat(32),
+                CertProblem::Untrusted,
+            );
+            let from = live.clone();
+            let mut to = from.clone();
+            to.allowed_certs.clear();
+            let merged = Settings::merge_changes(&live, &from, &to);
+            assert!(merged.allowed_certs.is_empty());
         }
     }
 }
