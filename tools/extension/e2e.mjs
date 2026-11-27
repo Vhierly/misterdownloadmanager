@@ -2960,8 +2960,19 @@ const CASES = {
         }
       }
       await panelSettings({ torrent_handler: true });
+      // The extension learns it at its next question for the rules (Chromium: asked now;
+      // Firefox: once its copy is a minute old, at the next download it sees, as in `torrents`),
+      // and page.js from the stored copy that question writes.
       if (t.session.inExtension) await t.session.inExtension("refreshRules().then(() => true)");
-      else await sleep(61000);
+      else {
+        await sleep(61000);
+        const p = `/gen/16K/tracker-${t.name}/download.php`;
+        const primer = `e2e-magnet-primer-${t.name}.torrent`;
+        await clickLink(t, `${p}?id=42&cd=${encodeURIComponent(primer)}&type=${encodeURIComponent("application/x-bittorrent")}`);
+        await until(`${primer} in the browser's folder`, 20000, () => fs.existsSync(path.join(t.dl, primer)));
+        await sleep(2000);
+        fs.rmSync(path.join(t.dl, primer), { force: true });
+      }
       await clickTrusted(onPage);
       if (WIN) {
         const pid = appPid();
