@@ -570,9 +570,23 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 Everything below ships together, in version 0.6.0, the next release.
 
 - ✅ Magnet links clicked in the browser reach MDM's **Add torrent** window while Torrent settings take torrents, even without OS protocol association; right-click **Download with Mister Download Manager** sends a magnet link regardless of that setting ([#2025](https://github.com/anefzaoui/misterdownloadmanager/issues/2025))
+- ✅ A download's progress window can start minimized: **Options → Downloads → Customize
+  "Download progress" dialog → Edit...** offers **Show normally**, **Show minimized** and
+  **Don't show** ([#1966](https://github.com/anefzaoui/misterdownloadmanager/issues/1966); thanks to
+  [@Raghav2012Code](https://github.com/Raghav2012Code))
+- ✅ Import: an `.ef2` list's `filename:` lines name its downloads (only a file name: folder parts
+  are left out), shown in Link grabber before they are added
+  ([#1963](https://github.com/anefzaoui/misterdownloadmanager/issues/1963); thanks to
+  [@abdul-karim-mia](https://github.com/abdul-karim-mia))
 - ✅ Each browser's logo before its name in the browser extension's window, the first start's
   browser step and Options → General's browser list, sharp at every display scale; a globe for a
   browser without one
+- ✅ Icons where they help recognition, second part
+  ([#2008](https://github.com/anefzaoui/misterdownloadmanager/issues/2008)): drop-down lists with
+  icons (the categories' in Download File Info and Options → Save to, the queues' in Download
+  later, the browsers' logos in Sites Logins' cookies list); a drawn mark before error and warning
+  lines; one empty-list block (icon, title, what goes there) for RSS feeds, Accounts, Site rules,
+  the Scheduler's files, Add torrent and Link grabber
 - ✅ Icons where they help recognition, first part
   ([#2008](https://github.com/anefzaoui/misterdownloadmanager/issues/2008)): a status icon before
   each download's status in the list and the tray panel, in every theme (a theme's own, else
@@ -673,6 +687,15 @@ Everything below ships together, in version 0.6.0, the next release.
 - ✅ Torrents: downloads pick up within seconds when the network comes back (Wi-Fi, sleep, VPN),
   instead of staying stalled: the peers that dropped with it are called again once, at once, and
   the trackers and the DHT asked again
+- ✅ Torrents: a paused torrent no longer keeps its files locked, and a finished one lets other
+  programs open, move or rename them (on Windows, held read-only while it is shared)
+- ✅ Torrents: files you didn't tick are no longer created on disk; big torrents keep fewer
+  files open (a budget for the whole of MDM, the least recently used file closed first)
+- ✅ Tests: the check that a torrent picks up when the network comes back no longer fails now and
+  then (seen on a Windows runner): it took the torrent's first check of its files for the
+  download, as both count up the same number, and cut the network before the peer was ever
+  reached; each stage now waits for the session's own word (downloading, the peer given up, its
+  retry refused) instead of the time that should have passed
 - ✅ Torrents: a paused torrent's finished pieces are saved before MDM quits
 - ✅ Torrents: the engine checks what it's sent more carefully
 - ✅ Extracting: 7z and RAR archives are checked more carefully
@@ -1435,6 +1458,10 @@ Everything below ships together, in version 0.6.0, the next release.
   ([#948](https://github.com/anefzaoui/misterdownloadmanager/issues/948))
 - ✅ A download refused for its site's security certificate says why (expired, not trusted, for
   another name) instead of a bare **Error** (follows [#762](https://github.com/anefzaoui/misterdownloadmanager/issues/762))
+- ✅ HTTPS servers with a self-signed, expired or untrusted certificate: when refused, MDM says why
+  and offers **Continue once**, **Always for this site** (pinned to the certificate's SHA-256
+  fingerprint, site and port) or **Cancel**, with allowed sites listed in **Options → Sites
+  Logins → Certificates...** where they can be removed ([#1964](https://github.com/anefzaoui/misterdownloadmanager/issues/1964))
 - ✅ **Options → Downloads → Customize "Download progress" dialog → Edit...** works: it can turn
   off the progress window that opens when a download starts; the button was greyed and did
   nothing ([#1041](https://github.com/anefzaoui/misterdownloadmanager/issues/1041))
@@ -2239,6 +2266,26 @@ Everything below ships together, in version 0.6.0, the next release.
 - ✅ Tests: the download checks on 32-bit Windows no longer stop halfway now and then: the
   largest test downloads (up to 1 GiB) are compared with what they should hold a piece at a
   time, instead of both whole in memory at once, which a 32-bit test program couldn't always fit
+- ✅ Torrents: turning DHT off in Torrent settings now really keeps it off, also when MDM is
+  started for a magnet link or a .torrent file, and for the command line's `torrent-info` and
+  `torrent-get`; the other Torrent settings switches and the network adapter apply from the
+  first moment too
+- ✅ A screen reader says a download's size with one space before the unit ("1.00 MB"): the
+  Size column's padding for its looks ("1.00  MB", as IDM writes it) was read aloud, extra
+  space and all, both in the size cell and in the status of a download with no known total
+  ([#1407](https://github.com/anefzaoui/misterdownloadmanager/issues/1407); thanks to
+  [@Seyamalam](https://github.com/Seyamalam))
+- ✅ Tests: the check that a torrent added again keeps showing what it had no longer fails now
+  and then on a slow computer: it counted how often it had looked, which the computer's pace
+  decides; it now holds the re-add half-way, the torrent out of the session, until its numbers
+  were read there, which a fast computer hardly ever did
+  ([#2002](https://github.com/anefzaoui/misterdownloadmanager/issues/2002))
+- ✅ GOVERNANCE.md says how MDM is run (who decides, how changes are reviewed and released, AI-assisted
+  development, what happens if the maintainer can't continue), and CODE_OF_CONDUCT.md adopts the
+  Contributor Covenant 2.1
+- ✅ All of MDM's Trendshift placements, not just the first: #1 Rust repository of the day and
+  of the week, #3 repository of the week and #4 of the day among all languages; four badges in the
+  README, and on the website's proof of delivery and press page, with the site's own stamp
 
 ## Being worked on
 
@@ -2246,6 +2293,10 @@ These ship in a later version, when they're ready.
 
 ### Being built
 
+- 🔄 A site whose bot check refused a download rests, not just that file: no other download of
+  that site starts, and none is retried, for 2 minutes, then 5, 15 and 30 after each refusal in a
+  row; a queue no longer runs through a site's files as fast as they are refused
+  ([#2024](https://github.com/anefzaoui/misterdownloadmanager/issues/2024)): in review
 - 🔄 **The tray icon's downloads panel**: a click on the icon shows what is downloading, with the progress window's Pause/Resume (Stop and save for a recording) and Cancel for each download and a button for the main window; a double click opens the window; **Options → General → Show downloads when the notification area icon is clicked** (ticked in a new copy, unticked in one set up before it) ([#1365](https://github.com/anefzaoui/misterdownloadmanager/issues/1365)): draft, in review
 - 🔄 **Add torrent**: choose whether a multi-file torrent gets an outer folder, with shared-destination ownership and deletion safeguards ([discussion #965](https://github.com/anefzaoui/misterdownloadmanager/discussions/965), [PR #1121](https://github.com/anefzaoui/misterdownloadmanager/pull/1121)): in review
 - 🔄 **Add torrent**: a **Rename** row (main name and extension) to rename a single-file torrent or a multi-file torrent's folder before the download starts ([#517](https://github.com/anefzaoui/misterdownloadmanager/issues/517)): in review

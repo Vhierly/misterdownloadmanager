@@ -356,6 +356,10 @@
 #. RSS feeds window, Download rules: shown when there are no rules yet
 #, machine
 	A rule adds the new articles whose titles it matches, as they come.	ఒక నియమం కొత్త కథనాలను, వాటి శీర్షికలకు సరిపోలినప్పుడు, అవి వచ్చిన వెంటనే జోడిస్తుంది.
+#. text in the Options window
+#. Site rules window: in the empty list of rules, under its title
+#, machine
+	A rule sets the connections, User-Agent or headers for one site.	ఒక నియమం ఒక సైట్ కోసం కనెక్షన్‌లు, యూజర్-ఏజెంట్ లేదా హెడర్‌లను సెట్ చేస్తుంది.
 #. text in errors.rs
 #. an error: a server on this computer redirected the download to the internet, which would not go through the chosen network adapter; {adapter} its name
 #, machine
@@ -463,6 +467,10 @@
 #. link in the empty download list: opens Add URL
 #, machine
 	Add new download	కొత్త డౌన్‌లోడ్‌ను జోడించు
+#. text in the Options window
+#. Options → Accounts: in the empty list of accounts, under its title
+#, machine
+	Add one to download file-host links through it.	ఫైల్-హోస్ట్ లింక్‌లను దాని ద్వారా డౌన్‌లోడ్ చేయడానికి ఖాతాను జోడించండి.
 #. text in the Options window
 #, machine
 	Add the duplicate and overwrite the existing file	నకిలీని జోడించి, ఇప్పటికే ఉన్న ఫైల్‌ను ఓవర్‌రైట్ చేయండి
@@ -617,6 +625,10 @@
 #. Click'n'Load window, under the question: nothing happens to the links before the user adds them in Link grabber
 #, machine
 	Allow only sites you use. Nothing is looked up or downloaded before you add it in Link grabber.	మీరు ఉపయోగించే సైట్‌లను మాత్రమే అనుమతించండి. మీరు లింక్ గ్రాబర్‌లో జోడించే వరకు ఏదీ వెతకబడదు లేదా డౌన్‌లోడ్ చేయబడదు.
+#. text in the Options window; window title in the Options window
+#. window title: HTTPS sites whose certificate the user chose to trust
+#, machine
+	Allowed certificates	అనుమతించబడిన సర్టిఫికేట్‌లు
 #. text in errors.rs
 #, machine
 	already being downloaded: {path}	ఇప్పటికే డౌన్‌లోడ్ అవుతోంది: {path}
@@ -650,6 +662,9 @@
 #. View menu: a check item; dark mode on, whatever the system's setting
 #, machine
 	Always dark	ఎల్లప్పుడూ డార్క్
+#. button in a dialog box
+#, machine
+	Always for this site	ఈ సైట్ కోసం ఎల్లప్పుడూ అనుమతించండి
 #. text in the Options window
 #. Options → Archives: where extracted files go
 #, machine
@@ -1059,6 +1074,11 @@
 #, machine
 	Central African Republic	మధ్య ఆఫ్రికా రిపబ్లిక్
 #. text in the Options window
+#. column title: SHA-256 certificate fingerprint
+#, machine
+	Certificate (SHA-256)	సర్టిఫికేట్ (SHA-256)
+#. text in a dialog box; text in the Options window
+#. Certificate warning: the certificate's SHA-256 fingerprint
 #. Options → Remote → Status: the certificate's fingerprint, which the phone's browser shows when it warns about it; {fingerprint} = hex digits
 #, machine
 	Certificate (SHA-256): {fingerprint}	సర్టిఫికేట్ (SHA-256): {fingerprint}
@@ -1066,6 +1086,11 @@
 #. Options → DNS over TLS: label before the name the server's certificate shows
 #, machine
 	Certificate name:	సర్టిఫికేట్ పేరు:
+#. text in the Options window
+#. Options → Sites Logins: button: opens the list of allowed HTTPS site certificates
+#. the trailing ... means it is still going on: keep it
+#, machine
+	Certificates...	సర్టిఫికేట్‌లు...
 #. text in countries.rs
 #. a country's name (where a download's server is)
 #, machine
@@ -1164,6 +1189,10 @@
 #. remote control page (on a phone): what the ".torrent file" button does (screen readers)
 #, machine
 	Choose a .torrent file	.టొరెంట్ ఫైల్‌ను ఎంచుకోండి
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles, under its title
+#, machine
+	Choose a feed to see its articles.	దాని కథనాలను చూడటానికి ఒక ఫీడ్‌ను ఎంచుకోండి.
 #. message or event log entry in the main window
 #. title of the file dialog of View → Font → Choose a font file
 #. title of the message when the font picked in View → Font can't be used
@@ -1335,6 +1364,13 @@
 #. text in the Options window
 #, machine
 	Connections:	కనెక్షన్‌లు:
+#. text in a dialog box
+#. Certificate warning: question before Continue once / Always for this site / Cancel
+#, machine
+	Continue anyway?	ఏమైనప్పటికీ కొనసాగించాలా?
+#. button in a dialog box
+#, machine
+	Continue once	ఒకసారి కొనసాగించండి
 #. link (opens a web page) in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
 	Contributors	సహకరించినవారు
@@ -1598,6 +1634,9 @@
 #. button in the browser extension's window: stop offering it at each start
 #, machine
 	Don't ask again	మళ్లీ అడగవద్దు
+#. option (radio button) in the Options window
+#, machine
+	Don't show	చూపవద్దు
 #. text in the Options window
 #. checkbox, Options → Downloads: Download complete and MDM's other windows that open by themselves wait while a full-screen game, app or video, a presentation or the locked screen is on, and show when the user is back
 #, machine
@@ -1781,6 +1820,10 @@
 #. tab title: download settings
 #, machine
 	Downloads	డౌన్‌లోడ్‌లు
+#. text in the Scheduler window
+#. Scheduler → Files in the queue: in the empty list, under its title
+#, machine
+	Downloads added to this queue show here.	ఈ క్యూకు జోడించిన డౌన్‌లోడ్‌లు ఇక్కడ కనిపిస్తాయి.
 #. window title in a dialog box
 #. title of the window that sums up downloads added together (a playlist, a batch) once all are done
 #, machine
@@ -1938,7 +1981,6 @@
 #, machine
 	Eritrea	ఎరిట్రియా
 #. text in a dialog box; item in the Categories tree in the download list; value in a column's filter list in the download list; text in the download list (sizes, speeds, status); text in a download's progress window; text in remote.rs
-#. in Download File Info, where the size goes: the address didn't answer
 #. a download's status (state it is in, not a command)
 #. a download's status (state it is in, not a command): it failed
 #, machine
@@ -2008,6 +2050,10 @@
 #. Options → Accounts: a note that the debrid services' support (Real-Debrid, AllDebrid, Premiumize) is new and not yet tried with real paid accounts
 #, machine
 	Experimental: built from the services' public API documentation, not yet confirmed with real accounts.	ప్రయోగాత్మకం: సేవల పబ్లిక్ API డాక్యుమెంటేషన్ నుండి రూపొందించబడింది, ఇంకా నిజమైన ఖాతాలతో ధృవీకరించబడలేదు.
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Expired	గడువు ముగిసింది
 #. message or event log entry in the main window; text in the Options window
 #, machine
 	Export	ఎగుమతి
@@ -2780,6 +2826,10 @@
 #. a country's name (where a download's server is)
 #, machine
 	Italy	ఇటలీ
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles of a feed not read yet
+#, machine
+	Its articles show here once the feed is read.	ఫీడ్ చదివిన తర్వాత దాని కథనాలు ఇక్కడ కనిపిస్తాయి.
 #. text in extracting archives (a download's log, the Archive password window)
 #. why an archive wasn't extracted in place (after "Couldn't extract {name}: "); HatchZip took its files out (the archive is gone), but moving them stopped: {to} holds those moved, {left} the others, {error} the system's reason
 #. {error} = an error message (keep the braces as they are)
@@ -3330,6 +3380,9 @@
 #. checkbox: the Minimize button hides MDM's windows to the notification area (system tray) instead of the taskbar
 #, machine
 	Minimize to the notification area	నోటిఫికేషన్ ప్రాంతానికి కనిష్టీకరించు
+#. text in the Options window
+#, machine
+	Minimized, the window waits on the taskbar and doesn't take the focus.	కనిష్టీకరించినప్పుడు, విండో టాస్క్‌బార్‌లో ఉంటుంది మరియు ఫోకస్‌ను తీసుకోదు.
 #. text in rssdlg.rs; text in the Add torrent window
 #. RSS feeds window: the unit after the minutes box
 #. Torrent settings: the unit after the minutes box
@@ -3650,6 +3703,10 @@
 #. button in a dialog box; text in a download's progress window
 #, machine
 	No	లేదు
+#. text in the Options window
+#. Options → Accounts: the title in the empty list of debrid service accounts
+#, machine
+	No accounts yet	ఇంకా ఖాతాలు లేవు
 #. text in a dialog box
 #, machine
 	No addresses yet	ఇంకా చిరునామాలు లేవు
@@ -3657,6 +3714,10 @@
 #. Options → Proxy / Socks: Test got no answer in time
 #, machine
 	No answer within 20 seconds.	20 సెకన్లలోపు సమాధానం రాలేదు.
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of articles of a feed that has none
+#, machine
+	No articles	కథనాలు లేవు
 #. text in extension.rs
 #. a check of Test browser integration (Linux, macOS): MDM found no browser it can connect to (one installed as a Flatpak isn't found)
 #, machine
@@ -3704,6 +3765,18 @@
 #. title in the empty download list when there are no downloads at all
 #, machine
 	No downloads yet	ఇంకా డౌన్‌లోడ్‌లు లేవు
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of articles, no feed chosen
+#, machine
+	No feed chosen	ఫీడ్ ఎంచుకోబడలేదు
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of feeds
+#, machine
+	No feeds yet	ఇంకా ఫీడ్‌లు లేవు
+#. text in the Scheduler window
+#. Scheduler → Files in the queue: the title in the empty list
+#, machine
+	No files in this queue	ఈ క్యూలో ఫైల్‌లు లేవు
 #. text in a dialog box
 #, machine
 	No folders yet	ఇంకా ఫోల్డర్‌లు లేవు
@@ -3717,6 +3790,10 @@
 #. text in langpick.rs
 #, machine
 	No language matches.	ఏ భాషా సరిపోలడం లేదు.
+#. text in the Link grabber window
+#. Link grabber: the title in its empty list
+#, machine
+	No links yet	ఇంకా లింక్‌లు లేవు
 #. text in the Options window
 #. Options → Remote → Status: on, but the computer has no local network address now
 #, machine
@@ -3748,9 +3825,17 @@
 #, machine
 	No proxy/socks	ప్రాక్సీ/SOCKS లేదు
 #. text in the Options window
+#. Site rules window: the title in the empty list of rules
+#, machine
+	No site rules yet	ఇంకా సైట్ నియమాలు లేవు
+#. text in the Options window
 #. Options → Accounts: no system keyring/keychain answered (none runs, e.g. a desktop without one), so the sign-ins stay in MDM's settings folder, which only the user's account may read
 #, machine
 	No system keyring answered, so sign-ins and passwords are kept in MDM's settings, which only you can read.	సిస్టమ్ కీరింగ్ స్పందించలేదు, కాబట్టి సైన్-ఇన్‌లు మరియు పాస్‌వర్డ్‌లు MDM సెట్టింగ్‌లలో ఉంచబడతాయి, వీటిని మీరు మాత్రమే చదవగలరు.
+#. text in the Add torrent window
+#. Add torrent: the title in the empty list of files, before a torrent is read
+#, machine
+	No torrent yet	ఇంకా టోరెంట్ లేదు
 #. message or event log entry in the main window
 #. event log entry: Add trackers changed nothing, the torrent had them all
 #, machine
@@ -3869,8 +3954,16 @@
 #, machine
 	Not tested: it is larger than {limit} (Options → Archives). Right-click → Test archive tests it	పరీక్షించలేదు: ఇది {limit} కంటే పెద్దది (ఎంపికలు → ఆర్కైవ్‌లు). కుడి-క్లిక్ → ఆర్కైవ్‌ను పరీక్షించండి ఎంచుకుంటే దీన్ని పరీక్షిస్తుంది
 #. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Not trusted	విశ్వసనీయం కాదు
+#. text in the Options window
 #, machine
 	Not used: file parts are written next to the file	ఉపయోగించబడలేదు: ఫైల్ భాగాలు ఫైల్ పక్కన వ్రాయబడతాయి
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Not yet valid	ఇంకా చెల్లుబాటు కాలేదు
 #. text in a dialog box
 #. \\n starts a new line: break lines where they fit the translation
 #, machine
@@ -4092,6 +4185,9 @@
 #. Options → Add an account: label before the field for the service's API token (the other way to sign in)
 #, machine
 	Or paste your API token:	లేదా మీ API టోకెన్‌ను అతికించండి:
+#. text in the Options window
+#, machine
+	Other	ఇతర
 #. text in the Link grabber window
 #. Link grabber: the box that edits the selected package
 #, machine
@@ -4165,6 +4261,7 @@
 #, machine
 	Password:	పాస్‌వర్డ్:
 #. text in the Add torrent window
+#. "Look up" is the button that reads the torrent: use its translation
 #, machine
 	Paste a magnet link or choose a .torrent file, then Look up.	మాగ్నెట్ లింక్‌ను అతికించండి లేదా .torrent ఫైల్‌ను ఎంచుకోండి, ఆపై శోధించండి.
 #. text in the Link grabber window
@@ -4398,6 +4495,10 @@
 #. {error} = an error message (keep the braces as they are)
 #, machine
 	Reannounce failed: {error}	మళ్లీ ప్రకటించడం విఫలమైంది: {error}
+#. text in the Options window
+#. column title: certificate refusal reason allowed
+#, machine
+	Reason	కారణం
 #. text in a download's progress window
 #. column title: how much came from the peer
 #, machine
@@ -4669,6 +4770,10 @@
 #. text in the Batch download window
 #, machine
 	Second file:	రెండవ ఫైల్:
+#. text in a dialog box
+#. window title when a server's HTTPS certificate is refused
+#, machine
+	Security Alert	భద్రతా హెచ్చరిక
 #. text in preview.rs
 #. the preview pane when no download is selected, under its title
 #, machine
@@ -4850,7 +4955,7 @@
 #. checkbox in the Options window; checkbox in a download's progress window
 #, machine
 	Show download complete dialog	డౌన్‌లోడ్ పూర్తయిన డైలాగ్‌ను చూపించు
-#. checkbox in the Options window
+#. text in the Options window
 #, machine
 	Show download progress dialog when a download starts	డౌన్‌లోడ్ ప్రారంభమైనప్పుడు డౌన్‌లోడ్ పురోగతి డైలాగ్‌ను చూపించు
 #. text in the Options window
@@ -4865,6 +4970,12 @@
 #. button in the browser extension's window: open the tutorial that adds the extension
 #, machine
 	Show me how	నాకు ఎలా చేయాలో చూపించండి
+#. option (radio button) in the Options window
+#, machine
+	Show minimized	చిన్నదిగా చేసి చూపించు
+#. option (radio button) in the Options window
+#, machine
+	Show normally	సాధారణంగా చూపించు
 #. what a keyboard shortcut does in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
 	Show or hide the preview pane	ప్రివ్యూ పేన్‌ను చూపండి లేదా దాచండి
@@ -4957,6 +5068,7 @@
 	Sint Maarten	సింట్ మార్టెన్
 #. text in the Options window
 #. Site rules: column title: the site pattern
+#. column title: site name and port
 #, machine
 	Site	సైట్
 #. checkbox in the Find window
@@ -4983,6 +5095,11 @@
 #. Site rule: label before the site pattern box (example.com, *.example.com)
 #, machine
 	Site:	సైట్:
+#. text in a dialog box
+#. Certificate warning: the site whose certificate was refused; {site} = host or host:port
+#. {site} = a web site's name such as "example.com" (keep the braces as they are)
+#, machine
+	Site: {site}	సైట్: {site}
 #. text in the Options window
 #. tab title: user names and passwords for sites
 #, machine
@@ -4993,6 +5110,14 @@
 #. text in helpers.rs
 #, machine
 	Sites send their best quality as separate video and audio. ffmpeg puts them together into one file that plays anywhere.	సైట్‌లు వాటి ఉత్తమ నాణ్యతను ప్రత్యేక వీడియో మరియు ఆడియోగా పంపుతాయి. ffmpeg వాటిని ఎక్కడైనా ప్లే అయ్యే ఒక ఫైల్‌గా కలుపుతుంది.
+#. text in the Options window
+#. Options → Sites Logins: beside the Certificates... button
+#, machine
+	Sites whose certificate you chose to trust	మీరు విశ్వసించాలని ఎంచుకున్న సర్టిఫికేట్ ఉన్న సైట్‌లు
+#. text in the Options window
+#. Allowed certificates window: explanation
+#, machine
+	Sites whose security certificate you chose to trust. Each entry is pinned to that certificate's SHA-256 fingerprint.	మీరు విశ్వసించాలని ఎంచుకున్న భద్రతా సర్టిఫికేట్ ఉన్న సైట్‌లు. ప్రతి ఎంట్రీ ఆ సర్టిఫికేట్ యొక్క SHA-256 ఫింగర్‌ప్రింట్‌కు పిన్ చేయబడింది.
 #. text in the Link grabber window; text in a download's progress window; text in the Scheduler window; text in the Add torrent window
 #. column title: the file's size
 #. column title: file size
@@ -5800,6 +5925,9 @@
 #, machine
 	The site's certificate isn't trusted, by yt-dlp nor by this computer: an antivirus's web filter or a proxy that reads HTTPS may be in the way. Turn its HTTPS scanning off, or add its certificate to the computer's, then look the page up again.	సైట్ యొక్క సర్టిఫికేట్ yt-dlp ద్వారా లేదా ఈ కంప్యూటర్ ద్వారా విశ్వసించబడలేదు: యాంటీవైరస్ యొక్క వెబ్ ఫిల్టర్ లేదా HTTPS చదివే ప్రాక్సీ అడ్డుగా ఉండవచ్చు. దాని HTTPS స్కానింగ్‌ను ఆఫ్ చేయండి లేదా దాని సర్టిఫికేట్‌ను కంప్యూటర్‌కు జోడించండి, ఆపై పేజీని మళ్లీ చూడండి.
 #. text in errors.rs
+#, machine
+	the site's security certificate expired on {date}, so MDM can't be sure it's the real site (your browser warns about it too)	సైట్ యొక్క భద్రతా సర్టిఫికేట్ {date}న గడువు ముగిసింది, కాబట్టి ఇది నిజమైన సైట్ అని MDM నిర్ధారించుకోలేదు (మీ బ్రౌజర్ కూడా దీని గురించి హెచ్చరిస్తుంది)
+#. text in errors.rs
 #. why a download failed: the site's security certificate (what proves a secure, HTTPS, site is the one it says) is past its end date. Browsers warn about the same site
 #, machine
 	the site's security certificate has expired, so MDM can't be sure it's the real site (your browser warns about it too)	సైట్ భద్రతా ధృవీకరణ పత్రం గడువు ముగిసింది, కాబట్టి MDM ఇది నిజమైన సైట్ అని నిర్ధారించుకోలేదు (మీ బ్రౌజర్ కూడా దీని గురించి హెచ్చరిస్తుంది)
@@ -5807,6 +5935,10 @@
 #. why a download failed: the site's security certificate was made for other site names than the one in the address
 #, machine
 	the site's security certificate is for another site name, so MDM can't be sure it's the real site (your browser warns about it too)	సైట్ భద్రతా ధృవీకరణ పత్రం చిరునామాలోని సైట్ పేరుకు కాకుండా వేరే సైట్ పేరు కోసం ఉంది, కాబట్టి MDM ఇది నిజమైన సైట్ అని నిర్ధారించుకోలేదు (మీ బ్రౌజర్ కూడా దీని గురించి హెచ్చరిస్తుంది)
+#. text in errors.rs
+#. why a download failed: the site's security certificate is self-signed
+#, machine
+	the site's security certificate is self-signed, so MDM can't be sure it's the real site (your browser warns about it too)	సైట్ యొక్క భద్రతా సర్టిఫికేట్ స్వీయ-సంతకం చేయబడింది, కాబట్టి ఇది నిజమైన సైట్ అని MDM నిర్ధారించుకోలేదు (మీ బ్రౌజర్ కూడా దీని గురించి హెచ్చరిస్తుంది)
 #. text in errors.rs
 #. why a download failed: the site's security certificate is made for other uses than a website (its "extended key usage" leaves out web servers)
 #, machine
@@ -5976,6 +6108,10 @@
 #. remote control page (on a phone): label of the box naming this phone (shown in MDM's list of paired devices)
 #, machine
 	This device's name	ఈ పరికరం పేరు
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles of a feed that has none
+#, machine
+	This feed has no articles right now.	ఈ ఫీడ్‌లో ప్రస్తుతం కథనాలు లేవు.
 #. message or event log entry in the main window
 #. the message when a file picked in View → Font isn't a TrueType or OpenType font MDM can read
 #, machine
@@ -6846,6 +6982,10 @@
 #. {n} = a number (keep the braces as they are)
 #, machine
 	Wrong code. Tries left: {n}	తప్పు కోడ్. మిగిలిన ప్రయత్నాలు: {n}
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Wrong name	తప్పు పేరు
 #. text in extracting archives (a download's log, the Archive password window)
 #. in Archive password: {name} is the archive's file name
 #. {name} = a file name (keep the braces as they are)

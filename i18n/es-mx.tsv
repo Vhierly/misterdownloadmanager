@@ -356,6 +356,10 @@
 #. RSS feeds window, Download rules: shown when there are no rules yet
 #, machine
 	A rule adds the new articles whose titles it matches, as they come.	Una regla añade los artículos nuevos cuyos títulos coinciden, a medida que llegan.
+#. text in the Options window
+#. Site rules window: in the empty list of rules, under its title
+#, machine
+	A rule sets the connections, User-Agent or headers for one site.	Una regla establece las conexiones, el User-Agent o los encabezados para un sitio.
 #. text in errors.rs
 #. an error: a server on this computer redirected the download to the internet, which would not go through the chosen network adapter; {adapter} its name
 #, machine
@@ -463,6 +467,10 @@
 #. link in the empty download list: opens Add URL
 #, machine
 	Add new download	Agregar nueva descarga
+#. text in the Options window
+#. Options → Accounts: in the empty list of accounts, under its title
+#, machine
+	Add one to download file-host links through it.	Agrega una para descargar enlaces de alojamiento de archivos a través de ella.
 #. text in the Options window
 #, machine
 	Add the duplicate and overwrite the existing file	Agregar el duplicado y sobrescribir el archivo existente
@@ -617,6 +625,10 @@
 #. Click'n'Load window, under the question: nothing happens to the links before the user adds them in Link grabber
 #, machine
 	Allow only sites you use. Nothing is looked up or downloaded before you add it in Link grabber.	Permite solo los sitios que usas. Nada se busca ni se descarga antes de que lo agregues al Capturador de enlaces.
+#. text in the Options window; window title in the Options window
+#. window title: HTTPS sites whose certificate the user chose to trust
+#, machine
+	Allowed certificates	Certificados permitidos
 #. text in errors.rs
 #, machine
 	already being downloaded: {path}	ya se está descargando: {path}
@@ -650,6 +662,9 @@
 #. View menu: a check item; dark mode on, whatever the system's setting
 #, machine
 	Always dark	Siempre oscuro
+#. button in a dialog box
+#, machine
+	Always for this site	Siempre para este sitio
 #. text in the Options window
 #. Options → Archives: where extracted files go
 #, machine
@@ -1059,6 +1074,11 @@
 #, machine
 	Central African Republic	República Centroafricana
 #. text in the Options window
+#. column title: SHA-256 certificate fingerprint
+#, machine
+	Certificate (SHA-256)	Certificado (SHA-256)
+#. text in a dialog box; text in the Options window
+#. Certificate warning: the certificate's SHA-256 fingerprint
 #. Options → Remote → Status: the certificate's fingerprint, which the phone's browser shows when it warns about it; {fingerprint} = hex digits
 #, machine
 	Certificate (SHA-256): {fingerprint}	Certificado (SHA-256): {fingerprint}
@@ -1066,6 +1086,11 @@
 #. Options → DNS over TLS: label before the name the server's certificate shows
 #, machine
 	Certificate name:	Nombre del certificado:
+#. text in the Options window
+#. Options → Sites Logins: button: opens the list of allowed HTTPS site certificates
+#. the trailing ... means it is still going on: keep it
+#, machine
+	Certificates...	Certificados...
 #. text in countries.rs
 #. a country's name (where a download's server is)
 #, machine
@@ -1164,6 +1189,10 @@
 #. remote control page (on a phone): what the ".torrent file" button does (screen readers)
 #, machine
 	Choose a .torrent file	Elegir un archivo .torrent
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles, under its title
+#, machine
+	Choose a feed to see its articles.	Elige una fuente para ver sus artículos.
 #. message or event log entry in the main window
 #. title of the file dialog of View → Font → Choose a font file
 #. title of the message when the font picked in View → Font can't be used
@@ -1335,6 +1364,13 @@
 #. text in the Options window
 #, machine
 	Connections:	Conexiones:
+#. text in a dialog box
+#. Certificate warning: question before Continue once / Always for this site / Cancel
+#, machine
+	Continue anyway?	¿Continuar de todos modos?
+#. button in a dialog box
+#, machine
+	Continue once	Continuar una vez
 #. link (opens a web page) in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
 	Contributors	Colaboradores
@@ -1598,6 +1634,9 @@
 #. button in the browser extension's window: stop offering it at each start
 #, machine
 	Don't ask again	No volver a preguntar
+#. option (radio button) in the Options window
+#, machine
+	Don't show	No mostrar
 #. text in the Options window
 #. checkbox, Options → Downloads: Download complete and MDM's other windows that open by themselves wait while a full-screen game, app or video, a presentation or the locked screen is on, and show when the user is back
 #, machine
@@ -1781,6 +1820,10 @@
 #. tab title: download settings
 #, machine
 	Downloads	Descargas
+#. text in the Scheduler window
+#. Scheduler → Files in the queue: in the empty list, under its title
+#, machine
+	Downloads added to this queue show here.	Las descargas añadidas a esta cola se muestran aquí.
 #. window title in a dialog box
 #. title of the window that sums up downloads added together (a playlist, a batch) once all are done
 #, machine
@@ -1938,7 +1981,6 @@
 #, machine
 	Eritrea	Eritrea
 #. text in a dialog box; item in the Categories tree in the download list; value in a column's filter list in the download list; text in the download list (sizes, speeds, status); text in a download's progress window; text in remote.rs
-#. in Download File Info, where the size goes: the address didn't answer
 #. a download's status (state it is in, not a command)
 #. a download's status (state it is in, not a command): it failed
 #, machine
@@ -2008,6 +2050,10 @@
 #. Options → Accounts: a note that the debrid services' support (Real-Debrid, AllDebrid, Premiumize) is new and not yet tried with real paid accounts
 #, machine
 	Experimental: built from the services' public API documentation, not yet confirmed with real accounts.	Experimental: creado a partir de la documentación de la API pública de los servicios, aún no confirmado con cuentas reales.
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Expired	Caducado
 #. message or event log entry in the main window; text in the Options window
 #, machine
 	Export	Exportar
@@ -2784,6 +2830,10 @@
 #. a country's name (where a download's server is)
 #, machine
 	Italy	Italia
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles of a feed not read yet
+#, machine
+	Its articles show here once the feed is read.	Sus artículos se muestran aquí una vez que se lee la fuente.
 #. text in extracting archives (a download's log, the Archive password window)
 #. why an archive wasn't extracted in place (after "Couldn't extract {name}: "); HatchZip took its files out (the archive is gone), but moving them stopped: {to} holds those moved, {left} the others, {error} the system's reason
 #. {error} = an error message (keep the braces as they are)
@@ -3334,6 +3384,9 @@
 #. checkbox: the Minimize button hides MDM's windows to the notification area (system tray) instead of the taskbar
 #, machine
 	Minimize to the notification area	Minimizar al área de notificación
+#. text in the Options window
+#, machine
+	Minimized, the window waits on the taskbar and doesn't take the focus.	Minimizada, la ventana espera en la barra de tareas y no toma el foco.
 #. text in rssdlg.rs; text in the Add torrent window
 #. RSS feeds window: the unit after the minutes box
 #. Torrent settings: the unit after the minutes box
@@ -3654,6 +3707,10 @@
 #. button in a dialog box; text in a download's progress window
 #, machine
 	No	No
+#. text in the Options window
+#. Options → Accounts: the title in the empty list of debrid service accounts
+#, machine
+	No accounts yet	No hay cuentas todavía
 #. text in a dialog box
 #, machine
 	No addresses yet	Aún no hay direcciones
@@ -3661,6 +3718,10 @@
 #. Options → Proxy / Socks: Test got no answer in time
 #, machine
 	No answer within 20 seconds.	No hubo respuesta en 20 segundos.
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of articles of a feed that has none
+#, machine
+	No articles	No hay artículos
 #. text in extension.rs
 #. a check of Test browser integration (Linux, macOS): MDM found no browser it can connect to (one installed as a Flatpak isn't found)
 #, machine
@@ -3708,6 +3769,18 @@
 #. title in the empty download list when there are no downloads at all
 #, machine
 	No downloads yet	Aún no hay descargas
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of articles, no feed chosen
+#, machine
+	No feed chosen	No se ha elegido ninguna fuente
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of feeds
+#, machine
+	No feeds yet	No hay fuentes todavía
+#. text in the Scheduler window
+#. Scheduler → Files in the queue: the title in the empty list
+#, machine
+	No files in this queue	No hay archivos en esta cola
 #. text in a dialog box
 #, machine
 	No folders yet	Aún no hay carpetas
@@ -3721,6 +3794,10 @@
 #. text in langpick.rs
 #, machine
 	No language matches.	Ningún idioma coincide.
+#. text in the Link grabber window
+#. Link grabber: the title in its empty list
+#, machine
+	No links yet	No hay enlaces todavía
 #. text in the Options window
 #. Options → Remote → Status: on, but the computer has no local network address now
 #, machine
@@ -3752,9 +3829,17 @@
 #, machine
 	No proxy/socks	Sin proxy/socks
 #. text in the Options window
+#. Site rules window: the title in the empty list of rules
+#, machine
+	No site rules yet	No hay reglas de sitio todavía
+#. text in the Options window
 #. Options → Accounts: no system keyring/keychain answered (none runs, e.g. a desktop without one), so the sign-ins stay in MDM's settings folder, which only the user's account may read
 #, machine
 	No system keyring answered, so sign-ins and passwords are kept in MDM's settings, which only you can read.	No respondió ningún llavero del sistema, por lo que los inicios de sesión y las contraseñas se guardan en la configuración de MDM, que solo usted puede leer.
+#. text in the Add torrent window
+#. Add torrent: the title in the empty list of files, before a torrent is read
+#, machine
+	No torrent yet	No hay torrent todavía
 #. message or event log entry in the main window
 #. event log entry: Add trackers changed nothing, the torrent had them all
 #, machine
@@ -3873,8 +3958,16 @@
 #, machine
 	Not tested: it is larger than {limit} (Options → Archives). Right-click → Test archive tests it	No probado: es más grande que {limit} (Opciones → Archivos). Clic derecho → Probar archivo para probarlo
 #. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Not trusted	No confiable
+#. text in the Options window
 #, machine
 	Not used: file parts are written next to the file	No se usa: las partes del archivo se escriben junto al archivo
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Not yet valid	Aún no válido
 #. text in a dialog box
 #. \\n starts a new line: break lines where they fit the translation
 #, machine
@@ -4096,6 +4189,9 @@
 #. Options → Add an account: label before the field for the service's API token (the other way to sign in)
 #, machine
 	Or paste your API token:	O pegue su token de API:
+#. text in the Options window
+#, machine
+	Other	Otro
 #. text in the Link grabber window
 #. Link grabber: the box that edits the selected package
 #, machine
@@ -4169,6 +4265,7 @@
 #, machine
 	Password:	Contraseña:
 #. text in the Add torrent window
+#. "Look up" is the button that reads the torrent: use its translation
 #, machine
 	Paste a magnet link or choose a .torrent file, then Look up.	Pegue un enlace magnet o elija un archivo .torrent, luego Buscar.
 #. text in the Link grabber window
@@ -4402,6 +4499,10 @@
 #. {error} = an error message (keep the braces as they are)
 #, machine
 	Reannounce failed: {error}	Error al volver a anunciar: {error}
+#. text in the Options window
+#. column title: certificate refusal reason allowed
+#, machine
+	Reason	Motivo
 #. text in a download's progress window
 #. column title: how much came from the peer
 #, machine
@@ -4673,6 +4774,10 @@
 #. text in the Batch download window
 #, machine
 	Second file:	Segundo archivo:
+#. text in a dialog box
+#. window title when a server's HTTPS certificate is refused
+#, machine
+	Security Alert	Alerta de seguridad
 #. text in preview.rs
 #. the preview pane when no download is selected, under its title
 #, machine
@@ -4854,7 +4959,7 @@
 #. checkbox in the Options window; checkbox in a download's progress window
 #, machine
 	Show download complete dialog	Mostrar cuadro de diálogo de descarga completa
-#. checkbox in the Options window
+#. text in the Options window
 #, machine
 	Show download progress dialog when a download starts	Mostrar diálogo de progreso de descarga cuando se inicia una descarga
 #. text in the Options window
@@ -4869,6 +4974,12 @@
 #. button in the browser extension's window: open the tutorial that adds the extension
 #, machine
 	Show me how	Mostrarme cómo
+#. option (radio button) in the Options window
+#, machine
+	Show minimized	Mostrar minimizada
+#. option (radio button) in the Options window
+#, machine
+	Show normally	Mostrar normalmente
 #. what a keyboard shortcut does in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
 	Show or hide the preview pane	Mostrar u ocultar el panel de vista previa
@@ -4961,6 +5072,7 @@
 	Sint Maarten	Sint Maarten
 #. text in the Options window
 #. Site rules: column title: the site pattern
+#. column title: site name and port
 #, machine
 	Site	Sitio
 #. checkbox in the Find window
@@ -4987,6 +5099,11 @@
 #. Site rule: label before the site pattern box (example.com, *.example.com)
 #, machine
 	Site:	Sitio:
+#. text in a dialog box
+#. Certificate warning: the site whose certificate was refused; {site} = host or host:port
+#. {site} = a web site's name such as "example.com" (keep the braces as they are)
+#, machine
+	Site: {site}	Sitio: {site}
 #. text in the Options window
 #. tab title: user names and passwords for sites
 #, machine
@@ -4997,6 +5114,14 @@
 #. text in helpers.rs
 #, machine
 	Sites send their best quality as separate video and audio. ffmpeg puts them together into one file that plays anywhere.	Los sitios envían su mejor calidad como video y audio separados. ffmpeg los une en un solo archivo que se reproduce en cualquier lugar.
+#. text in the Options window
+#. Options → Sites Logins: beside the Certificates... button
+#, machine
+	Sites whose certificate you chose to trust	Sitios cuyo certificado elegiste confiar
+#. text in the Options window
+#. Allowed certificates window: explanation
+#, machine
+	Sites whose security certificate you chose to trust. Each entry is pinned to that certificate's SHA-256 fingerprint.	Sitios cuyo certificado de seguridad elegiste confiar. Cada entrada está anclada a la huella digital SHA-256 de ese certificado.
 #. text in the Link grabber window; text in a download's progress window; text in the Scheduler window; text in the Add torrent window
 #. column title: the file's size
 #. column title: file size
@@ -5804,6 +5929,9 @@
 #, machine
 	The site's certificate isn't trusted, by yt-dlp nor by this computer: an antivirus's web filter or a proxy that reads HTTPS may be in the way. Turn its HTTPS scanning off, or add its certificate to the computer's, then look the page up again.	El certificado del sitio no es de confianza, ni para yt-dlp ni para esta computadora: un filtro web de antivirus o un proxy que lee HTTPS puede estar interfiriendo. Desactiva su escaneo HTTPS o añade su certificado a la computadora, luego busca la página de nuevo.
 #. text in errors.rs
+#, machine
+	the site's security certificate expired on {date}, so MDM can't be sure it's the real site (your browser warns about it too)	el certificado de seguridad del sitio caducó el {date}, por lo que MDM no puede estar seguro de que sea el sitio real (tu navegador también lo advierte)
+#. text in errors.rs
 #. why a download failed: the site's security certificate (what proves a secure, HTTPS, site is the one it says) is past its end date. Browsers warn about the same site
 #, machine
 	the site's security certificate has expired, so MDM can't be sure it's the real site (your browser warns about it too)	el certificado de seguridad del sitio ha caducado, por lo que MDM no puede asegurar que sea el sitio real (tu navegador también te lo advierte)
@@ -5811,6 +5939,10 @@
 #. why a download failed: the site's security certificate was made for other site names than the one in the address
 #, machine
 	the site's security certificate is for another site name, so MDM can't be sure it's the real site (your browser warns about it too)	el certificado de seguridad del sitio es para otro nombre de sitio, por lo que MDM no puede asegurar que sea el sitio real (tu navegador también te lo advierte)
+#. text in errors.rs
+#. why a download failed: the site's security certificate is self-signed
+#, machine
+	the site's security certificate is self-signed, so MDM can't be sure it's the real site (your browser warns about it too)	el certificado de seguridad del sitio es autofirmado, por lo que MDM no puede estar seguro de que sea el sitio real (tu navegador también lo advierte)
 #. text in errors.rs
 #. why a download failed: the site's security certificate is made for other uses than a website (its "extended key usage" leaves out web servers)
 #, machine
@@ -5980,6 +6112,10 @@
 #. remote control page (on a phone): label of the box naming this phone (shown in MDM's list of paired devices)
 #, machine
 	This device's name	Nombre de este dispositivo
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles of a feed that has none
+#, machine
+	This feed has no articles right now.	Esta fuente no tiene artículos en este momento.
 #. message or event log entry in the main window
 #. the message when a file picked in View → Font isn't a TrueType or OpenType font MDM can read
 #, machine
@@ -6850,6 +6986,10 @@
 #. {n} = a number (keep the braces as they are)
 #, machine
 	Wrong code. Tries left: {n}	Código incorrecto. Intentos restantes: {n}
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Wrong name	Nombre incorrecto
 #. text in extracting archives (a download's log, the Archive password window)
 #. in Archive password: {name} is the archive's file name
 #. {name} = a file name (keep the braces as they are)

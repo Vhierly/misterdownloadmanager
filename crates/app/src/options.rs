@@ -72,9 +72,9 @@ enum Sub {
     Panels(bool, PanelSize, u16, String, String),
     /// General → Keys...: (also take the files the browser would open).
     Keys(bool),
-    /// Downloads → Customize "Download progress" dialog → Edit... (#1041): (show it when a
-    /// download starts).
-    Progress(bool),
+    /// Downloads → Customize "Download progress" dialog → Edit... (#1041, #1966): (show it
+    /// when a download starts, starts it minimized).
+    Progress { show: bool, minimized: bool },
     /// General → Test browser integration...: the checks, read beside the window (#1218) when it
     /// opened, and again once a Set it up finished.
     Test(crate::extension::Tester),
@@ -91,6 +91,8 @@ enum Sub {
     Passwords(String),
     /// Connection → Site rules... (#1778): the rules, and the one being edited.
     Rules(Box<RulesEdit>),
+    /// Sites Logins → Certificates... (#1964): the allowed HTTPS site certificates.
+    Certs(winui::RowList),
 }
 
 /// One row of Site rules: a rule and its number of connections (the exception under its
@@ -439,8 +441,17 @@ impl OptionsDialog {
                 )))
             }
             "account" => self.sub = Some(Sub::Account(AccountEdit::default())),
-            "progress" => self.sub = Some(Sub::Progress(self.s.show_progress)),
+            "progress" => {
+                self.sub = Some(Sub::Progress {
+                    show: self.s.show_progress,
+                    minimized: self.s.show_progress_minimized,
+                })
+            }
             "keys" => self.sub = Some(Sub::Keys(self.s.capture_opened)),
+            "certs" => {
+                self.page = 6;
+                self.sub = Some(Sub::Certs(Default::default()));
+            }
             // Connection → Site rules... (#1778), and with its first rule (else a new one) open.
             "siterules" | "siterule" => {
                 let rows = rule_rows(&self.s);
@@ -1252,10 +1263,16 @@ impl OptionsDialog {
         self.category = self.category.min(cats.len() - 1);
         let names: Vec<String> = cats.iter().map(|c| c.label().into_owned()).collect();
         let labels: Vec<&str> = names.iter().map(String::as_str).collect();
-        if let Some(i) = winui::combo_light(
+        // Each with its icon, the Categories tree's (#2008).
+        let icons: Vec<winui::ItemIcon> = cats
+            .iter()
+            .map(|c| winui::ItemIcon::Shell(c.icon()))
+            .collect();
+        if let Some(i) = winui::combo_light_icons(
             ui,
             r(o, 30.0, 136.0, 212.0, 21.0),
             &labels,
+            &icons,
             self.category,
             true,
             "opt-category",
@@ -1527,7 +1544,10 @@ impl OptionsDialog {
         )
         .clicked()
         {
-            self.sub = Some(Sub::Progress(self.s.show_progress));
+            self.sub = Some(Sub::Progress {
+                show: self.s.show_progress,
+                minimized: self.s.show_progress_minimized,
+            });
         }
         let s = &mut self.s;
         winui::checkbox_light(
@@ -2506,6 +2526,21 @@ impl OptionsDialog {
             false,
             "opt-accounts",
         );
+        if rows.is_empty() {
+            let p = ui.painter().clone();
+            winui::empty_state(
+                ui,
+                &p,
+                report_body(r(o, 21.0, 93.0, 383.0, 124.0)),
+                crate::icons::EmptyIcon::Accounts,
+                // i18n: Options → Accounts: the title in the empty list of debrid service accounts
+                crate::i18n::mark("No accounts yet"),
+                // i18n: Options → Accounts: in the empty list of accounts, under its title
+                crate::i18n::mark("Add one to download file-host links through it."),
+                None,
+                "opt-accounts-empty",
+            );
+        }
         let sel = self.account_rows.selected.filter(|i| *i < rows.len());
         // i18n: button: add a debrid service account (opens the sign-in)
         let add = winui::button_light(
@@ -2572,9 +2607,16 @@ impl OptionsDialog {
             // i18n: Options → Accounts: a note that the debrid services' support (Real-Debrid, AllDebrid, Premiumize) is new and not yet tried with real paid accounts
             "Experimental: built from the services' public API documentation, not yet confirmed with real accounts.",
         );
-        winui::paragraph(
+        let x = winui::note_mark(
+            ui,
             &p,
             o.x + 21.0,
+            o.y + 256.0,
+            Some(crate::icons::Mark::Warn),
+        );
+        winui::paragraph(
+            &p,
+            x,
             o.y + 256.0,
             note,
             crate::theme::colors().warning,
@@ -2767,10 +2809,16 @@ impl OptionsDialog {
             .iter()
             .map(|b| crate::videodlg::browser_label(b))
             .collect();
-        if let Some(i) = winui::combo_light(
+        // Each browser's logo, as in General's list and the extension's window (#2008).
+        let logos: Vec<winui::ItemIcon> = browsers
+            .iter()
+            .map(|b| winui::ItemIcon::Browser(crate::browsericons::Browser::of_cookie_id(b)))
+            .collect();
+        if let Some(i) = winui::combo_light_icons(
             ui,
             r(o, 200.0, 311.0, 192.0, 21.0),
             &names,
+            &logos,
             at,
             on,
             "opt-cookie-browser",
@@ -2837,11 +2885,19 @@ impl OptionsDialog {
             )
         };
         // Three lines at most: the room above the check box below (a longer language's note is
-        // cut with "..." and shown whole on hover, never drawn over it).
-        winui::paragraph_until(
+        // cut with "..." and shown whole on hover, never drawn over it). The warning starts with
+        // its mark (#2008).
+        let x = winui::note_mark(
             ui,
             &p,
             o.x + 30.0,
+            o.y + 380.0,
+            crate::icons::Mark::of_ink(ink),
+        );
+        winui::paragraph_until(
+            ui,
+            &p,
+            x,
             o.y + 380.0,
             note,
             ink,
@@ -2861,6 +2917,36 @@ impl OptionsDialog {
             // i18n: Options → Sites Logins → Use my yt-dlp config file: its tooltip
             "yt-dlp also reads its own config files (on Windows %APPDATA%\\yt-dlp\\config.txt, on Linux and macOS ~/.config/yt-dlp/config). Most of what MDM chooses, the folder, the name and the quality, still wins, but options there that skip or filter videos apply too.",
         ));
+        // Allowed HTTPS certificates (#1964): sites whose certificate the user chose to trust.
+        // i18n: Options → Sites Logins: button: opens the list of allowed HTTPS site certificates
+        let certs_label = crate::i18n::mark("Certificates...");
+        let cw = winui::button_width(&p, certs_label, 103.0).min(200.0);
+        let certs_btn = winui::button_light(
+            ui,
+            r(o, 21.0, 442.0, cw, 21.0),
+            certs_label,
+            ButtonKind::Normal,
+            false,
+        );
+        let certs_about = crate::i18n::t(
+            // i18n: Options → Sites Logins: beside the Certificates... button
+            "Sites whose certificate you chose to trust",
+        );
+        let (rect, cut) = winui::label_into(
+            &p,
+            o.x + 21.0 + cw + 8.0,
+            o.y + 457.0,
+            certs_about,
+            LIGHT_TEXT(),
+            o.x + 404.0,
+            o.x + 21.0 + cw + 8.0,
+        );
+        if cut {
+            winui::full_on_hover(ui, rect, "allowed-certs-about", certs_about);
+        }
+        if certs_btn.clicked() {
+            self.sub = Some(Sub::Certs(Default::default()));
+        }
     }
 
     /// Archives (ours, #37): extracting archives when their download completes, what becomes
@@ -4108,6 +4194,23 @@ impl OptionsDialog {
                     true,
                     "opt-site-rules",
                 );
+                if rows.is_empty() {
+                    let p = ui.painter().clone();
+                    winui::empty_state(
+                        ui,
+                        &p,
+                        report_body(r(o, 14.0, 62.0, bx - 8.0 - 14.0, 196.0)),
+                        crate::icons::EmptyIcon::Sites,
+                        // i18n: Site rules window: the title in the empty list of rules
+                        crate::i18n::mark("No site rules yet"),
+                        // i18n: Site rules window: in the empty list of rules, under its title
+                        crate::i18n::mark(
+                            "A rule sets the connections, User-Agent or headers for one site.",
+                        ),
+                        None,
+                        "site-rules-empty",
+                    );
+                }
                 let sel = edit.list.selected.filter(|i| *i < edit.rows.len());
                 let free = !editing;
                 let on = |b: bool| {
@@ -4736,6 +4839,109 @@ impl OptionsDialog {
                     self.sub = Some(Sub::Rules(edit));
                 }
             }
+            Sub::Certs(mut list) => {
+                let mut rows: Vec<Vec<String>> = self
+                    .s
+                    .allowed_certs
+                    .iter()
+                    .map(|c| {
+                        let reason = match c.problem {
+                            // i18n: Allowed certificates table: short reason label
+                            mdm_engine::CertProblem::Expired => crate::i18n::t("Expired"),
+                            // i18n: Allowed certificates table: short reason label
+                            mdm_engine::CertProblem::NotYetValid => crate::i18n::t("Not yet valid"),
+                            // i18n: Allowed certificates table: short reason label
+                            mdm_engine::CertProblem::Untrusted => crate::i18n::t("Not trusted"),
+                            // i18n: Allowed certificates table: short reason label
+                            mdm_engine::CertProblem::WrongName => crate::i18n::t("Wrong name"),
+                            _ => crate::i18n::t("Other"),
+                        };
+                        vec![
+                            crate::dialogs::site_label(&c.host, c.port),
+                            reason.to_owned(),
+                            crate::dialogs::format_fingerprint(&c.sha256),
+                        ]
+                    })
+                    .collect();
+                list.name = crate::i18n::t("Allowed certificates");
+                let out = window(
+                    ctx,
+                    "opt-allowed-certs",
+                    // i18n: window title: HTTPS sites whose certificate the user chose to trust
+                    "Allowed certificates",
+                    [460.0, 260.0],
+                    false,
+                    LIGHT_BG(),
+                    |ui, o| {
+                        let p = ui.painter().clone();
+                        winui::paragraph(
+                            &p,
+                            o.x + 14.0,
+                            o.y + 20.0,
+                            // i18n: Allowed certificates window: explanation
+                            crate::i18n::t(
+                                "Sites whose security certificate you chose to trust. Each entry is pinned to that certificate's SHA-256 fingerprint.",
+                            ),
+                            LIGHT_TEXT(),
+                            o.x + 446.0,
+                            14.0,
+                        );
+                        let (_, del_key) = report(
+                            ui,
+                            o,
+                            r(o, 14.0, 56.0, 432.0, 154.0),
+                            &[
+                                // i18n: column title: site name and port
+                                (crate::i18n::mark("Site"), 135.0),
+                                // i18n: column title: certificate refusal reason allowed
+                                (crate::i18n::mark("Reason"), 225.0),
+                                // i18n: column title: SHA-256 certificate fingerprint
+                                (crate::i18n::mark("Certificate (SHA-256)"), 432.0),
+                            ],
+                            &rows,
+                            &mut list,
+                            false,
+                            "opt-certs-list",
+                        );
+                        let sel = list.selected.filter(|i| *i < rows.len());
+                        let rem_kind = if sel.is_some() {
+                            ButtonKind::Normal
+                        } else {
+                            ButtonKind::Disabled
+                        };
+                        let rem = winui::button_light(
+                            ui,
+                            r(o, 14.0, 222.0, 86.0, 21.0),
+                            "Remove",
+                            rem_kind,
+                            false,
+                        )
+                        .clicked()
+                            || del_key;
+                        if rem && let Some(i) = sel {
+                            self.s.allowed_certs.remove(i);
+                            rows.remove(i);
+                            list.selected = None;
+                        }
+                        let close = winui::button_light(
+                            ui,
+                            r(o, 368.0, 222.0, 78.0, 21.0),
+                            "Close",
+                            ButtonKind::Default,
+                            false,
+                        )
+                        .clicked();
+                        if close || winui::escape_pressed(ui) {
+                            Outcome::<()>::Closed
+                        } else {
+                            Outcome::Open
+                        }
+                    },
+                );
+                if matches!(out, Outcome::Open) {
+                    self.sub = Some(Sub::Certs(list));
+                }
+            }
             Sub::Passwords(mut list) => {
                 let out = window(
                     ctx,
@@ -4860,20 +5066,26 @@ impl OptionsDialog {
                     Outcome::Closed => {}
                 }
             }
-            Sub::Progress(mut shown) => {
+            Sub::Progress {
+                mut show,
+                mut minimized,
+            } => {
                 let out = window(
                     ctx,
                     "opt-progress",
                     // i18n: window title: Options → Downloads → Edit... (the progress window's settings)
                     "Download progress dialog",
-                    [400.0, 150.0],
+                    [400.0, 196.0],
                     false,
                     LIGHT_BG(),
-                    |ui, o| progress_dialog(ui, o, &mut shown),
+                    |ui, o| progress_dialog(ui, o, &mut show, &mut minimized),
                 );
                 match out {
-                    Outcome::Open => self.sub = Some(Sub::Progress(shown)),
-                    Outcome::Done(()) => self.s.show_progress = shown,
+                    Outcome::Open => self.sub = Some(Sub::Progress { show, minimized }),
+                    Outcome::Done(()) => {
+                        self.s.show_progress = show;
+                        self.s.show_progress_minimized = minimized;
+                    }
                     Outcome::Closed => {}
                 }
             }
@@ -5734,28 +5946,75 @@ fn read_sites_file(path: &std::path::Path) -> std::io::Result<String> {
 }
 
 /// Downloads → Customize "Download progress" dialog → Edit... (#1041): whether a download's
-/// progress window opens when it starts, and where to find it when it doesn't.
-fn progress_dialog(ui: &mut Ui, o: Pos2, shown: &mut bool) -> Outcome<()> {
+/// progress window opens when it starts, minimized or not (#1966), and where to find it when it
+/// doesn't.
+fn progress_dialog(ui: &mut Ui, o: Pos2, show: &mut bool, minimized: &mut bool) -> Outcome<()> {
     let p = ui.painter().clone();
-    winui::checkbox_light(
-        ui,
-        o + vec2(14.0, 16.0),
-        shown,
-        "Show download progress dialog when a download starts",
-        true,
-    );
+    let mut choice = match (*show, *minimized) {
+        (false, _) => 2,
+        (true, true) => 1,
+        (true, false) => 0,
+    };
     winui::paragraph(
         &p,
         o.x + 14.0,
-        o.y + 58.0,
-        crate::i18n::t(
-            "When it is off, downloads go on in the main window's list. Double-click one there to see its progress.",
-        ),
+        o.y + 16.0,
+        crate::i18n::t("Show download progress dialog when a download starts"),
         LIGHT_TEXT(),
         o.x + 386.0,
         14.0,
     );
-    ok_cancel(ui, o, 232.0, 117.0, true)
+    let normal = winui::radio_light(ui, o + vec2(28.0, 44.0), choice == 0, "Show normally", true);
+    let min = winui::radio_light(
+        ui,
+        o + vec2(28.0, 66.0),
+        choice == 1,
+        "Show minimized",
+        true,
+    );
+    let off = winui::radio_light(ui, o + vec2(28.0, 88.0), choice == 2, "Don't show", true);
+    if normal.clicked() {
+        choice = 0;
+    } else if min.clicked() {
+        choice = 1;
+    } else if off.clicked() {
+        choice = 2;
+    }
+    if let Some(i) = winui::radio_keys(ui, &[normal, min, off]) {
+        choice = i;
+    }
+    (*show, *minimized) = match choice {
+        0 => (true, false),
+        1 => (true, true),
+        _ => (false, false),
+    };
+    if choice == 1 {
+        // i18n: the progress window's setting: it starts minimized
+        winui::paragraph(
+            &p,
+            o.x + 14.0,
+            o.y + 120.0,
+            crate::i18n::t(
+                "Minimized, the window waits on the taskbar and doesn't take the focus.",
+            ),
+            LIGHT_TEXT(),
+            o.x + 386.0,
+            14.0,
+        );
+    } else if choice == 2 {
+        winui::paragraph(
+            &p,
+            o.x + 14.0,
+            o.y + 120.0,
+            crate::i18n::t(
+                "When it is off, downloads go on in the main window's list. Double-click one there to see its progress.",
+            ),
+            LIGHT_TEXT(),
+            o.x + 386.0,
+            14.0,
+        );
+    }
+    ok_cancel(ui, o, 232.0, 164.0, true)
 }
 
 pub(crate) fn ok_cancel(ui: &mut Ui, o: Pos2, x: f32, y: f32, valid: bool) -> Outcome<()> {
@@ -6154,6 +6413,16 @@ pub(crate) fn list_frame(p: &egui::Painter, rc: Rect) {
     );
 }
 
+/// Where a [`report`] in the screen rect `rc` has its rows: under its header, inside its
+/// frame (on screen; an empty list's block goes there).
+fn report_body(rc: Rect) -> Rect {
+    let rc = winui::rect(rc);
+    winui::rect(Rect::from_min_max(
+        pos2(rc.left() + 1.0, rc.top() + 1.0 + 25.0),
+        pos2(rc.right() - 1.0, rc.bottom() - 1.0),
+    ))
+}
+
 /// A report list (header 25 px, rows 17 px): `cols` are (title, right edge in client x).
 /// Returns true on a double click of a row.
 #[allow(clippy::too_many_arguments)]
@@ -6196,10 +6465,7 @@ fn report(
         x0 = right;
     }
     // The rows: the shared row list under the header (its frame on the list's).
-    let body = Rect::from_min_max(
-        pos2(rc.left() + 1.0, head + 25.0),
-        pos2(rc.right() - 1.0, rc.bottom() - 1.0),
-    );
+    let body = winui::rect(report_body(winui::rect(rc)));
     let gridc = winui::GRID();
     let ev = winui::row_list(
         ui,
@@ -6646,27 +6912,55 @@ mod tests {
         });
         assert!(dlg.sub.is_none());
         click(&ctx, edit.center(), |ui| dlg.downloads(ui, Pos2::ZERO));
-        assert!(matches!(dlg.sub, Some(Sub::Progress(false))));
+        assert!(matches!(
+            dlg.sub,
+            Some(Sub::Progress {
+                show: false,
+                minimized: false
+            })
+        ));
     }
 
-    /// #1041: its check box turns the progress window off, and OK keeps it.
+    /// #1041: its radios turn the progress window off or start it minimized, and OK keeps it.
     #[test]
     fn the_download_progress_dialog_turns_the_window_off() {
         let ctx = context();
-        let mut shown = true;
+        let mut show = true;
+        let mut minimized = false;
         let mut out = Outcome::Open;
         frame(&ctx, Vec::new(), |ui| {
-            out = progress_dialog(ui, Pos2::ZERO, &mut shown)
+            out = progress_dialog(ui, Pos2::ZERO, &mut show, &mut minimized)
         });
-        click(&ctx, pos2(20.0, 22.0), |ui| {
-            out = progress_dialog(ui, Pos2::ZERO, &mut shown);
+        click(&ctx, pos2(34.0, 94.0), |ui| {
+            out = progress_dialog(ui, Pos2::ZERO, &mut show, &mut minimized);
         });
-        assert!(!shown);
+        assert!(!show);
         assert!(matches!(out, Outcome::Open));
-        click(&ctx, pos2(268.0, 127.0), |ui| {
-            out = progress_dialog(ui, Pos2::ZERO, &mut shown);
+        click(&ctx, pos2(268.0, 174.0), |ui| {
+            out = progress_dialog(ui, Pos2::ZERO, &mut show, &mut minimized);
         });
         assert!(matches!(out, Outcome::Done(())));
-        assert!(!shown);
+        assert!(!show);
+    }
+
+    /// #1966: "Show minimized" keeps the window opened, minimized.
+    #[test]
+    fn the_download_progress_dialog_starts_it_minimized() {
+        let ctx = context();
+        let mut show = true;
+        let mut minimized = false;
+        let mut out = Outcome::Open;
+        frame(&ctx, Vec::new(), |ui| {
+            out = progress_dialog(ui, Pos2::ZERO, &mut show, &mut minimized)
+        });
+        click(&ctx, pos2(34.0, 72.0), |ui| {
+            out = progress_dialog(ui, Pos2::ZERO, &mut show, &mut minimized);
+        });
+        assert!(show && minimized);
+        click(&ctx, pos2(268.0, 174.0), |ui| {
+            out = progress_dialog(ui, Pos2::ZERO, &mut show, &mut minimized);
+        });
+        assert!(matches!(out, Outcome::Done(())));
+        assert!(show && minimized);
     }
 }

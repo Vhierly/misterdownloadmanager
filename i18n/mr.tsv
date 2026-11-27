@@ -356,6 +356,10 @@
 #. RSS feeds window, Download rules: shown when there are no rules yet
 #, machine
 	A rule adds the new articles whose titles it matches, as they come.	एक नियम नवीन लेख जोडतो ज्यांच्या शीर्षकांशी ते जुळतात, जसे ते येतात.
+#. text in the Options window
+#. Site rules window: in the empty list of rules, under its title
+#, machine
+	A rule sets the connections, User-Agent or headers for one site.	एक नियम एका साइटसाठी कनेक्शन, वापरकर्ता-एजंट किंवा शीर्षलेख सेट करतो.
 #. text in errors.rs
 #. an error: a server on this computer redirected the download to the internet, which would not go through the chosen network adapter; {adapter} its name
 #, machine
@@ -463,6 +467,10 @@
 #. link in the empty download list: opens Add URL
 #, machine
 	Add new download	नवीन डाउनलोड जोडा
+#. text in the Options window
+#. Options → Accounts: in the empty list of accounts, under its title
+#, machine
+	Add one to download file-host links through it.	फाइल होस्टच्या दुव्यांद्वारे डाउनलोड करण्यासाठी खाते जोडा.
 #. text in the Options window
 #, machine
 	Add the duplicate and overwrite the existing file	डुप्लिकेट जोडा आणि विद्यमान फाइल ओव्हरराइट करा
@@ -617,6 +625,10 @@
 #. Click'n'Load window, under the question: nothing happens to the links before the user adds them in Link grabber
 #, machine
 	Allow only sites you use. Nothing is looked up or downloaded before you add it in Link grabber.	तुम्ही वापरत असलेल्या साइट्सनाच परवानगी द्या. लिंक ग्रॅबरमध्ये तुम्ही लिंक जोडेपर्यंत काहीही शोधले किंवा डाउनलोड केले जात नाही.
+#. text in the Options window; window title in the Options window
+#. window title: HTTPS sites whose certificate the user chose to trust
+#, machine
+	Allowed certificates	अनुमत प्रमाणपत्रे
 #. text in errors.rs
 #, machine
 	already being downloaded: {path}	आधीपासून डाउनलोड होत आहे: {path}
@@ -650,6 +662,9 @@
 #. View menu: a check item; dark mode on, whatever the system's setting
 #, machine
 	Always dark	नेहमी गडद
+#. button in a dialog box
+#, machine
+	Always for this site	या साइटसाठी नेहमी परवानगी द्या
 #. text in the Options window
 #. Options → Archives: where extracted files go
 #, machine
@@ -1059,6 +1074,11 @@
 #, machine
 	Central African Republic	मध्य आफ्रिकन प्रजासत्ताक
 #. text in the Options window
+#. column title: SHA-256 certificate fingerprint
+#, machine
+	Certificate (SHA-256)	प्रमाणपत्र (SHA-256)
+#. text in a dialog box; text in the Options window
+#. Certificate warning: the certificate's SHA-256 fingerprint
 #. Options → Remote → Status: the certificate's fingerprint, which the phone's browser shows when it warns about it; {fingerprint} = hex digits
 #, machine
 	Certificate (SHA-256): {fingerprint}	प्रमाणपत्र (SHA-256): {fingerprint}
@@ -1066,6 +1086,11 @@
 #. Options → DNS over TLS: label before the name the server's certificate shows
 #, machine
 	Certificate name:	प्रमाणपत्र नाव:
+#. text in the Options window
+#. Options → Sites Logins: button: opens the list of allowed HTTPS site certificates
+#. the trailing ... means it is still going on: keep it
+#, machine
+	Certificates...	प्रमाणपत्रे...
 #. text in countries.rs
 #. a country's name (where a download's server is)
 #, machine
@@ -1164,6 +1189,10 @@
 #. remote control page (on a phone): what the ".torrent file" button does (screen readers)
 #, machine
 	Choose a .torrent file	.torrent फाइल निवडा
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles, under its title
+#, machine
+	Choose a feed to see its articles.	त्याचे लेख पाहण्यासाठी फीड निवडा.
 #. message or event log entry in the main window
 #. title of the file dialog of View → Font → Choose a font file
 #. title of the message when the font picked in View → Font can't be used
@@ -1335,6 +1364,13 @@
 #. text in the Options window
 #, machine
 	Connections:	कनेक्शन:
+#. text in a dialog box
+#. Certificate warning: question before Continue once / Always for this site / Cancel
+#, machine
+	Continue anyway?	तरीही पुढे चालू ठेवायचे?
+#. button in a dialog box
+#, machine
+	Continue once	एकदा पुढे चालू ठेवा
 #. link (opens a web page) in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
 	Contributors	योगदानकर्ते
@@ -1598,6 +1634,9 @@
 #. button in the browser extension's window: stop offering it at each start
 #, machine
 	Don't ask again	पुन्हा विचारू नका
+#. option (radio button) in the Options window
+#, machine
+	Don't show	दाखवू नका
 #. text in the Options window
 #. checkbox, Options → Downloads: Download complete and MDM's other windows that open by themselves wait while a full-screen game, app or video, a presentation or the locked screen is on, and show when the user is back
 #, machine
@@ -1781,6 +1820,10 @@
 #. tab title: download settings
 #, machine
 	Downloads	डाउनलोड
+#. text in the Scheduler window
+#. Scheduler → Files in the queue: in the empty list, under its title
+#, machine
+	Downloads added to this queue show here.	या रांगेत जोडलेले डाउनलोड येथे दिसतात.
 #. window title in a dialog box
 #. title of the window that sums up downloads added together (a playlist, a batch) once all are done
 #, machine
@@ -1938,7 +1981,6 @@
 #, machine
 	Eritrea	इरिट्रिया
 #. text in a dialog box; item in the Categories tree in the download list; value in a column's filter list in the download list; text in the download list (sizes, speeds, status); text in a download's progress window; text in remote.rs
-#. in Download File Info, where the size goes: the address didn't answer
 #. a download's status (state it is in, not a command)
 #. a download's status (state it is in, not a command): it failed
 #, machine
@@ -2008,6 +2050,10 @@
 #. Options → Accounts: a note that the debrid services' support (Real-Debrid, AllDebrid, Premiumize) is new and not yet tried with real paid accounts
 #, machine
 	Experimental: built from the services' public API documentation, not yet confirmed with real accounts.	प्रायोगिक: सेवांच्या सार्वजनिक API दस्तऐवजातून तयार केले आहे, अद्याप वास्तविक खात्यांसह याची पुष्टी झालेली नाही.
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Expired	कालबाह्य झाले
 #. message or event log entry in the main window; text in the Options window
 #, machine
 	Export	निर्यात करा
@@ -2780,6 +2826,10 @@
 #. a country's name (where a download's server is)
 #, machine
 	Italy	इटली
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles of a feed not read yet
+#, machine
+	Its articles show here once the feed is read.	फीड वाचल्यावर त्याचे लेख येथे दिसतात.
 #. text in extracting archives (a download's log, the Archive password window)
 #. why an archive wasn't extracted in place (after "Couldn't extract {name}: "); HatchZip took its files out (the archive is gone), but moving them stopped: {to} holds those moved, {left} the others, {error} the system's reason
 #. {error} = an error message (keep the braces as they are)
@@ -3330,6 +3380,9 @@
 #. checkbox: the Minimize button hides MDM's windows to the notification area (system tray) instead of the taskbar
 #, machine
 	Minimize to the notification area	सूचना क्षेत्रात लहान करा
+#. text in the Options window
+#, machine
+	Minimized, the window waits on the taskbar and doesn't take the focus.	विंडो लहान केल्यावर टास्कबारवर राहते आणि फोकस घेत नाही.
 #. text in rssdlg.rs; text in the Add torrent window
 #. RSS feeds window: the unit after the minutes box
 #. Torrent settings: the unit after the minutes box
@@ -3650,6 +3703,10 @@
 #. button in a dialog box; text in a download's progress window
 #, machine
 	No	नाही
+#. text in the Options window
+#. Options → Accounts: the title in the empty list of debrid service accounts
+#, machine
+	No accounts yet	अद्याप कोणतेही खाते नाही
 #. text in a dialog box
 #, machine
 	No addresses yet	अद्याप पत्ते नाहीत
@@ -3657,6 +3714,10 @@
 #. Options → Proxy / Socks: Test got no answer in time
 #, machine
 	No answer within 20 seconds.	20 सेकंदात उत्तर मिळाले नाही.
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of articles of a feed that has none
+#, machine
+	No articles	लेख नाहीत
 #. text in extension.rs
 #. a check of Test browser integration (Linux, macOS): MDM found no browser it can connect to (one installed as a Flatpak isn't found)
 #, machine
@@ -3704,6 +3765,18 @@
 #. title in the empty download list when there are no downloads at all
 #, machine
 	No downloads yet	अद्याप कोणतेही डाउनलोड नाहीत
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of articles, no feed chosen
+#, machine
+	No feed chosen	कोणतेही फीड निवडले नाही
+#. text in rssdlg.rs
+#. RSS feeds window: the title in the empty list of feeds
+#, machine
+	No feeds yet	अद्याप कोणतेही फीड नाही
+#. text in the Scheduler window
+#. Scheduler → Files in the queue: the title in the empty list
+#, machine
+	No files in this queue	या रांगेत कोणतीही फाइल नाही
 #. text in a dialog box
 #, machine
 	No folders yet	अद्याप कोणतेही फोल्डर नाहीत
@@ -3717,6 +3790,10 @@
 #. text in langpick.rs
 #, machine
 	No language matches.	कोणतीही भाषा जुळत नाही.
+#. text in the Link grabber window
+#. Link grabber: the title in its empty list
+#, machine
+	No links yet	अद्याप कोणतेही दुवे नाहीत
 #. text in the Options window
 #. Options → Remote → Status: on, but the computer has no local network address now
 #, machine
@@ -3748,9 +3825,17 @@
 #, machine
 	No proxy/socks	प्रॉक्सी/SOCKS नाही
 #. text in the Options window
+#. Site rules window: the title in the empty list of rules
+#, machine
+	No site rules yet	अद्याप कोणतेही साइट नियम नाहीत
+#. text in the Options window
 #. Options → Accounts: no system keyring/keychain answered (none runs, e.g. a desktop without one), so the sign-ins stay in MDM's settings folder, which only the user's account may read
 #, machine
 	No system keyring answered, so sign-ins and passwords are kept in MDM's settings, which only you can read.	कोणत्याही सिस्टम कीरिंगने प्रतिसाद दिला नाही, त्यामुळे साइन-इन आणि पासवर्ड MDM च्या सेटिंग्जमध्ये ठेवले आहेत; त्या फक्त तुम्ही वाचू शकता.
+#. text in the Add torrent window
+#. Add torrent: the title in the empty list of files, before a torrent is read
+#, machine
+	No torrent yet	अद्याप कोणताही टॉरेंट नाही
 #. message or event log entry in the main window
 #. event log entry: Add trackers changed nothing, the torrent had them all
 #, machine
@@ -3869,8 +3954,16 @@
 #, machine
 	Not tested: it is larger than {limit} (Options → Archives). Right-click → Test archive tests it	चाचणी केली नाही: ते {limit} पेक्षा मोठे आहे (पर्याय → संग्रह). उजवे-क्लिक → संग्रह चाचणी याने त्याची चाचणी होते
 #. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Not trusted	अविश्वसनीय
+#. text in the Options window
 #, machine
 	Not used: file parts are written next to the file	वापरले नाही: फाइलचे भाग फाइलच्या शेजारी लिहिले जातात
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Not yet valid	अजून वैध नाही
 #. text in a dialog box
 #. \\n starts a new line: break lines where they fit the translation
 #, machine
@@ -4092,6 +4185,9 @@
 #. Options → Add an account: label before the field for the service's API token (the other way to sign in)
 #, machine
 	Or paste your API token:	किंवा तुमचे API टोकन पेस्ट करा:
+#. text in the Options window
+#, machine
+	Other	इतर
 #. text in the Link grabber window
 #. Link grabber: the box that edits the selected package
 #, machine
@@ -4165,6 +4261,7 @@
 #, machine
 	Password:	पासवर्ड:
 #. text in the Add torrent window
+#. "Look up" is the button that reads the torrent: use its translation
 #, machine
 	Paste a magnet link or choose a .torrent file, then Look up.	मॅग्नेट लिंक पेस्ट करा किंवा .torrent फाइल निवडा, नंतर 'शोध' वर क्लिक करा.
 #. text in the Link grabber window
@@ -4398,6 +4495,10 @@
 #. {error} = an error message (keep the braces as they are)
 #, machine
 	Reannounce failed: {error}	पुन्हा घोषणा अयशस्वी झाली: {error}
+#. text in the Options window
+#. column title: certificate refusal reason allowed
+#, machine
+	Reason	कारण
 #. text in a download's progress window
 #. column title: how much came from the peer
 #, machine
@@ -4669,6 +4770,10 @@
 #. text in the Batch download window
 #, machine
 	Second file:	दुसरी फाइल:
+#. text in a dialog box
+#. window title when a server's HTTPS certificate is refused
+#, machine
+	Security Alert	सुरक्षा सूचना
 #. text in preview.rs
 #. the preview pane when no download is selected, under its title
 #, machine
@@ -4850,7 +4955,7 @@
 #. checkbox in the Options window; checkbox in a download's progress window
 #, machine
 	Show download complete dialog	डाउनलोड पूर्ण झाल्याचा संवाद बॉक्स दाखवा
-#. checkbox in the Options window
+#. text in the Options window
 #, machine
 	Show download progress dialog when a download starts	डाउनलोड सुरू झाल्यावर डाउनलोड प्रगती संवाद बॉक्स दाखवा
 #. text in the Options window
@@ -4865,6 +4970,12 @@
 #. button in the browser extension's window: open the tutorial that adds the extension
 #, machine
 	Show me how	मला कसे ते दाखवा
+#. option (radio button) in the Options window
+#, machine
+	Show minimized	लहान करून दाखवा
+#. option (radio button) in the Options window
+#, machine
+	Show normally	सामान्यपणे दाखवा
 #. what a keyboard shortcut does in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
 	Show or hide the preview pane	पूर्वावलोकन फलक दाखवा किंवा लपवा
@@ -4957,6 +5068,7 @@
 	Sint Maarten	सिंट मार्टेन
 #. text in the Options window
 #. Site rules: column title: the site pattern
+#. column title: site name and port
 #, machine
 	Site	साइट
 #. checkbox in the Find window
@@ -4983,6 +5095,11 @@
 #. Site rule: label before the site pattern box (example.com, *.example.com)
 #, machine
 	Site:	साइट:
+#. text in a dialog box
+#. Certificate warning: the site whose certificate was refused; {site} = host or host:port
+#. {site} = a web site's name such as "example.com" (keep the braces as they are)
+#, machine
+	Site: {site}	साइट: {site}
 #. text in the Options window
 #. tab title: user names and passwords for sites
 #, machine
@@ -4993,6 +5110,14 @@
 #. text in helpers.rs
 #, machine
 	Sites send their best quality as separate video and audio. ffmpeg puts them together into one file that plays anywhere.	साइट्स त्यांची सर्वोत्तम गुणवत्ता स्वतंत्र व्हिडिओ आणि ऑडिओ म्हणून पाठवतात. ffmpeg त्यांना एकत्र करून एक फाइल बनवते जी कुठेही प्ले होते.
+#. text in the Options window
+#. Options → Sites Logins: beside the Certificates... button
+#, machine
+	Sites whose certificate you chose to trust	ज्या साइट्सच्या प्रमाणपत्रांवर तुम्ही विश्वास ठेवण्याचे निवडले आहे
+#. text in the Options window
+#. Allowed certificates window: explanation
+#, machine
+	Sites whose security certificate you chose to trust. Each entry is pinned to that certificate's SHA-256 fingerprint.	ज्या साइट्सच्या सुरक्षा प्रमाणपत्रांवर तुम्ही विश्वास ठेवण्याचे निवडले आहे। प्रत्येक नोंद त्या प्रमाणपत्राच्या SHA-256 फिंगरप्रिंटशी जोडलेली असते।
 #. text in the Link grabber window; text in a download's progress window; text in the Scheduler window; text in the Add torrent window
 #. column title: the file's size
 #. column title: file size
@@ -5800,6 +5925,9 @@
 #, machine
 	The site's certificate isn't trusted, by yt-dlp nor by this computer: an antivirus's web filter or a proxy that reads HTTPS may be in the way. Turn its HTTPS scanning off, or add its certificate to the computer's, then look the page up again.	साइटचे प्रमाणपत्र yt-dlp किंवा या संगणकाद्वारे विश्वसनीय नाही: अँटीव्हायरसचा वेब फिल्टर किंवा HTTPS वाचणारा प्रॉक्सी अडथळा आणत असेल. त्याचे HTTPS स्कॅनिंग बंद करा, किंवा त्याचे प्रमाणपत्र संगणकात जोडा, नंतर पृष्ठ पुन्हा शोधा.
 #. text in errors.rs
+#, machine
+	the site's security certificate expired on {date}, so MDM can't be sure it's the real site (your browser warns about it too)	साइटचे सुरक्षा प्रमाणपत्र {date} रोजी कालबाह्य झाले, त्यामुळे MDM ला ती खरी साइट असल्याची खात्री नाही (तुमचा ब्राउझर देखील याबद्दल चेतावणी देतो)
+#. text in errors.rs
 #. why a download failed: the site's security certificate (what proves a secure, HTTPS, site is the one it says) is past its end date. Browsers warn about the same site
 #, machine
 	the site's security certificate has expired, so MDM can't be sure it's the real site (your browser warns about it too)	साइटचे सुरक्षा प्रमाणपत्र कालबाह्य झाले आहे, त्यामुळे MDM ला खात्री नाही की ती खरी साइट आहे (तुमचा ब्राउझर देखील त्याबद्दल चेतावणी देतो)
@@ -5807,6 +5935,10 @@
 #. why a download failed: the site's security certificate was made for other site names than the one in the address
 #, machine
 	the site's security certificate is for another site name, so MDM can't be sure it's the real site (your browser warns about it too)	साइटचे सुरक्षा प्रमाणपत्र पत्त्यातील इतर साइट नावासाठी आहे, त्यामुळे MDM ला खात्री नाही की ती खरी साइट आहे (तुमचा ब्राउझर देखील त्याबद्दल चेतावणी देतो)
+#. text in errors.rs
+#. why a download failed: the site's security certificate is self-signed
+#, machine
+	the site's security certificate is self-signed, so MDM can't be sure it's the real site (your browser warns about it too)	साइटचे सुरक्षा प्रमाणपत्र सेल्फ-साईन केलेले आहे, त्यामुळे MDM ला ती खरी साइट असल्याची खात्री नाही (तुमचा ब्राउझर देखील याबद्दल चेतावणी देतो)
 #. text in errors.rs
 #. why a download failed: the site's security certificate is made for other uses than a website (its "extended key usage" leaves out web servers)
 #, machine
@@ -5976,6 +6108,10 @@
 #. remote control page (on a phone): label of the box naming this phone (shown in MDM's list of paired devices)
 #, machine
 	This device's name	या उपकरणाचे नाव
+#. text in rssdlg.rs
+#. RSS feeds window: in the empty list of articles of a feed that has none
+#, machine
+	This feed has no articles right now.	या फीडमध्ये सध्या कोणतेही लेख नाहीत.
 #. message or event log entry in the main window
 #. the message when a file picked in View → Font isn't a TrueType or OpenType font MDM can read
 #, machine
@@ -6846,6 +6982,10 @@
 #. {n} = a number (keep the braces as they are)
 #, machine
 	Wrong code. Tries left: {n}	चुकीचा कोड. राहिलेले प्रयत्न: {n}
+#. text in the Options window
+#. Allowed certificates table: short reason label
+#, machine
+	Wrong name	चुकीचे नाव
 #. text in extracting archives (a download's log, the Archive password window)
 #. in Archive password: {name} is the archive's file name
 #. {name} = a file name (keep the braces as they are)

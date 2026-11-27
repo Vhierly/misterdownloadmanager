@@ -232,6 +232,23 @@ impl Category {
         crate::i18n::t(self.shipped_name()).to_owned()
     }
 
+    /// Its icon: the Categories tree's, and its choice's in the category drop-downs (#2008).
+    /// Silk icons standing in for IDM's XP-era category icons; a theme's icon set may replace
+    /// them (`crate::themeicons`).
+    pub fn icon(self) -> crate::chrome::IconKey {
+        let (need, silk) = match self {
+            Category::Compressed => ("cat-compressed", "page_white_zip"),
+            Category::Documents => ("cat-documents", "page_white"),
+            Category::Music => ("cat-music", "music"),
+            Category::Programs => ("cat-programs", "application_xp"),
+            Category::Video => ("cat-video", "film"),
+            Category::General => ("cat-documents", "page_white"),
+            Category::Torrents => ("cat-torrents", "folder_link"),
+            Category::Custom(_) => ("cat-folder", "folder"),
+        };
+        crate::chrome::IconKey::Themed(need, silk)
+    }
+
     /// Every category: General first.
     pub fn all() -> Vec<Category> {
         std::iter::once(Category::General)
@@ -610,6 +627,10 @@ pub struct Item {
     /// overnight is renewed the next day); cleared as it starts again.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub waits_for_address: bool,
+    /// Its last try failed because the site's bot check refused it (`Error::BotCheck`): the
+    /// whole site is given a rest (`crate::sitewait`), not only this file. Not kept with the list.
+    #[serde(skip)]
+    pub refused_by_site: bool,
     /// It was made from a private (incognito) window's download. Saved (with Options → General →
     /// "Keep private-window downloads in the list"), unlike `context.private`, which is memory
     /// only: read back, the row stays apart from normal windows' downloads (it neither takes
@@ -1453,6 +1474,7 @@ impl Item {
             referer: None,
             page: None,
             waits_for_address: false,
+            refused_by_site: false,
             private_window: false,
             file_url: None,
             own: OwnRequest::default(),
@@ -1680,6 +1702,8 @@ impl Item {
                 {
                     self.waits_for_address = true;
                 }
+                self.refused_by_site =
+                    failed_now && matches!(s.failure, Some(mdm_engine::Error::BotCheck));
                 // In the interface language; the engine's English when it gave no failure.
                 self.error = s.failure.as_ref().map(crate::errors::describe).or(s.error);
                 if self.video.is_some()
