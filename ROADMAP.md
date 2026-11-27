@@ -569,6 +569,12 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 These ship in the next version.
 
+- ✅ **Tasks → Torrent settings...** has a box for your own trackers (one address a line, `http`,
+  `https`, or `udp`), added after a new public torrent's own trackers (never to private torrents,
+  and local-network trackers are refused). Existing torrents keep their trackers, it works beside
+  the public tracker list without duplicates, and `misterdownloadmanager-cli torrent-get` follows it
+  ([#1959](https://github.com/anefzaoui/misterdownloadmanager/issues/1959), from
+  [#1507](https://github.com/anefzaoui/misterdownloadmanager/discussions/1507))
 - ✅ The browser add-on's **Download video** button can be scaled (**80%**, **100%**, **120%**) beside **Button size** in **Options → General → Download panels**, keeps free interior positions when dragged anywhere over the player, offers **Hide the download button in full screen** directly in its menu, and respects DOM full-screen hiding inside embedded frames
   ([#1923](https://github.com/anefzaoui/misterdownloadmanager/issues/1923))
 - ✅ The first start's setup in one window: the language, the video helpers (each with its own

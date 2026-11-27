@@ -137,6 +137,10 @@
 #. {n} = a number (keep the braces as they are)
 @plural	{n} tracker added|{n} trackers added	{n} tracker added|{n} trackers added
 #. count in the main window
+#. event log entry: user's own trackers (Torrent settings) were added to a new torrent
+#. {n} = a number (keep the braces as they are)
+@plural	{n} tracker added from Torrent settings|{n} trackers added from Torrent settings	{n} tracker added from Torrent settings|{n} trackers added from Torrent settings
+#. count in the main window
 #. event log entry: trackers from the public tracker list (Torrent settings) were added to a torrent
 #. {n} = a number (keep the braces as they are)
 @plural	{n} tracker added from the public list|{n} trackers added from the public list	{n} tracker added from the public list|{n} trackers added from the public list
@@ -265,6 +269,8 @@
 	A playlist's videos are downloaded whole	A playlist's videos are downloaded whole
 #. message or event log entry in the main window
 	A private torrent: the public tracker list isn't added	A private torrent: the public tracker list isn't added
+#. message or event log entry in the main window
+	A private torrent: your own trackers aren't added	A private torrent: your own trackers aren't added
 #. text in the Options window
 #. Options → Sites Logins → Cookies for video sites: the tooltip of the profile box
 	A profile's name or its folder. Empty: the profile used last. For a browser built on Chromium that isn't listed (Helium, Thorium...), choose Chromium and its profile's folder.	A profile's name or its folder. Empty: the profile used last. For a browser built on Chromium that isn't listed (Helium, Thorium...), choose Chromium and its profile's folder.
@@ -2685,6 +2691,9 @@
 	Network adapter:	Network adapter:
 #. text in errors.rs
 	network error	network error
+#. text in the Add torrent window
+#. Torrent settings: under the user's own trackers box
+	Never added to private torrents. Existing torrents stay as they are.	Never added to private torrents. Existing torrents stay as they are.
 #. text in the Options window
 	Never show it on these sites:	Never show it on these sites:
 #. button in the Options window
@@ -5160,6 +5169,9 @@
 #. Video helpers: {path} = the program the person chose, {version} = its version
 #. {version} = a version number (keep the braces as they are)
 	Your own program: {path} ({version})	Your own program: {path} ({version})
+#. text in the Add torrent window
+#. Torrent settings: above the multi-line box for user's own trackers
+	Your own trackers for new public torrents, one address a line:	Your own trackers for new public torrents, one address a line:
 #. text in helpers.rs
 #. Video helpers: {path} = the system's yt-dlp, ffmpeg or gallery-dl
 	Your system's: {path}	Your system's: {path}
