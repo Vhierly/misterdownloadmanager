@@ -20,6 +20,7 @@ mod deferred_rename;
 mod deleter;
 mod derive;
 mod dialogs;
+mod diskwatch;
 mod droptarget;
 mod errors;
 mod extension;
@@ -71,8 +72,12 @@ mod scrollbar;
 mod secrets;
 mod selection;
 mod settings;
+// The offer of Mesa's software renderer (#476): Windows only, where WARP draws without a card;
+// Linux and macOS have their own software OpenGL.
 mod setup;
 mod sitewait;
+#[cfg(windows)]
+mod softgl;
 mod store;
 mod sysprogress;
 mod theme;
@@ -571,6 +576,9 @@ fn app() -> eframe::Result {
             at_login,
         );
     }
+    // This thread is the window's: from its first frame on, it makes no file call (#1292,
+    // diskwatch.rs; debug builds log any it makes).
+    diskwatch::start();
     // Linux: the session's end (logind's SIGTERM at logout or shutdown) is heard from now on,
     // and run at the window's next frame (`Shared::logic`).
     #[cfg(target_os = "linux")]
