@@ -7092,7 +7092,7 @@
   },
   "5f818384bb56aff6": {
    "source": "<g1>Edge (or another browser) says \"Specified native messaging host not found\", though the registry entry looks right?</g1> On 64-bit Windows the browsers read the registry's 32-bit part (<x2/>) before the entry you find under <x3/>, and take the first one there, even one that leads to a copy that is gone. <g4>Test browser integration</g4> says <g5>An older registry entry is in the way</g5>, with that entry: click <g6>Set it up</g6> to give your account an entry of its own, which the browsers read before it. MDM also does that by itself at its start when that entry leads nowhere, and its setup for everyone removes it.",
-   "text": "<g1>مرورگر Edge (یا مرورگر دیگری) می‌گوید «Specified native messaging host not found»، با اینکه ورودی رجیستری درست به نظر می‌رسد؟</g1> در Windows 64بیتی، مرورگرها بخش 32بیتی رجیستری (<x2/>) را قبل از ورودی‌ای که در <x3/> پیدا می‌کنید می‌خوانند و اولین ورودی را که پیدا می‌کنند، حتی اگر به نسخه‌ای حذف‌شده اشاره کند، انتخاب می‌کنند. <g4>آزمایش یکپارچه‌سازی مرورگر</g4> می‌گوید <g5>یک ورودی قدیمی‌تر در رجیستری مانع است</g5>، و آن ورودی را نشان می‌دهد: روی <g6>تنظیم کن</g6> کلیک کنید تا یک ورودی مخصوص برای حساب کاربری شما ایجاد شود که مرورگرها آن را قبل از ورودی‌های دیگر می‌خوانند. MDM همچنین در هنگام شروع خود، اگر آن ورودی به جایی نرسد، این کار را انجام می‌دهد و تنظیمات آن برای همه کاربران، آن ورودی را حذف می‌کند."
+   "text": "<g1>مرورگر Edge (یا مرورگر دیگری) می‌گوید «Specified native messaging host not found»، با اینکه ورودی رجیستری درست به نظر می‌رسد؟</g1> در Windows 64 بیتی، مرورگرها بخش 32 بیتی رجیستری (<x2/>) را قبل از ورودی که در <x3/> پیدا می‌کنید می‌خوانند و اولین ورودی را انتخاب می‌کنند، حتی اگر آن ورودی به نسخه‌ای که حذف شده است اشاره کند. <g4>آزمایش یکپارچه‌سازی مرورگر</g4> می‌گوید <g5>یک ورودی قدیمی‌تر در رجیستری مزاحم است</g5>، همراه با آن ورودی: روی <g6>تنظیم کن</g6> کلیک کنید تا یک ورودی مخصوص به حساب کاربری شما اضافه شود که مرورگرها آن را قبل از ورودی‌های دیگر می‌خوانند. MDM همچنین در هنگام شروع خود، اگر آن ورودی به جایی نرسد، این کار را انجام می‌دهد و تنظیمات آن برای همه کاربران، آن ورودی را حذف می‌کند."
   },
   "5f8f976d1dd62e61": {
    "source": "A group box's frame",
@@ -10845,6 +10845,10 @@
   "91921dfcf2686194": {
    "source": "MDM's interface comes in 87 languages: every display language Windows 11 offers, from Afrikaans to Vietnamese, including both Chinese scripts, Spanish for Spain and Mexico, French for France and Canada, Portuguese for Portugal and Brazil, and Serbian in Cyrillic and Latin.",
    "text": "رابط کاربری MDM به 87 زبان ارائه می‌شود: همه زبان‌های نمایشی Windows 11، از آفریکانس تا ویتنامی، از جمله هر دو خط نوشتاری چینی، اسپانیایی برای اسپانیا و مکزیک، فرانسوی برای فرانسه و کانادا، پرتغالی برای پرتغال و برزیل، و صربی با خط سیریلیک و لاتین."
+  },
+  "91c08dd2d3fe7d4a": {
+   "source": "<g1>Add category</g1> — make your own, for example <g2>Books</g2> for <x3/> (they then go to Books, not Documents). Give it a name, the file types (separated by spaces, <x4/> allowed) and a folder.",
+   "text": "<g1>افزودن دسته</g1> — دسته خود را بسازید، مثلا <g2>کتاب‌ها</g2> برای <x3/> (آن‌ها سپس به کتاب‌ها می‌روند، نه اسناد). یک نام، انواع فایل‌ها (با فاصله جدا شده، <x4/> مجاز است) و یک پوشه به آن بدهید."
   },
   "91cefe80b7f00fac": {
    "source": "<g1><g2>Download a file</g2></g1> — copy a link, add it, open the file.",
@@ -17290,6 +17294,10 @@
    "source": "Can it download overnight or on a schedule?",
    "text": "آیا می‌تواند شبانه یا طبق برنامه بارگیری کند؟"
   },
+  "e852a2ae2ea94c2d": {
+   "source": "<g1>Automatically put in \"…\" category the following file types</g1> — the file types that go to this category. A built-in category whose list you never changed gains the types a new version adds; one you edited stays as it is.",
+   "text": "<g1>انتقال خودکار انواع فایل زیر به دسته‌بندی «…»</g1> — انواع فایل‌هایی که به این دسته‌بندی منتقل می‌شوند. یک دسته‌بندی داخلی که فهرست آن را هرگز تغییر نداده‌اید، انواع فایل‌های اضافه شده در نسخه‌های جدید را دریافت می‌کند؛ دسته‌بندی ویرایش شده به همان صورت باقی می‌ماند."
+  },
   "e8592a334f7cb4df": {
    "source": "In <g1>Download File Info</g1>, click <g2>Download Later</g2> and pick the queue.",
    "text": "در <g1>اطلاعات فایل بارگیری‌شده</g1>، روی <g2>بارگیری بعدا</g2> کلیک کنید و صف را انتخاب کنید."
@@ -17885,6 +17893,10 @@
   "ef6e5d90b67f8e4e": {
    "source": "<g1>\"Hide tab\" was cut in longer languages</g1> (German \"Registerkarte au...\"): the button grows to fit its label where there is room, through a shared helper other buttons can use.",
    "text": "<g1>«پنهان کردن برگه» در زبان‌های طولانی‌تر قطع می‌شد</g1> (آلمانی «Registerkarte au...»): دکمه به اندازه‌ای رشد می‌کند که برچسب خود را در جایی که فضا وجود دارد، از طریق یک کمک‌کننده مشترک که دکمه‌های دیگر می‌توانند از آن استفاده کنند، جا دهد."
+  },
+  "ef7238dc374b9e0e": {
+   "source": "Each download falls into a category by its file type: <g1>General</g1>, <g2>Compressed</g2>, <g3>Documents</g3>, <g4>Music</g4>, <g5>Programs</g5> or <g6>Video</g6>. Torrents have their own <g7>Torrents</g7> category. <g8>Programs</g8> takes programs, installers and app packages (EXE, MSI, APK, IPA, DMG, PKG, DEB, RPM, AppImage, MSIX…), <g9>Compressed</g9> archives and disc images (ZIP, RAR, 7Z, TAR, XZ, ISO, IMG, VHD…), <g10>Documents</g10> text documents, spreadsheets and e-books (PDF, DOCX, XLSX, ODT, EPUB, MOBI…), <g11>Music</g11> audio (MP3, FLAC, OPUS, M4A…) and <g12>Video</g12> videos (MP4, MKV, WEBM…); every other file goes to General. Your own categories come before the built-in ones. Each category has its own folder, by default inside your Downloads folder (<x13/>, <x14/> and so on; General uses <x15/> itself).",
+   "text": "هر بارگیری بر اساس نوع فایل خود در یک دسته قرار می‌گیرد: <g1>عمومی</g1>، <g2>فشرده</g2>، <g3>اسناد</g3>، <g4>موسیقی</g4>، <g5>برنامه‌ها</g5> یا <g6>ویدئو</g6>. تورنت‌ها دسته <g7>تورنت‌ها</g7>ی خود را دارند. <g8>برنامه‌ها</g8> شامل برنامه‌ها، نصب‌کننده‌ها و بسته‌های برنامه (EXE، MSI، APK، IPA، DMG، PKG، DEB، RPM، AppImage، MSIX و غیره)، <g9>فشرده</g9> شامل آرشیوها و ایمیج‌های دیسک (ZIP، RAR، 7Z، TAR، XZ، ISO، IMG، VHD و غیره)، <g10>اسناد</g10> شامل اسناد متنی، صفحات گسترده و کتاب‌های الکترونیکی (PDF، DOCX، XLSX، ODT، EPUB، MOBI و غیره)، <g11>موسیقی</g11> شامل فایل‌های صوتی (MP3، FLAC، OPUS، M4A و غیره) و <g12>ویدئو</g12> شامل ویدئوها (MP4، MKV، WEBM و غیره) می‌شود؛ هر فایل دیگری به دسته عمومی می‌رود. دسته‌های شما قبل از دسته‌های داخلی قرار می‌گیرند. هر دسته پوشه مخصوص به خود را دارد که به‌طور پیش‌فرض در پوشه بارگیری‌های شما قرار دارد (<x13/>، <x14/> و غیره؛ عمومی از <x15/> استفاده می‌کند)."
   },
   "ef8cedcbdccdaf85": {
    "source": "The code is filled in when you scanned the QR code; otherwise type it. Give the phone a name, and tap <g1>Pair</g1>. The window on the computer says so, and closes with <g2>Done</g2>.",

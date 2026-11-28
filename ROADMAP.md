@@ -575,6 +575,12 @@ Everything below ships together, in version 0.6.0, the next release.
   the public tracker list without duplicates, and `misterdownloadmanager-cli torrent-get` follows it
   ([#1959](https://github.com/anefzaoui/misterdownloadmanager/issues/1959), from
   [#1507](https://github.com/anefzaoui/misterdownloadmanager/discussions/1507))
+- ✅ More file types in the built-in categories: apps and installers (APK, IPA, AppImage, DEB,
+  RPM, Flatpak, Snap, MSIX, DMG, PKG…) in Programs, disc and disk images (ISO, IMG, VHD, VMDK…)
+  and more archives in Compressed, e-books, OpenDocument files and spreadsheets in Documents,
+  OPUS, FLAC, M4B and AIFF in Music, M2TS and MTS in Video; a list you edited stays yours
+  ([#1725](https://github.com/anefzaoui/misterdownloadmanager/issues/1725); thanks to
+  [@twistedwolfyt00](https://github.com/twistedwolfyt00))
 - ✅ Website: live counters under the home page's contributors, the downloads from GitHub (every
   file of every release) and the browser add-on's users (the Chrome Web Store and Firefox Add-ons), on
   split-flap tiles that flip up from zero when the page opens; read at most every 15 minutes, the
