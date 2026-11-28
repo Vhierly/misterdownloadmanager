@@ -569,6 +569,10 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 Everything below ships together, in version 0.6.0, the next release.
 
+- ✅ Torrents: ticking another file on a finished torrent no longer re-checks every piece already on
+  disk: MDM keeps the piece map when a finished torrent leaves the session (when sharing is off or
+  a seeding limit is reached) and removes it on delete, Recheck, or file replacement
+  ([#2079](https://github.com/anefzaoui/misterdownloadmanager/issues/2079))
 - ✅ More file types in the built-in categories: apps and installers (APK, IPA, AppImage, DEB,
   RPM, Flatpak, Snap, MSIX, DMG, PKG…) in Programs, disc and disk images (ISO, IMG, VHD, VMDK…)
   and more archives in Compressed, e-books, OpenDocument files and spreadsheets in Documents,
