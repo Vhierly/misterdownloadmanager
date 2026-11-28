@@ -2170,6 +2170,10 @@
    "source": "Open (GPL-3.0)",
    "text": "Terbuka (GPL-3.0)"
   },
+  "1c33e6d58d65ebb6": {
+   "source": "<g1>Tasks → Torrent settings... → Own trackers...</g1> follows the same rules: every address is checked so none on your computer or local network is contacted, and private torrents never get them.",
+   "text": "<g1>Tugas → Pengaturan torrent... → Pelacak sendiri...</g1> mengikuti aturan yang sama: setiap alamat diperiksa sehingga tidak ada yang ada di komputer atau jaringan lokal Anda yang dihubungi, dan torrent pribadi tidak pernah mendapatkannya."
+  },
   "1c41a815ee54b7d7": {
    "source": "MDM has <g1>no analytics, no automatic crash reporting, no telemetry and no advertising</g1> (a crash report goes only where you send it yourself). It never sends us your download list, the addresses you download, or anything else.",
    "text": "MDM <g1>tidak memiliki analitik, pelaporan kerusakan otomatis, telemetri, dan iklan</g1> (laporan kerusakan hanya akan dikirim ke tempat yang Anda tuju sendiri). MDM tidak pernah mengirimkan daftar unduhan Anda, alamat yang Anda unduh, atau hal lainnya kepada kami."
@@ -3210,6 +3214,10 @@
    "source": "MDM runs on Windows 10 and Windows 11 (x64, ARM64 and 32-bit), and on 64-bit Linux (x86-64 and ARM64): see <g1>On Linux</g1>. Builds for macOS are new and still experimental: see <g2>On a Mac</g2>.",
    "text": "MDM berjalan di Windows 10 dan Windows 11 (x64, ARM64, dan 32-bit), serta di Linux 64-bit (x86-64 dan ARM64): lihat <g1>Di Linux</g1>. Versi untuk macOS masih baru dan eksperimental: lihat <g2>Di Mac</g2>."
   },
+  "29f37397c338f4c4": {
+   "source": "Download a torrent, or only some of its files. If some of its files are already in the folder, it stops and names them; <x1/> uses them instead (what matches is kept, the rest downloaded). With Torrent settings' <g2>Add the trackers of this public list to public torrents</g2> on, a public torrent gets the list's trackers too, as in the app. Any trackers you listed in Torrent settings' <g3>Own trackers...</g3> window are added to new public torrents the same way.",
+   "text": "Mengunduh torrent, atau hanya beberapa filenya. Jika beberapa filenya sudah ada di folder, ia berhenti dan menamainya; <x1/> menggunakannya sebagai gantinya (yang cocok dipertahankan, sisanya diunduh). Dengan <g2>Tambahkan pelacak dari daftar publik ini ke torrent publik</g2> di Pengaturan torrent aktif, torrent publik juga mendapatkan pelacak dari daftar tersebut, seperti di aplikasi. Pelacak apa pun yang Anda cantumkan di jendela <g3>Pelacak sendiri...</g3> Pengaturan torrent ditambahkan ke torrent publik baru dengan cara yang sama."
+  },
   "2a014824bb4f981c": {
    "source": "Disabled text, the one grey of every greyed control and label",
    "text": "Teks dinonaktifkan, satu-satunya warna abu-abu dari setiap kontrol dan label yang berwarna abu-abu"
@@ -3997,6 +4005,10 @@
   "34ee8ac31c366dc9": {
    "source": "Some file hosts count a look-up as a download: turn the look-ups off in <g1>Options → Archives</g1>.",
    "text": "Beberapa host file menghitung pencarian sebagai unduhan: matikan pencarian di <g1>Opsi → Arsip</g1>."
+  },
+  "34f9c0c492a55ca2": {
+   "source": "<g1>Your own trackers in Torrent settings</g1>, if you list any: every new public torrent contacts those trackers too, and they see which public torrents you add.",
+   "text": "<g1>Pelacak Anda sendiri di Pengaturan torrent</g1>, jika Anda mencantumkan apa pun: setiap torrent publik baru juga menghubungi pelacak tersebut, dan mereka melihat torrent publik mana yang Anda tambahkan."
   },
   "35092e177f7efaa5": {
    "source": "Download complete with Open and Open folder",
@@ -6166,6 +6178,10 @@
    "source": "On Windows, MDM draws its windows with Direct3D 12; on Linux and macOS, with OpenGL, or with Vulkan (Linux) or Metal (macOS) when you choose them. A graphics driver can still misbehave: a window that holds still for seconds, flickers, or shows wrong colours or blocks. Try the other one: choose <g1>View → Draw with → OpenGL</g1> (or <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), then quit MDM (<g5>Tasks → Exit</g5>) and start it again. Choosing the first one goes back the same way.",
    "text": "Di Windows, MDM merender jendelanya dengan Direct3D 12; di Linux dan macOS, dengan OpenGL, atau dengan Vulkan (Linux) maupun Metal (macOS) jika Anda memilihnya. Driver grafis masih bisa bermasalah: jendela bisa tidak merespons selama beberapa detik, berkedip, atau menampilkan warna yang salah maupun blok. Coba pilihan lain: pilih <g1>Tampilan → Render dengan → OpenGL</g1> (atau <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), lalu keluar dari MDM (<g5>Tugas → Keluar</g5>) dan jalankan lagi. Untuk kembali ke pilihan awal, lakukan hal yang sama."
   },
+  "534625c2933b25c5": {
+   "source": "You can also list your own trackers under <g1>Tasks → Torrent settings... → Own trackers...</g1>, one address a line (<x2/>, <x3/>, or <x4/>). Every new public torrent asks them after its own trackers, private torrents never get them, and <x5/> uses the same list.",
+   "text": "Anda juga dapat mencantumkan pelacak Anda sendiri di <g1>Tugas → Pengaturan torrent... → Pelacak sendiri...</g1>, satu alamat per baris (<x2/>, <x3/>, atau <x4/>). Setiap torrent publik baru akan menanyakan pelacak ini setelah pelacaknya sendiri, torrent pribadi tidak pernah menggunakannya, dan <x5/> menggunakan daftar yang sama."
+  },
   "53463dc2311b18e1": {
    "source": "when <g1>Options → Archives → Extract archives when their download completes</g1> is on (off by default), for any other download,",
    "text": "saat <g1>Opsi → Arsip → Ekstrak arsip saat unduhan selesai</g1> diaktifkan (nonaktif secara default), untuk unduhan lainnya,"
@@ -7073,6 +7089,10 @@
   "5f7f2cf66185bda1": {
    "source": "What Update now does",
    "text": "Apa yang dilakukan Perbarui sekarang"
+  },
+  "5f818384bb56aff6": {
+   "source": "<g1>Edge (or another browser) says \"Specified native messaging host not found\", though the registry entry looks right?</g1> On 64-bit Windows the browsers read the registry's 32-bit part (<x2/>) before the entry you find under <x3/>, and take the first one there, even one that leads to a copy that is gone. <g4>Test browser integration</g4> says <g5>An older registry entry is in the way</g5>, with that entry: click <g6>Set it up</g6> to give your account an entry of its own, which the browsers read before it. MDM also does that by itself at its start when that entry leads nowhere, and its setup for everyone removes it.",
+   "text": "<g1>Edge (atau browser lain) menampilkan \"Specified native messaging host not found\", meskipun entri registri terlihat benar?</g1> Pada Windows 64-bit, browser membaca bagian registri 32-bit (<x2/>) sebelum entri yang Anda temukan di bawah <x3/>, dan mengambil yang pertama di sana, bahkan yang mengarah ke salinan yang sudah tidak ada. <g4>Uji integrasi browser</g4> menampilkan <g5>Entri registri lama menghalangi</g5>, dengan entri tersebut: klik <g6>Siapkan</g6> untuk memberikan akun Anda entri sendiri, yang dibaca browser sebelumnya. MDM juga melakukannya sendiri saat dimulai ketika entri tersebut tidak mengarah ke mana pun, dan pengaturannya untuk semua orang akan menghapusnya."
   },
   "5f8f976d1dd62e61": {
    "source": "A group box's frame",
@@ -8482,6 +8502,10 @@
    "source": "Paste a Google Drive link as it is, the one <g1>Share → Copy link</g1> gives:",
    "text": "Tempel tautan Google Drive apa adanya, seperti tautan yang diberikan melalui <g1>Bagikan → Salin tautan</g1>:"
   },
+  "7297ca101de5145e": {
+   "source": "The list couldn't be read from GitHub when this page was built. Everyone is on GitHub meanwhile, in the project's <g1>pull requests</g1> and <g2>issues</g2>.",
+   "text": "Daftar tidak dapat dibaca dari GitHub saat halaman ini dibuat. Sementara itu, semua orang ada di GitHub, di <g1>permintaan tarik</g1> dan <g2>masalah</g2> proyek."
+  },
   "729a19fc6ce418f9": {
    "source": "Reporting problems",
    "text": "Melaporkan masalah"
@@ -8613,6 +8637,10 @@
   "74147234c5be454d": {
    "source": "A 256 KiB file. MDM is done in 30 ms; IDM is still starting.",
    "text": "File berukuran 256 KiB. MDM selesai dalam 30 ms; IDM masih memulai."
+  },
+  "7416633f0aac387c": {
+   "source": "<g1>Own trackers...:</g1> opens a window for your own trackers, one address a line (<x2/>, <x3/>, or <x4/>), empty by default. Every public torrent you add from then on also asks these trackers, right after its own trackers and before the public tracker list if both are used (duplicates are added once). Addresses on your computer or local network are refused, private torrents never get them, and torrents already in your list keep their trackers (use <g5>Add trackers...</g5> in the right-click menu for those). <x6/> follows this setting too.",
+   "text": "<g1>Pelacak sendiri...:</g1> membuka jendela untuk pelacak Anda sendiri, satu alamat per baris (<x2/>, <x3/>, atau <x4/>), kosong secara default. Setiap torrent publik yang Anda tambahkan setelah itu juga akan menanyakan pelacak ini, tepat setelah pelacaknya sendiri dan sebelum daftar pelacak publik jika keduanya digunakan (duplikat ditambahkan sekali). Alamat di komputer atau jaringan lokal Anda ditolak, torrent pribadi tidak pernah mendapatkannya, dan torrent yang sudah ada dalam daftar Anda mempertahankan pelacaknya (gunakan <g5>Tambahkan pelacak...</g5> di menu klik kanan untuk itu). <x6/> juga mengikuti pengaturan ini."
   },
   "741be1a1c9d6ba43": {
    "source": "What to do",

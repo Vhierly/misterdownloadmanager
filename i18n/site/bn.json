@@ -2170,6 +2170,10 @@
    "source": "Open (GPL-3.0)",
    "text": "উন্মুক্ত (GPL-3.0)"
   },
+  "1c33e6d58d65ebb6": {
+   "source": "<g1>Tasks → Torrent settings... → Own trackers...</g1> follows the same rules: every address is checked so none on your computer or local network is contacted, and private torrents never get them.",
+   "text": "<g1>কাজ → টরেন্ট সেটিংস... → নিজস্ব ট্র্যাকার...</g1> একই নিয়ম মেনে চলে: প্রতিটি ঠিকানা যাচাই করা হয় যাতে আপনার কম্পিউটার বা স্থানীয় নেটওয়ার্কের কোনোটির সাথে যোগাযোগ না হয়, এবং ব্যক্তিগত টরেন্টগুলো কখনোই এগুলো পায় না।"
+  },
   "1c41a815ee54b7d7": {
    "source": "MDM has <g1>no analytics, no automatic crash reporting, no telemetry and no advertising</g1> (a crash report goes only where you send it yourself). It never sends us your download list, the addresses you download, or anything else.",
    "text": "MDM-এর <g1>কোনো অ্যানালিটিক্স, স্বয়ংক্রিয় ক্র্যাশ রিপোর্টিং, টেলিমেট্রি বা বিজ্ঞাপন নেই</g1> (একটি ক্র্যাশ রিপোর্ট কেবল সেখানেই যায় যেখানে আপনি নিজে পাঠান)। এটি আমাদের কাছে আপনার ডাউনলোড তালিকা, আপনি যে ঠিকানাগুলি ডাউনলোড করেন বা অন্য কিছু পাঠায় না।"
@@ -3210,6 +3214,10 @@
    "source": "MDM runs on Windows 10 and Windows 11 (x64, ARM64 and 32-bit), and on 64-bit Linux (x86-64 and ARM64): see <g1>On Linux</g1>. Builds for macOS are new and still experimental: see <g2>On a Mac</g2>.",
    "text": "MDM Windows 10 এবং Windows 11 (x64, ARM64 এবং 32-বিট)-এ চলে, এবং 64-বিট Linux (x86-64 এবং ARM64)-এ চলে: <g1>Linux-এ</g1> দেখুন। macOS-এর জন্য বিল্ডগুলো নতুন এবং এখনো পরীক্ষামূলক: <g2>Mac-এ</g2> দেখুন।"
   },
+  "29f37397c338f4c4": {
+   "source": "Download a torrent, or only some of its files. If some of its files are already in the folder, it stops and names them; <x1/> uses them instead (what matches is kept, the rest downloaded). With Torrent settings' <g2>Add the trackers of this public list to public torrents</g2> on, a public torrent gets the list's trackers too, as in the app. Any trackers you listed in Torrent settings' <g3>Own trackers...</g3> window are added to new public torrents the same way.",
+   "text": "একটি টরেন্ট ডাউনলোড করুন, অথবা এর কিছু ফাইল ডাউনলোড করুন। যদি এর কিছু ফাইল ইতোমধ্যে ফোল্ডারে থাকে, তাহলে এটি থেমে যায় এবং সেগুলোর নাম দেয়; <x1/> সেগুলোর পরিবর্তে সেগুলোকে ব্যবহার করে (যা মিলে যায় তা রাখা হয়, বাকিটা ডাউনলোড করা হয়)। টরেন্ট সেটিংস-এর <g2>এই পাবলিক তালিকার ট্র্যাকারগুলো পাবলিক টরেন্টে যোগ করুন</g2> চালু থাকলে, একটি পাবলিক টরেন্ট অ্যাপের মতো তালিকার ট্র্যাকারগুলোও পায়। টরেন্ট সেটিংস-এর <g3>নিজস্ব ট্র্যাকার...</g3> উইন্ডোতে আপনি যে ট্র্যাকারগুলো তালিকাভুক্ত করেছেন, সেগুলো নতুন পাবলিক টরেন্টে একইভাবে যোগ করা হয়।"
+  },
   "2a014824bb4f981c": {
    "source": "Disabled text, the one grey of every greyed control and label",
    "text": "অক্ষম টেক্সট, প্রতিটি ধূসর করা নিয়ন্ত্রণ এবং লেবেলের একমাত্র ধূসর রঙ"
@@ -3997,6 +4005,10 @@
   "34ee8ac31c366dc9": {
    "source": "Some file hosts count a look-up as a download: turn the look-ups off in <g1>Options → Archives</g1>.",
    "text": "কিছু ফাইল হোস্ট একটি লুক-আপকে ডাউনলোড হিসাবে গণনা করে: <g1>সেটিংস → আর্কাইভ</g1> এ লুক-আপগুলি বন্ধ করুন।"
+  },
+  "34f9c0c492a55ca2": {
+   "source": "<g1>Your own trackers in Torrent settings</g1>, if you list any: every new public torrent contacts those trackers too, and they see which public torrents you add.",
+   "text": "<g1>টরেন্ট সেটিংস-এ আপনার নিজস্ব ট্র্যাকারগুলো</g1>, যদি আপনি কোনোটি তালিকাভুক্ত করেন: প্রতিটি নতুন পাবলিক টরেন্ট সেই ট্র্যাকারগুলোর সাথেও যোগাযোগ করে, এবং তারা দেখে আপনি কোন পাবলিক টরেন্টগুলো যোগ করছেন।"
   },
   "35092e177f7efaa5": {
    "source": "Download complete with Open and Open folder",
@@ -6166,6 +6178,10 @@
    "source": "On Windows, MDM draws its windows with Direct3D 12; on Linux and macOS, with OpenGL, or with Vulkan (Linux) or Metal (macOS) when you choose them. A graphics driver can still misbehave: a window that holds still for seconds, flickers, or shows wrong colours or blocks. Try the other one: choose <g1>View → Draw with → OpenGL</g1> (or <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), then quit MDM (<g5>Tasks → Exit</g5>) and start it again. Choosing the first one goes back the same way.",
    "text": "Windows-এ, MDM তার উইন্ডোগুলি Direct3D 12 দিয়ে আঁকে; Linux এবং macOS-এ, OpenGL দিয়ে, অথবা আপনি যখন Vulkan (Linux) বা Metal (macOS) নির্বাচন করেন তখন সেগুলির সাথে। একটি গ্রাফিক্স ড্রাইভার এখনও ভুল আচরণ করতে পারে: একটি উইন্ডো যা কয়েক সেকেন্ডের জন্য স্থির থাকে, ঝিকিমিকি করে, অথবা ভুল রঙ বা ব্লক দেখায়। অন্যটি চেষ্টা করুন: <g1>দেখুন → এর সাথে আঁকুন → OpenGL</g1> (বা <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>) নির্বাচন করুন, তারপর MDM বন্ধ করুন (<g5>কাজগুলি → প্রস্থান করুন</g5>) এবং এটি আবার শুরু করুন। প্রথমটি নির্বাচন করলে একই উপায়ে ফিরে যায়।"
   },
+  "534625c2933b25c5": {
+   "source": "You can also list your own trackers under <g1>Tasks → Torrent settings... → Own trackers...</g1>, one address a line (<x2/>, <x3/>, or <x4/>). Every new public torrent asks them after its own trackers, private torrents never get them, and <x5/> uses the same list.",
+   "text": "আপনি <g1>কাজ → টরেন্ট সেটিংস... → নিজস্ব ট্র্যাকার...</g1>-এর অধীনে আপনার নিজস্ব ট্র্যাকারগুলো তালিকাভুক্ত করতে পারেন, প্রতি লাইনে একটি ঠিকানা (<x2/>, <x3/>, অথবা <x4/>)। প্রতিটি নতুন পাবলিক টরেন্ট তার নিজস্ব ট্র্যাকারের পরে এগুলোকে জিজ্ঞাসা করে, প্রাইভেট টরেন্টগুলো কখনোই এগুলো পায় না, এবং <x5/> একই তালিকা ব্যবহার করে।"
+  },
   "53463dc2311b18e1": {
    "source": "when <g1>Options → Archives → Extract archives when their download completes</g1> is on (off by default), for any other download,",
    "text": "যখন <g1>সেটিংস → আর্কাইভ → ডাউনলোড সম্পূর্ণ হলে আর্কাইভ এক্সট্র্যাক্ট করুন</g1> চালু থাকে (ডিফল্টভাবে বন্ধ), অন্য যেকোনো ডাউনলোডের ক্ষেত্রে,"
@@ -7073,6 +7089,10 @@
   "5f7f2cf66185bda1": {
    "source": "What Update now does",
    "text": "এখনই আপডেট করুন কী করে"
+  },
+  "5f818384bb56aff6": {
+   "source": "<g1>Edge (or another browser) says \"Specified native messaging host not found\", though the registry entry looks right?</g1> On 64-bit Windows the browsers read the registry's 32-bit part (<x2/>) before the entry you find under <x3/>, and take the first one there, even one that leads to a copy that is gone. <g4>Test browser integration</g4> says <g5>An older registry entry is in the way</g5>, with that entry: click <g6>Set it up</g6> to give your account an entry of its own, which the browsers read before it. MDM also does that by itself at its start when that entry leads nowhere, and its setup for everyone removes it.",
+   "text": "<g1>Edge (বা অন্য কোনো ব্রাউজার) বলছে “Specified native messaging host not found”, যদিও রেজিস্ট্রি এন্ট্রিটি সঠিক দেখাচ্ছে?</g1> 64-বিট Windows-এ ব্রাউজারগুলো রেজিস্ট্রি-এর 32-বিট অংশ (<x2/>) থেকে এন্ট্রি পড়ে <x3/>-এর নিচে আপনি যে এন্ট্রিটি খুঁজে পান তার আগে, এবং সেখানে প্রথমটি নেয়, এমনকি যদি সেটি এমন একটি কপির দিকে নিয়ে যায় যা আর নেই। <g4>ব্রাউজার ইন্টিগ্রেশন পরীক্ষা করুন</g4> বলছে <g5>একটি পুরোনো রেজিস্ট্রি এন্ট্রি বাধা দিচ্ছে</g5>, সেই এন্ট্রি সহ: <g6>সেট আপ করুন</g6>-এ ক্লিক করে আপনার অ্যাকাউন্টের জন্য নিজস্ব একটি এন্ট্রি দিন, যা ব্রাউজারগুলো এর আগে পড়ে। MDM নিজেও এটি তার শুরুতে করে যখন সেই এন্ট্রি কোথাও নিয়ে যায় না, এবং সবার জন্য এর সেটআপ এটি বাদ দেয়।"
   },
   "5f8f976d1dd62e61": {
    "source": "A group box's frame",
@@ -8482,6 +8502,10 @@
    "source": "Paste a Google Drive link as it is, the one <g1>Share → Copy link</g1> gives:",
    "text": "Google Drive-এর লিঙ্কটি যেমন আছে তেমনই পেস্ট করুন। <g1>Share → Copy link</g1> থেকে পাওয়া লিঙ্কটি এমন হয়:"
   },
+  "7297ca101de5145e": {
+   "source": "The list couldn't be read from GitHub when this page was built. Everyone is on GitHub meanwhile, in the project's <g1>pull requests</g1> and <g2>issues</g2>.",
+   "text": "এই পেজটি তৈরি করার সময় GitHub থেকে তালিকাটি পড়া যায়নি। এই মুহূর্তে সবাই GitHub-এ আছেন, প্রোজেক্টের <g1>পুল রিকোয়েস্ট</g1> এবং <g2>ইস্যু</g2>-তে।"
+  },
   "729a19fc6ce418f9": {
    "source": "Reporting problems",
    "text": "সমস্যা রিপোর্ট করা"
@@ -8613,6 +8637,10 @@
   "74147234c5be454d": {
    "source": "A 256 KiB file. MDM is done in 30 ms; IDM is still starting.",
    "text": "একটি 256 KiB ফাইল। MDM 30 ms-এ সম্পন্ন হয়; IDM এখনও শুরু হচ্ছে।"
+  },
+  "7416633f0aac387c": {
+   "source": "<g1>Own trackers...:</g1> opens a window for your own trackers, one address a line (<x2/>, <x3/>, or <x4/>), empty by default. Every public torrent you add from then on also asks these trackers, right after its own trackers and before the public tracker list if both are used (duplicates are added once). Addresses on your computer or local network are refused, private torrents never get them, and torrents already in your list keep their trackers (use <g5>Add trackers...</g5> in the right-click menu for those). <x6/> follows this setting too.",
+   "text": "<g1>নিজস্ব ট্র্যাকার...:</g1> আপনার নিজস্ব ট্র্যাকারগুলোর জন্য একটি উইন্ডো খোলে, যেখানে প্রতিটি ঠিকানাকে একটি লাইনে লিখতে হয় (<x2/>, <x3/>, অথবা <x4/>)। এটি ডিফল্টভাবে খালি থাকে। এরপর থেকে আপনি যে পাবলিক টরেন্টই যোগ করবেন, সেটির নিজস্ব ট্র্যাকারগুলোর পরে এবং পাবলিক ট্র্যাকার তালিকা ব্যবহারের ক্ষেত্রে সেটির আগে এই ট্র্যাকারগুলোতেও জিজ্ঞাসা করা হবে (একই ঠিকানা একাধিকবার যোগ করা হবে না)। আপনার কম্পিউটার বা লোকাল নেটওয়ার্কের ঠিকানাগুলো গ্রহণ করা হবে না, প্রাইভেট টরেন্টগুলোতে এগুলো কখনোই যোগ হবে না এবং আপনার তালিকায় ইতোমধ্যে থাকা টরেন্টগুলো তাদের নিজস্ব ট্র্যাকারগুলোই ব্যবহার করবে (এগুলোর জন্য রাইট-ক্লিক মেনুতে <g5>ট্র্যাকার যোগ করুন...</g5> ব্যবহার করুন)। <x6/> এই সেটিংটিও অনুসরণ করে।"
   },
   "741be1a1c9d6ba43": {
    "source": "What to do",

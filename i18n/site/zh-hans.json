@@ -2170,6 +2170,10 @@
    "source": "Open (GPL-3.0)",
    "text": "开源 (GPL-3.0)"
   },
+  "1c33e6d58d65ebb6": {
+   "source": "<g1>Tasks → Torrent settings... → Own trackers...</g1> follows the same rules: every address is checked so none on your computer or local network is contacted, and private torrents never get them.",
+   "text": "<g1>任务 → 种子设置... → 自己的跟踪器...</g1> 遵循相同的规则：每个地址都会被检查，以确保不会联系您计算机或本地网络上的任何地址，并且私有种子永远不会获取它们。"
+  },
   "1c41a815ee54b7d7": {
    "source": "MDM has <g1>no analytics, no automatic crash reporting, no telemetry and no advertising</g1> (a crash report goes only where you send it yourself). It never sends us your download list, the addresses you download, or anything else.",
    "text": "MDM <g1>没有分析、没有自动崩溃报告、没有遥测、没有广告</g1>（崩溃报告只发送到您自己发送的地方）。它绝不会向我们发送您的下载列表、您下载的地址或任何其他信息。"
@@ -3210,6 +3214,10 @@
    "source": "MDM runs on Windows 10 and Windows 11 (x64, ARM64 and 32-bit), and on 64-bit Linux (x86-64 and ARM64): see <g1>On Linux</g1>. Builds for macOS are new and still experimental: see <g2>On a Mac</g2>.",
    "text": "MDM 运行于 Windows 10 和 Windows 11（x64、ARM64 和 32 位），以及 64 位 Linux（x86-64 和 ARM64）：请参阅<g1>在 Linux 上</g1>。macOS 版本是新推出的，仍在实验中：请参阅<g2>在 Mac 上</g2>。"
   },
+  "29f37397c338f4c4": {
+   "source": "Download a torrent, or only some of its files. If some of its files are already in the folder, it stops and names them; <x1/> uses them instead (what matches is kept, the rest downloaded). With Torrent settings' <g2>Add the trackers of this public list to public torrents</g2> on, a public torrent gets the list's trackers too, as in the app. Any trackers you listed in Torrent settings' <g3>Own trackers...</g3> window are added to new public torrents the same way.",
+   "text": "下载一个种子，或仅下载其部分文件。如果部分文件已存在于文件夹中，它会停止并列出这些文件；<x1/> 会使用这些现有文件（匹配的部分保留，其余部分下载）。如果“种子设置”中的<g2>将此公共列表的跟踪器添加到公共种子</g2>选项已开启，公共种子也会获得列表中的跟踪器，与应用内行为一致。您在“种子设置”的<g3>自己的跟踪器...</g3>窗口中列出的任何跟踪器，也会以相同方式添加到新的公共种子中。"
+  },
   "2a014824bb4f981c": {
    "source": "Disabled text, the one grey of every greyed control and label",
    "text": "禁用文本，所有灰色控件和标签的灰色"
@@ -3997,6 +4005,10 @@
   "34ee8ac31c366dc9": {
    "source": "Some file hosts count a look-up as a download: turn the look-ups off in <g1>Options → Archives</g1>.",
    "text": "一些文件主机将查找计为下载：请在<g1>选项 → 压缩包</g1>中关闭查找功能。"
+  },
+  "34f9c0c492a55ca2": {
+   "source": "<g1>Your own trackers in Torrent settings</g1>, if you list any: every new public torrent contacts those trackers too, and they see which public torrents you add.",
+   "text": "<g1>种子设置</g1>中您自己的跟踪器（如果您有列出）：每个新的公共种子也会联系这些跟踪器，它们会看到您添加了哪些公共种子。"
   },
   "35092e177f7efaa5": {
    "source": "Download complete with Open and Open folder",
@@ -6166,6 +6178,10 @@
    "source": "On Windows, MDM draws its windows with Direct3D 12; on Linux and macOS, with OpenGL, or with Vulkan (Linux) or Metal (macOS) when you choose them. A graphics driver can still misbehave: a window that holds still for seconds, flickers, or shows wrong colours or blocks. Try the other one: choose <g1>View → Draw with → OpenGL</g1> (or <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), then quit MDM (<g5>Tasks → Exit</g5>) and start it again. Choosing the first one goes back the same way.",
    "text": "在 Windows 上，MDM 使用 Direct3D 12 绘制窗口；在 Linux 和 macOS 上使用 OpenGL，也可选择 Vulkan（Linux）或 Metal（macOS）。图形驱动程序仍可能出现问题：窗口卡住几秒、闪烁，或显示错误的颜色或方块。可以尝试另一种绘制方式：选择<g1>视图 → 绘制方式 → OpenGL</g1>（或<g2>Direct3D</g2>、<g3>Vulkan</g3>、<g4>Metal</g4>），然后退出 MDM（<g5>任务 → 退出</g5>）并重新启动。要切回原来的绘制方式，也按相同步骤操作。"
   },
+  "534625c2933b25c5": {
+   "source": "You can also list your own trackers under <g1>Tasks → Torrent settings... → Own trackers...</g1>, one address a line (<x2/>, <x3/>, or <x4/>). Every new public torrent asks them after its own trackers, private torrents never get them, and <x5/> uses the same list.",
+   "text": "您还可以在<g1>任务 → 种子设置... → 自己的跟踪器...</g1>下添加自己的跟踪器，每行一个地址（<x2/>、<x3/> 或 <x4/>）。每个新的公共种子都会在自己的跟踪器之后询问这些跟踪器，私有种子则不会，<x5/> 使用相同的列表。"
+  },
   "53463dc2311b18e1": {
    "source": "when <g1>Options → Archives → Extract archives when their download completes</g1> is on (off by default), for any other download,",
    "text": "当“<g1>选项 → 存档 → 下载完成后提取存档</g1>”开启时（默认为关闭），适用于任何其他下载，"
@@ -7073,6 +7089,10 @@
   "5f7f2cf66185bda1": {
    "source": "What Update now does",
    "text": "“立即更新”执行的操作"
+  },
+  "5f818384bb56aff6": {
+   "source": "<g1>Edge (or another browser) says \"Specified native messaging host not found\", though the registry entry looks right?</g1> On 64-bit Windows the browsers read the registry's 32-bit part (<x2/>) before the entry you find under <x3/>, and take the first one there, even one that leads to a copy that is gone. <g4>Test browser integration</g4> says <g5>An older registry entry is in the way</g5>, with that entry: click <g6>Set it up</g6> to give your account an entry of its own, which the browsers read before it. MDM also does that by itself at its start when that entry leads nowhere, and its setup for everyone removes it.",
+   "text": "<g1>Edge（或其他浏览器）提示“未找到指定的原生消息主机”，但注册表项看起来是正确的？</g1> 在 64 位 Windows 上，浏览器会先读取注册表的 32 位部分 (<x2/>)，然后才是您在 <x3/> 下找到的条目，并且会采用第一个找到的条目，即使该条目指向一个已不存在的副本。<g4>测试浏览器集成</g4> 会显示 <g5>存在一个旧的注册表项</g5>，并列出该条目：点击 <g6>立即设置</g6> 为您的账户添加一个专属条目，浏览器会优先读取它。当该条目无效时，MDM 也会在启动时自动执行此操作，并且其面向所有用户的设置会将其删除。"
   },
   "5f8f976d1dd62e61": {
    "source": "A group box's frame",
@@ -8613,6 +8633,10 @@
   "74147234c5be454d": {
    "source": "A 256 KiB file. MDM is done in 30 ms; IDM is still starting.",
    "text": "一个 256 KiB 的文件。MDM 在 30 毫秒内完成；IDM 仍在启动。"
+  },
+  "7416633f0aac387c": {
+   "source": "<g1>Own trackers...:</g1> opens a window for your own trackers, one address a line (<x2/>, <x3/>, or <x4/>), empty by default. Every public torrent you add from then on also asks these trackers, right after its own trackers and before the public tracker list if both are used (duplicates are added once). Addresses on your computer or local network are refused, private torrents never get them, and torrents already in your list keep their trackers (use <g5>Add trackers...</g5> in the right-click menu for those). <x6/> follows this setting too.",
+   "text": "<g1>自己的跟踪器…：</g1> 打开一个窗口，用于添加您自己的跟踪器，每行一个地址（<x2/>、<x3/> 或 <x4/>），默认为空。此后您添加的每个公共种子都会向这些跟踪器发送请求，紧随其自身的跟踪器之后，如果两者都使用，则在公共跟踪器列表之前（重复项只添加一次）。您计算机或本地网络上的地址将被拒绝，私有种子永远不会获取这些跟踪器，并且已在列表中的种子会保留其跟踪器（对于这些种子，请使用右键菜单中的<g5>添加 Tracker…</g5>）。<x6/> 也遵循此设置。"
   },
   "741be1a1c9d6ba43": {
    "source": "What to do",

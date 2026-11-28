@@ -2170,6 +2170,10 @@
    "source": "Open (GPL-3.0)",
    "text": "باز (GPL-3.0)"
   },
+  "1c33e6d58d65ebb6": {
+   "source": "<g1>Tasks → Torrent settings... → Own trackers...</g1> follows the same rules: every address is checked so none on your computer or local network is contacted, and private torrents never get them.",
+   "text": "<g1>وظایف ← تنظیمات تورنت… ← ردیاب‌های شما…</g1> از همین قوانین پیروی می‌کند: هر آدرس بررسی می‌شود تا هیچ‌یک از آدرس‌های روی رایانه یا شبکه محلی شما تماس نگیرد و تورنت‌های خصوصی هرگز آن‌ها را دریافت نمی‌کنند."
+  },
   "1c41a815ee54b7d7": {
    "source": "MDM has <g1>no analytics, no automatic crash reporting, no telemetry and no advertising</g1> (a crash report goes only where you send it yourself). It never sends us your download list, the addresses you download, or anything else.",
    "text": "MDM <g1>فاقد هرگونه تحلیل، گزارش خودکار خرابی، تله‌متری و تبلیغات</g1> است (گزارش خرابی فقط به جایی می‌رود که خودتان آن را ارسال کنید). هرگز لیست دانلودهای شما، آدرس‌هایی که دانلود می‌کنید یا هر چیز دیگری را برای ما ارسال نمی‌کند."
@@ -3210,6 +3214,10 @@
    "source": "MDM runs on Windows 10 and Windows 11 (x64, ARM64 and 32-bit), and on 64-bit Linux (x86-64 and ARM64): see <g1>On Linux</g1>. Builds for macOS are new and still experimental: see <g2>On a Mac</g2>.",
    "text": "MDM روی Windows 10 و Windows 11 (x64، ARM64 و 32-بیت) و روی Linux 64-بیت (x86-64 و ARM64) اجرا می‌شود: به <g1>روی Linux</g1> مراجعه کنید. نسخه‌های macOS جدید و هنوز آزمایشی هستند: به <g2>روی مک</g2> مراجعه کنید."
   },
+  "29f37397c338f4c4": {
+   "source": "Download a torrent, or only some of its files. If some of its files are already in the folder, it stops and names them; <x1/> uses them instead (what matches is kept, the rest downloaded). With Torrent settings' <g2>Add the trackers of this public list to public torrents</g2> on, a public torrent gets the list's trackers too, as in the app. Any trackers you listed in Torrent settings' <g3>Own trackers...</g3> window are added to new public torrents the same way.",
+   "text": "یک تورنت یا فقط برخی از فایل‌های آن را بارگیری کنید. اگر بعضی از فایل‌های آن از قبل در پوشه موجود باشند، متوقف می‌شود و نام آن‌ها را می‌آورد؛ <x1/> به جای آن‌ها از فایل‌های موجود استفاده می‌کند (آنچه مطابقت دارد حفظ می‌شود، بقیه بارگیری می‌شوند). با فعال بودن <g2>ردیاب‌های این فهرست عمومی را به تورنت‌های عمومی اضافه کن</g2> در تنظیمات تورنت، یک تورنت عمومی نیز ردیاب‌های فهرست را دریافت می‌کند، همان‌طور که در برنامه اتفاق می‌افتد. هر ردیابی که در پنجره <g3>ردیاب‌های شما...</g3> در تنظیمات تورنت فهرست کرده‌اید، به همین ترتیب به تورنت‌های عمومی جدید اضافه می‌شود."
+  },
   "2a014824bb4f981c": {
    "source": "Disabled text, the one grey of every greyed control and label",
    "text": "متن غیرفعال، تنها رنگ خاکستری هر کنترل و برچسب خاکستری‌شده"
@@ -3997,6 +4005,10 @@
   "34ee8ac31c366dc9": {
    "source": "Some file hosts count a look-up as a download: turn the look-ups off in <g1>Options → Archives</g1>.",
    "text": "برخی از میزبان‌های فایل، هر جستجو را به عنوان یک بارگیری حساب می‌کنند: جستجوها را در <g1>گزینه‌ها → بایگانی‌ها</g1> خاموش کنید."
+  },
+  "34f9c0c492a55ca2": {
+   "source": "<g1>Your own trackers in Torrent settings</g1>, if you list any: every new public torrent contacts those trackers too, and they see which public torrents you add.",
+   "text": "<g1>ردیاب‌های شما در تنظیمات تورنت</g1>، اگر موردی را فهرست کرده باشید: هر تورنت عمومی جدید نیز با آن ردیاب‌ها تماس می‌گیرد و آن‌ها می‌بینند که شما کدام تورنت‌های عمومی را اضافه می‌کنید."
   },
   "35092e177f7efaa5": {
    "source": "Download complete with Open and Open folder",
@@ -6166,6 +6178,10 @@
    "source": "On Windows, MDM draws its windows with Direct3D 12; on Linux and macOS, with OpenGL, or with Vulkan (Linux) or Metal (macOS) when you choose them. A graphics driver can still misbehave: a window that holds still for seconds, flickers, or shows wrong colours or blocks. Try the other one: choose <g1>View → Draw with → OpenGL</g1> (or <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), then quit MDM (<g5>Tasks → Exit</g5>) and start it again. Choosing the first one goes back the same way.",
    "text": "در Windows، MDM پنجره‌هایش را با Direct3D 12 ترسیم می‌کند؛ در Linux و macOS با OpenGL، یا با Vulkan (Linux) یا Metal (macOS) در صورت انتخاب این گزینه‌ها. ممکن است درایور گرافیک درست کار نکند و پنجره برای چند ثانیه ثابت بماند، سوسو بزند یا رنگ‌ها یا بلوک‌ها را نادرست نشان دهد. روش دیگر را امتحان کنید: <g1>نما → ترسیم با → OpenGL</g1> (یا <g2>Direct3D</g2>، <g3>Vulkan</g3>، <g4>Metal</g4>) را انتخاب کنید، سپس MDM را ببندید (<g5>وظایف → خروج</g5>) و دوباره اجرا کنید. برای بازگشت به روش قبلی، همان گزینه را انتخاب کنید."
   },
+  "534625c2933b25c5": {
+   "source": "You can also list your own trackers under <g1>Tasks → Torrent settings... → Own trackers...</g1>, one address a line (<x2/>, <x3/>, or <x4/>). Every new public torrent asks them after its own trackers, private torrents never get them, and <x5/> uses the same list.",
+   "text": "همچنین می‌توانید ردیاب‌های خود را در <g1>وظایف ← تنظیمات تورنت… ← ردیاب‌های شما…</g1> فهرست کنید؛ هر آدرس در یک خط (<x2/>، <x3/> یا <x4/>). هر تورنت عمومی جدید، پس از ردیاب‌های خودش، از این ردیاب‌ها سؤال می‌کند. تورنت‌های خصوصی هرگز از آن‌ها استفاده نمی‌کنند و <x5/> نیز از همین فهرست استفاده می‌کند."
+  },
   "53463dc2311b18e1": {
    "source": "when <g1>Options → Archives → Extract archives when their download completes</g1> is on (off by default), for any other download,",
    "text": "وقتی گزینه <g1>گزینه‌ها → بایگانی‌ها → بایگانی‌ها را پس از اتمام دانلود استخراج کن</g1> روشن باشد (به‌طور پیش‌فرض خاموش است)، برای هر بارگیری دیگری،"
@@ -7073,6 +7089,10 @@
   "5f7f2cf66185bda1": {
    "source": "What Update now does",
    "text": "کاری که اکنون به‌روزرسانی کن انجام می‌دهد"
+  },
+  "5f818384bb56aff6": {
+   "source": "<g1>Edge (or another browser) says \"Specified native messaging host not found\", though the registry entry looks right?</g1> On 64-bit Windows the browsers read the registry's 32-bit part (<x2/>) before the entry you find under <x3/>, and take the first one there, even one that leads to a copy that is gone. <g4>Test browser integration</g4> says <g5>An older registry entry is in the way</g5>, with that entry: click <g6>Set it up</g6> to give your account an entry of its own, which the browsers read before it. MDM also does that by itself at its start when that entry leads nowhere, and its setup for everyone removes it.",
+   "text": "<g1>مرورگر Edge (یا مرورگر دیگری) می‌گوید «Specified native messaging host not found»، با اینکه ورودی رجیستری درست به نظر می‌رسد؟</g1> در Windows 64بیتی، مرورگرها بخش 32بیتی رجیستری (<x2/>) را قبل از ورودی‌ای که در <x3/> پیدا می‌کنید می‌خوانند و اولین ورودی را که پیدا می‌کنند، حتی اگر به نسخه‌ای حذف‌شده اشاره کند، انتخاب می‌کنند. <g4>آزمایش یکپارچه‌سازی مرورگر</g4> می‌گوید <g5>یک ورودی قدیمی‌تر در رجیستری مانع است</g5>، و آن ورودی را نشان می‌دهد: روی <g6>تنظیم کن</g6> کلیک کنید تا یک ورودی مخصوص برای حساب کاربری شما ایجاد شود که مرورگرها آن را قبل از ورودی‌های دیگر می‌خوانند. MDM همچنین در هنگام شروع خود، اگر آن ورودی به جایی نرسد، این کار را انجام می‌دهد و تنظیمات آن برای همه کاربران، آن ورودی را حذف می‌کند."
   },
   "5f8f976d1dd62e61": {
    "source": "A group box's frame",
@@ -8482,6 +8502,10 @@
    "source": "Paste a Google Drive link as it is, the one <g1>Share → Copy link</g1> gives:",
    "text": "پیوند Google Drive را همان‌طور که هست بچسبانید؛ همان پیوندی که با <g1>اشتراک‌گذاری → کپی پیوند</g1> دریافت می‌کنید:"
   },
+  "7297ca101de5145e": {
+   "source": "The list couldn't be read from GitHub when this page was built. Everyone is on GitHub meanwhile, in the project's <g1>pull requests</g1> and <g2>issues</g2>.",
+   "text": "هنگام ساخت این صفحه، فهرست مشارکت‌کنندگان از GitHub خوانده نشد. در این مدت، همه در GitHub، در <g1>درخواست‌های پول</g1> و <g2>مسائل</g2> پروژه حضور دارند."
+  },
   "729a19fc6ce418f9": {
    "source": "Reporting problems",
    "text": "گزارش مشکلات"
@@ -8613,6 +8637,10 @@
   "74147234c5be454d": {
    "source": "A 256 KiB file. MDM is done in 30 ms; IDM is still starting.",
    "text": "یک فایل 256 کیلوبایتی. MDM در 30 میلی‌ثانیه کارش تمام می‌شود؛ IDM هنوز در حال شروع است."
+  },
+  "7416633f0aac387c": {
+   "source": "<g1>Own trackers...:</g1> opens a window for your own trackers, one address a line (<x2/>, <x3/>, or <x4/>), empty by default. Every public torrent you add from then on also asks these trackers, right after its own trackers and before the public tracker list if both are used (duplicates are added once). Addresses on your computer or local network are refused, private torrents never get them, and torrents already in your list keep their trackers (use <g5>Add trackers...</g5> in the right-click menu for those). <x6/> follows this setting too.",
+   "text": "<g1>ردیاب‌های شما...:</g1> پنجره‌ای را برای ردیاب‌های شما باز می‌کند که هر آدرس در یک خط قرار می‌گیرد (<x2/>، <x3/> یا <x4/>) و به‌طور پیش‌فرض خالی است. هر تورنت عمومی که از آن به بعد اضافه می‌کنید، بلافاصله پس از ردیاب‌های خودش و قبل از فهرست ردیاب‌های عمومی (در صورت استفاده از هر دو)، این ردیاب‌ها را نیز درخواست می‌کند (موارد تکراری فقط یک بار اضافه می‌شوند). آدرس‌های موجود در رایانه یا شبکه محلی شما پذیرفته نمی‌شوند، تورنت‌های خصوصی هرگز آن‌ها را دریافت نمی‌کنند و تورنت‌هایی که از قبل در فهرست شما هستند، ردیاب‌های خود را حفظ می‌کنند (برای این موارد از <g5>افزودن ردیاب‌ها...</g5> در منوی راست‌کلیک استفاده کنید). <x6/> نیز از این تنظیم پیروی می‌کند."
   },
   "741be1a1c9d6ba43": {
    "source": "What to do",

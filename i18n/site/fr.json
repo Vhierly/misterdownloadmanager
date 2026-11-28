@@ -2170,6 +2170,10 @@
    "source": "Open (GPL-3.0)",
    "text": "Open source (GPL-3.0)"
   },
+  "1c33e6d58d65ebb6": {
+   "source": "<g1>Tasks → Torrent settings... → Own trackers...</g1> follows the same rules: every address is checked so none on your computer or local network is contacted, and private torrents never get them.",
+   "text": "<g1>Tâches → Paramètres du torrent... → Vos propres trackers...</g1> suit les mêmes règles : chaque adresse est vérifiée afin qu'aucune adresse sur votre ordinateur ou réseau local ne soit contactée, et les torrents privés ne les reçoivent jamais."
+  },
   "1c41a815ee54b7d7": {
    "source": "MDM has <g1>no analytics, no automatic crash reporting, no telemetry and no advertising</g1> (a crash report goes only where you send it yourself). It never sends us your download list, the addresses you download, or anything else.",
    "text": "MDM n'a <g1>pas d'analyse, pas de rapport d'erreur automatique, pas de télémétrie et pas de publicité</g1> (un rapport d'erreur ne va que là où vous l'envoyez vous-même). Il ne nous envoie jamais votre liste de téléchargements, les adresses que vous téléchargez, ou quoi que ce soit d'autre."
@@ -3993,6 +3997,10 @@
   "34ee8ac31c366dc9": {
    "source": "Some file hosts count a look-up as a download: turn the look-ups off in <g1>Options → Archives</g1>.",
    "text": "Certains hébergeurs de fichiers comptent une consultation comme un téléchargement : désactivez les consultations dans <g1>Options → Archives</g1>."
+  },
+  "34f9c0c492a55ca2": {
+   "source": "<g1>Your own trackers in Torrent settings</g1>, if you list any: every new public torrent contacts those trackers too, and they see which public torrents you add.",
+   "text": "<g1>Vos propres traqueurs dans les Paramètres du torrent</g1>, si vous en listez : chaque nouveau torrent public contacte également ces traqueurs, et ils voient quels torrents publics vous ajoutez."
   },
   "35092e177f7efaa5": {
    "source": "Download complete with Open and Open folder",
@@ -6162,6 +6170,10 @@
    "source": "On Windows, MDM draws its windows with Direct3D 12; on Linux and macOS, with OpenGL, or with Vulkan (Linux) or Metal (macOS) when you choose them. A graphics driver can still misbehave: a window that holds still for seconds, flickers, or shows wrong colours or blocks. Try the other one: choose <g1>View → Draw with → OpenGL</g1> (or <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), then quit MDM (<g5>Tasks → Exit</g5>) and start it again. Choosing the first one goes back the same way.",
    "text": "Sous Windows, MDM dessine ses fenêtres avec Direct3D 12 ; sous Linux et macOS, avec OpenGL, ou avec Vulkan (Linux) ou Metal (macOS) si vous les choisissez. Un pilote graphique peut toujours mal se comporter : une fenêtre qui reste figée pendant des secondes, scintille, ou affiche des couleurs ou des blocs incorrects. Essayez l'autre : choisissez <g1>Affichage → Dessiner avec → OpenGL</g1> (ou <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), puis quittez MDM (<g5>Tâches → Quitter</g5>) et redémarrez-le. Choisir le premier revient au même."
   },
+  "534625c2933b25c5": {
+   "source": "You can also list your own trackers under <g1>Tasks → Torrent settings... → Own trackers...</g1>, one address a line (<x2/>, <x3/>, or <x4/>). Every new public torrent asks them after its own trackers, private torrents never get them, and <x5/> uses the same list.",
+   "text": "Vous pouvez également lister vos propres trackers sous <g1>Tâches → Paramètres du torrent… → Vos propres trackers…</g1>, une adresse par ligne (<x2/>, <x3/> ou <x4/>). Chaque nouveau torrent public les interroge après ses propres trackers, les torrents privés ne les obtiennent jamais, et <x5/> utilise la même liste."
+  },
   "53463dc2311b18e1": {
    "source": "when <g1>Options → Archives → Extract archives when their download completes</g1> is on (off by default), for any other download,",
    "text": "lorsque <g1>Options → Archives → Extraire les archives une fois leur téléchargement terminé</g1> est activé (désactivé par défaut), pour tout autre téléchargement,"
@@ -7069,6 +7081,10 @@
   "5f7f2cf66185bda1": {
    "source": "What Update now does",
    "text": "Fonctionnement de « Mettre à jour maintenant »"
+  },
+  "5f818384bb56aff6": {
+   "source": "<g1>Edge (or another browser) says \"Specified native messaging host not found\", though the registry entry looks right?</g1> On 64-bit Windows the browsers read the registry's 32-bit part (<x2/>) before the entry you find under <x3/>, and take the first one there, even one that leads to a copy that is gone. <g4>Test browser integration</g4> says <g5>An older registry entry is in the way</g5>, with that entry: click <g6>Set it up</g6> to give your account an entry of its own, which the browsers read before it. MDM also does that by itself at its start when that entry leads nowhere, and its setup for everyone removes it.",
+   "text": "<g1>Edge (ou un autre navigateur) affiche « Hôte de messagerie native spécifié introuvable », même si l’entrée de registre semble correcte ?</g1> Sous Windows 64 bits, les navigateurs lisent la partie 32 bits du registre (<x2/>) avant l’entrée que vous trouvez sous <x3/>, et prennent la première qu’ils y trouvent, même si elle mène à une copie qui n’existe plus. <g4>Tester l’intégration du navigateur</g4> indique <g5>Une ancienne entrée de registre fait obstacle</g5>, avec cette entrée : cliquez sur <g6>Configurer</g6> pour donner à votre compte une entrée propre, que les navigateurs liront avant celle-ci. MDM le fait aussi de lui-même à son démarrage lorsque cette entrée ne mène nulle part, et sa configuration pour tous la supprime."
   },
   "5f8f976d1dd62e61": {
    "source": "A group box's frame",
@@ -8478,6 +8494,10 @@
    "source": "Paste a Google Drive link as it is, the one <g1>Share → Copy link</g1> gives:",
    "text": "Collez un lien Google Drive tel quel, celui que <g1>Partager → Copier le lien</g1> donne :"
   },
+  "7297ca101de5145e": {
+   "source": "The list couldn't be read from GitHub when this page was built. Everyone is on GitHub meanwhile, in the project's <g1>pull requests</g1> and <g2>issues</g2>.",
+   "text": "La liste n’a pas pu être lue depuis GitHub lors de la création de cette page. En attendant, tout le monde est sur GitHub, dans les <g1>pull requests</g1> et les <g2>issues</g2> du projet."
+  },
   "729a19fc6ce418f9": {
    "source": "Reporting problems",
    "text": "Signaler des problèmes"
@@ -8609,6 +8629,10 @@
   "74147234c5be454d": {
    "source": "A 256 KiB file. MDM is done in 30 ms; IDM is still starting.",
    "text": "Un fichier de 256 Kio. MDM termine en 30 ms ; IDM est encore en démarrage."
+  },
+  "7416633f0aac387c": {
+   "source": "<g1>Own trackers...:</g1> opens a window for your own trackers, one address a line (<x2/>, <x3/>, or <x4/>), empty by default. Every public torrent you add from then on also asks these trackers, right after its own trackers and before the public tracker list if both are used (duplicates are added once). Addresses on your computer or local network are refused, private torrents never get them, and torrents already in your list keep their trackers (use <g5>Add trackers...</g5> in the right-click menu for those). <x6/> follows this setting too.",
+   "text": "<g1>Vos propres trackers…</g1> : ouvre une fenêtre pour vos propres trackers, une adresse par ligne (<x2/>, <x3/> ou <x4/>), vide par défaut. Chaque torrent public que vous ajoutez à partir de ce moment interroge également ces trackers, juste après ses propres trackers et avant la liste des trackers publics si les deux sont utilisés (les doublons sont ajoutés une seule fois). Les adresses sur votre ordinateur ou votre réseau local sont refusées, les torrents privés ne les reçoivent jamais, et les torrents déjà dans votre liste conservent leurs trackers (utilisez <g5>Ajouter des trackers…</g5> dans le menu contextuel pour ceux-là). <x6/> suit également ce paramètre."
   },
   "741be1a1c9d6ba43": {
    "source": "What to do",

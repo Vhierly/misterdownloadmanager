@@ -2170,6 +2170,10 @@
    "source": "Open (GPL-3.0)",
    "text": "Відкритий (GPL-3.0)"
   },
+  "1c33e6d58d65ebb6": {
+   "source": "<g1>Tasks → Torrent settings... → Own trackers...</g1> follows the same rules: every address is checked so none on your computer or local network is contacted, and private torrents never get them.",
+   "text": "<g1>Завдання → Налаштування торрентів... → Власні трекери...</g1> дотримується тих самих правил: кожна адреса перевіряється, щоб не було зв’язку з вашим комп’ютером або локальною мережею, а приватні торренти ніколи їх не отримують."
+  },
   "1c41a815ee54b7d7": {
    "source": "MDM has <g1>no analytics, no automatic crash reporting, no telemetry and no advertising</g1> (a crash report goes only where you send it yourself). It never sends us your download list, the addresses you download, or anything else.",
    "text": "MDM <g1>не має аналітики, автоматичного звітування про збої, телеметрії та реклами</g1> (звіт про збій надсилається лише туди, куди ви його надсилаєте). Він ніколи не надсилає нам ваш список завантажень, адреси, які ви завантажуєте, або щось інше."
@@ -3210,6 +3214,10 @@
    "source": "MDM runs on Windows 10 and Windows 11 (x64, ARM64 and 32-bit), and on 64-bit Linux (x86-64 and ARM64): see <g1>On Linux</g1>. Builds for macOS are new and still experimental: see <g2>On a Mac</g2>.",
    "text": "MDM працює на Windows 10 і Windows 11 (x64, ARM64 та 32-біт), а також на 64-бітних Linux (x86-64 та ARM64): дивіться <g1>На Linux</g1>. Збірки для macOS нові та все ще експериментальні: дивіться <g2>На Mac</g2>."
   },
+  "29f37397c338f4c4": {
+   "source": "Download a torrent, or only some of its files. If some of its files are already in the folder, it stops and names them; <x1/> uses them instead (what matches is kept, the rest downloaded). With Torrent settings' <g2>Add the trackers of this public list to public torrents</g2> on, a public torrent gets the list's trackers too, as in the app. Any trackers you listed in Torrent settings' <g3>Own trackers...</g3> window are added to new public torrents the same way.",
+   "text": "Завантажити торрент або лише деякі з його файлів. Якщо деякі з його файлів уже є в папці, програма зупиняється та називає їх; <x1/> використовує їх замість (те, що збігається, зберігається, решта завантажується). Якщо в <g2>Додати трекери з цього публічного списку до публічних торрентів</g2> у «Налаштування торрентів» увімкнено, публічний торрент також отримує трекери зі списку, як у програмі. Будь-які трекери, які ви вказали у вікні <g3>Власні трекери...</g3> в «Налаштування торрентів», додаються до нових публічних торрентів таким же чином."
+  },
   "2a014824bb4f981c": {
    "source": "Disabled text, the one grey of every greyed control and label",
    "text": "Вимкнений текст, єдиний сірий колір кожного неактивного елемента керування та мітки"
@@ -3997,6 +4005,10 @@
   "34ee8ac31c366dc9": {
    "source": "Some file hosts count a look-up as a download: turn the look-ups off in <g1>Options → Archives</g1>.",
    "text": "Деякі файлові хостинги зараховують перегляд як завантаження: вимкніть перегляди в <g1>Параметри → Архіви</g1>."
+  },
+  "34f9c0c492a55ca2": {
+   "source": "<g1>Your own trackers in Torrent settings</g1>, if you list any: every new public torrent contacts those trackers too, and they see which public torrents you add.",
+   "text": "<g1>Ваші власні трекери в налаштуваннях торрентів</g1>, якщо ви їх додаєте: кожен новий публічний торрент також контактує з цими трекерами, і вони бачать, які публічні торренти ви додаєте."
   },
   "35092e177f7efaa5": {
    "source": "Download complete with Open and Open folder",
@@ -6166,6 +6178,10 @@
    "source": "On Windows, MDM draws its windows with Direct3D 12; on Linux and macOS, with OpenGL, or with Vulkan (Linux) or Metal (macOS) when you choose them. A graphics driver can still misbehave: a window that holds still for seconds, flickers, or shows wrong colours or blocks. Try the other one: choose <g1>View → Draw with → OpenGL</g1> (or <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), then quit MDM (<g5>Tasks → Exit</g5>) and start it again. Choosing the first one goes back the same way.",
    "text": "У Windows MDM малює свої вікна за допомогою Direct3D 12; у Linux та macOS — за допомогою OpenGL, або за допомогою Vulkan (Linux) чи Metal (macOS), якщо ви їх оберете. Графічний драйвер все ще може працювати некоректно: вікно, яке застигає на секунди, мерехтить або показує неправильні кольори чи блоки. Спробуйте інший: оберіть <g1>Вигляд → Малювати за допомогою → OpenGL</g1> (або <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), потім вийдіть з MDM (<g5>Завдання → Вихід</g5>) і запустіть його знову. Вибір першого повертає тим же шляхом."
   },
+  "534625c2933b25c5": {
+   "source": "You can also list your own trackers under <g1>Tasks → Torrent settings... → Own trackers...</g1>, one address a line (<x2/>, <x3/>, or <x4/>). Every new public torrent asks them after its own trackers, private torrents never get them, and <x5/> uses the same list.",
+   "text": "Ви також можете додати власні трекери в розділі <g1>Завдання → Налаштування торрентів... → Власні трекери...</g1>, по одній адресі на рядок (<x2/>, <x3/> або <x4/>). Кожен новий публічний торрент запитуватиме їх після власних трекерів, приватні торренти ніколи їх не отримують, а <x5/> використовує той самий список."
+  },
   "53463dc2311b18e1": {
    "source": "when <g1>Options → Archives → Extract archives when their download completes</g1> is on (off by default), for any other download,",
    "text": "коли увімкнено <g1>Параметри → Архіви → Видобувати архіви після завершення завантаження</g1> (вимкнено за замовчуванням) для будь-якого іншого завантаження,"
@@ -7073,6 +7089,10 @@
   "5f7f2cf66185bda1": {
    "source": "What Update now does",
    "text": "Що робить Оновити зараз"
+  },
+  "5f818384bb56aff6": {
+   "source": "<g1>Edge (or another browser) says \"Specified native messaging host not found\", though the registry entry looks right?</g1> On 64-bit Windows the browsers read the registry's 32-bit part (<x2/>) before the entry you find under <x3/>, and take the first one there, even one that leads to a copy that is gone. <g4>Test browser integration</g4> says <g5>An older registry entry is in the way</g5>, with that entry: click <g6>Set it up</g6> to give your account an entry of its own, which the browsers read before it. MDM also does that by itself at its start when that entry leads nowhere, and its setup for everyone removes it.",
+   "text": "<g1>Edge (або інший браузер) повідомляє «Specified native messaging host not found», хоча запис у реєстрі виглядає правильно?</g1> У 64-розрядній Windows браузери читають 32-розрядну частину реєстру (<x2/>) перед записом, який ви знаходите в <x3/>, і беруть перший, навіть той, що веде до копії, яка вже видалена. <g4>Перевірка інтеграції з браузером</g4> повідомляє <g5>Заважає старіший запис реєстру</g5>, з цим записом: натисніть <g6>Налаштувати</g6>, щоб створити власний запис для вашого облікового запису, який браузери прочитають раніше. MDM також робить це самостійно під час запуску, якщо цей запис нікуди не веде, а його налаштування для всіх користувачів видаляє його."
   },
   "5f8f976d1dd62e61": {
    "source": "A group box's frame",
@@ -8482,6 +8502,10 @@
    "source": "Paste a Google Drive link as it is, the one <g1>Share → Copy link</g1> gives:",
    "text": "Вставте посилання Google Диска як є, те, що дає <g1>Поділитися → Копіювати посилання</g1>:"
   },
+  "7297ca101de5145e": {
+   "source": "The list couldn't be read from GitHub when this page was built. Everyone is on GitHub meanwhile, in the project's <g1>pull requests</g1> and <g2>issues</g2>.",
+   "text": "Не вдалося прочитати список з GitHub під час створення цієї сторінки. Усі учасники є на GitHub у <g1>запитах на злиття</g1> та <g2>проблемах</g2> проєкту."
+  },
   "729a19fc6ce418f9": {
    "source": "Reporting problems",
    "text": "Повідомлення про проблеми"
@@ -8613,6 +8637,10 @@
   "74147234c5be454d": {
    "source": "A 256 KiB file. MDM is done in 30 ms; IDM is still starting.",
    "text": "Файл розміром 256 КБ. MDM завершує роботу за 30 мс; IDM все ще запускається."
+  },
+  "7416633f0aac387c": {
+   "source": "<g1>Own trackers...:</g1> opens a window for your own trackers, one address a line (<x2/>, <x3/>, or <x4/>), empty by default. Every public torrent you add from then on also asks these trackers, right after its own trackers and before the public tracker list if both are used (duplicates are added once). Addresses on your computer or local network are refused, private torrents never get them, and torrents already in your list keep their trackers (use <g5>Add trackers...</g5> in the right-click menu for those). <x6/> follows this setting too.",
+   "text": "<g1>Власні трекери...:</g1> відкриває вікно для ваших власних трекерів, по одній адресі на рядок (<x2/>, <x3/> або <x4/>), за замовчуванням порожнє. Кожен публічний торрент, який ви додаєте після цього, також звертається до цих трекерів, одразу після власних трекерів і перед списком публічних трекерів, якщо використовуються обидва (дублікати додаються один раз). Адреси на вашому комп’ютері або в локальній мережі відхиляються, приватні торренти ніколи їх не отримують, а торренти, які вже є у вашому списку, зберігають свої трекери (використовуйте <g5>Додати трекери...</g5> у контекстному меню для них). <x6/> також дотримується цього налаштування."
   },
   "741be1a1c9d6ba43": {
    "source": "What to do",

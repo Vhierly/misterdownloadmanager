@@ -2170,6 +2170,10 @@
    "source": "Open (GPL-3.0)",
    "text": "Открытый код (GPL-3.0)"
   },
+  "1c33e6d58d65ebb6": {
+   "source": "<g1>Tasks → Torrent settings... → Own trackers...</g1> follows the same rules: every address is checked so none on your computer or local network is contacted, and private torrents never get them.",
+   "text": "<g1>Задачи → Настройки торрента... → Собственные трекеры...</g1> подчиняется тем же правилам: каждый адрес проверяется, чтобы не было обращений к вашему компьютеру или локальной сети, а приватные торренты никогда их не получают."
+  },
   "1c41a815ee54b7d7": {
    "source": "MDM has <g1>no analytics, no automatic crash reporting, no telemetry and no advertising</g1> (a crash report goes only where you send it yourself). It never sends us your download list, the addresses you download, or anything else.",
    "text": "В MDM <g1>нет аналитики, автоматической отправки отчетов о сбоях, телеметрии и рекламы</g1> (отчет о сбое отправляется только туда, куда вы его отправите сами). Он никогда не отправляет нам ваш список загрузок, адреса, с которых вы загружаете, или что-либо еще."
@@ -3210,6 +3214,10 @@
    "source": "MDM runs on Windows 10 and Windows 11 (x64, ARM64 and 32-bit), and on 64-bit Linux (x86-64 and ARM64): see <g1>On Linux</g1>. Builds for macOS are new and still experimental: see <g2>On a Mac</g2>.",
    "text": "MDM работает на Windows 10 и Windows 11 (x64, ARM64 и 32-бит), а также на 64-битном Linux (x86-64 и ARM64): см. <g1>В Linux</g1>. Сборки для macOS новые и пока экспериментальные: см. <g2>На Mac</g2>."
   },
+  "29f37397c338f4c4": {
+   "source": "Download a torrent, or only some of its files. If some of its files are already in the folder, it stops and names them; <x1/> uses them instead (what matches is kept, the rest downloaded). With Torrent settings' <g2>Add the trackers of this public list to public torrents</g2> on, a public torrent gets the list's trackers too, as in the app. Any trackers you listed in Torrent settings' <g3>Own trackers...</g3> window are added to new public torrents the same way.",
+   "text": "Загрузить торрент или только некоторые из его файлов. Если некоторые из его файлов уже находятся в папке, загрузка останавливается и отображает их имена; <x1/> вместо этого использует их (совпадающие файлы сохраняются, остальные загружаются). Если в <g2>Добавлять трекеры из этого публичного списка к публичным торрентам</g2> в разделе «Настройки торрента» включено, публичный торрент также получает трекеры из списка, как и в приложении. Любые трекеры, которые вы указали в окне <g3>Собственные трекеры...</g3> в разделе «Настройки торрента», добавляются к новым публичным торрентам таким же образом."
+  },
   "2a014824bb4f981c": {
    "source": "Disabled text, the one grey of every greyed control and label",
    "text": "Отключенный текст, единственный серый цвет каждого неактивного элемента управления и метки"
@@ -3997,6 +4005,10 @@
   "34ee8ac31c366dc9": {
    "source": "Some file hosts count a look-up as a download: turn the look-ups off in <g1>Options → Archives</g1>.",
    "text": "Некоторые файловые хостинги считают просмотр как загрузку: отключите просмотры в <g1>Параметры → Архивы</g1>."
+  },
+  "34f9c0c492a55ca2": {
+   "source": "<g1>Your own trackers in Torrent settings</g1>, if you list any: every new public torrent contacts those trackers too, and they see which public torrents you add.",
+   "text": "<g1>Ваши собственные трекеры в настройках торрента</g1>, если вы их указали: каждый новый публичный торрент также связывается с этими трекерами, и они видят, какие публичные торренты вы добавляете."
   },
   "35092e177f7efaa5": {
    "source": "Download complete with Open and Open folder",
@@ -6166,6 +6178,10 @@
    "source": "On Windows, MDM draws its windows with Direct3D 12; on Linux and macOS, with OpenGL, or with Vulkan (Linux) or Metal (macOS) when you choose them. A graphics driver can still misbehave: a window that holds still for seconds, flickers, or shows wrong colours or blocks. Try the other one: choose <g1>View → Draw with → OpenGL</g1> (or <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), then quit MDM (<g5>Tasks → Exit</g5>) and start it again. Choosing the first one goes back the same way.",
    "text": "В Windows MDM отрисовывает свои окна с помощью Direct3D 12; в Linux и macOS — с помощью OpenGL, или с помощью Vulkan (Linux) или Metal (macOS), если вы их выберете. Графический драйвер всё ещё может работать некорректно: окно зависает на несколько секунд, мерцает или отображает неправильные цвета или блоки. Попробуйте другой вариант: выберите <g1>Вид → Отрисовка с помощью → OpenGL</g1> (или <g2>Direct3D</g2>, <g3>Vulkan</g3>, <g4>Metal</g4>), затем закройте MDM (<g5>Задачи → Выход</g5>) и запустите его снова. Выбор первого варианта возвращает всё обратно тем же способом."
   },
+  "534625c2933b25c5": {
+   "source": "You can also list your own trackers under <g1>Tasks → Torrent settings... → Own trackers...</g1>, one address a line (<x2/>, <x3/>, or <x4/>). Every new public torrent asks them after its own trackers, private torrents never get them, and <x5/> uses the same list.",
+   "text": "Вы также можете указать свои собственные трекеры в разделе <g1>Задачи → Настройки торрента… → Собственные трекеры…</g1>, по одному адресу на строку (<x2/>, <x3/> или <x4/>). Каждый новый публичный торрент будет запрашивать их после своих собственных трекеров, приватные торренты никогда не будут их использовать, а <x5/> использует тот же список."
+  },
   "53463dc2311b18e1": {
    "source": "when <g1>Options → Archives → Extract archives when their download completes</g1> is on (off by default), for any other download,",
    "text": "если включен параметр <g1>Параметры → Архивы → Извлекать архивы после завершения загрузки</g1> (по умолчанию выключен), для любой другой загрузки,"
@@ -7073,6 +7089,10 @@
   "5f7f2cf66185bda1": {
    "source": "What Update now does",
    "text": "Что делает команда «Обновить сейчас»"
+  },
+  "5f818384bb56aff6": {
+   "source": "<g1>Edge (or another browser) says \"Specified native messaging host not found\", though the registry entry looks right?</g1> On 64-bit Windows the browsers read the registry's 32-bit part (<x2/>) before the entry you find under <x3/>, and take the first one there, even one that leads to a copy that is gone. <g4>Test browser integration</g4> says <g5>An older registry entry is in the way</g5>, with that entry: click <g6>Set it up</g6> to give your account an entry of its own, which the browsers read before it. MDM also does that by itself at its start when that entry leads nowhere, and its setup for everyone removes it.",
+   "text": "<g1>Edge (или другой браузер) сообщает «Указанный хост нативного обмена сообщениями не найден», хотя запись в реестре выглядит правильно?</g1> В 64-разрядной Windows браузеры считывают 32-разрядную часть реестра (<x2/>) перед записью, которую вы найдете в <x3/>, и берут первую из них, даже ту, которая ведет к уже удаленной копии. <g4>Проверка интеграции с браузером</g4> сообщает <g5>Мешает более старая запись в реестре</g5>, с указанием этой записи: нажмите <g6>Настроить</g6>, чтобы создать собственную запись для вашей учетной записи, которую браузеры прочитают раньше. MDM также делает это самостоятельно при запуске, если эта запись никуда не ведет, а его установка для всех пользователей удаляет ее."
   },
   "5f8f976d1dd62e61": {
    "source": "A group box's frame",
@@ -8482,6 +8502,10 @@
    "source": "Paste a Google Drive link as it is, the one <g1>Share → Copy link</g1> gives:",
    "text": "Вставьте ссылку Google Диска как есть, ту, что даёт <g1>Поделиться → Копировать ссылку</g1>:"
   },
+  "7297ca101de5145e": {
+   "source": "The list couldn't be read from GitHub when this page was built. Everyone is on GitHub meanwhile, in the project's <g1>pull requests</g1> and <g2>issues</g2>.",
+   "text": "Список не удалось прочитать из GitHub при создании этой страницы. Все участники пока находятся на GitHub, в <g1>запросах на слияние</g1> и <g2>задачах</g2> проекта."
+  },
   "729a19fc6ce418f9": {
    "source": "Reporting problems",
    "text": "Сообщение о проблемах"
@@ -8613,6 +8637,10 @@
   "74147234c5be454d": {
    "source": "A 256 KiB file. MDM is done in 30 ms; IDM is still starting.",
    "text": "Файл размером 256 КиБ. MDM завершает работу за 30 мс; IDM всё ещё запускается."
+  },
+  "7416633f0aac387c": {
+   "source": "<g1>Own trackers...:</g1> opens a window for your own trackers, one address a line (<x2/>, <x3/>, or <x4/>), empty by default. Every public torrent you add from then on also asks these trackers, right after its own trackers and before the public tracker list if both are used (duplicates are added once). Addresses on your computer or local network are refused, private torrents never get them, and torrents already in your list keep their trackers (use <g5>Add trackers...</g5> in the right-click menu for those). <x6/> follows this setting too.",
+   "text": "<g1>Собственные трекеры...:</g1> открывает окно для ваших собственных трекеров, по одному адресу на строку (<x2/>, <x3/> или <x4/>), по умолчанию пусто. Каждый публичный торрент, который вы добавляете после этого, также запрашивает эти трекеры, сразу после своих собственных трекеров и перед списком публичных трекеров, если используются оба (дубликаты добавляются один раз). Адреса на вашем компьютере или в локальной сети отклоняются, приватные торренты никогда их не получают, а торренты, уже находящиеся в вашем списке, сохраняют свои трекеры (используйте <g5>Добавить трекеры...</g5> в контекстном меню для них). <x6/> также следует этому параметру."
   },
   "741be1a1c9d6ba43": {
    "source": "What to do",
@@ -19065,6 +19093,10 @@
   "ffa29022fa7a00bc": {
    "source": "Where theme files go",
    "text": "Расположение файлов тем"
+  },
+  "ffb19e8a15974427": {
+   "source": "On Windows, Microsoft's software renderer (WARP) keeps the processor much busier than Mesa's (llvmpipe), the more so the larger the window. Where WARP draws for want of a graphics driver, MDM offers once to download llvmpipe (about 66 MB, from Mesa's Windows builds on GitHub), and <g1>View → Draw with → Download Mesa's software renderer (llvmpipe)...</g1> offers it at any time. Nothing downloads until you press <g2>Download</g2>; it is checked against MDM's signed list of checked builds, as ffmpeg is, and kept in MDM's data folder (<x3/>). MDM draws with it from its next start, and <g4>View → Draw with</g4> says <g5>Software (llvmpipe)</g5>. If it can't start or draw there, MDM remembers that and draws with WARP again (<g6>Software (llvmpipe) didn't start here: WARP draws</g6>); a newer llvmpipe is tried again. To stop using it, quit MDM and delete the <x7/> folder.",
+   "text": "В Windows программное средство рендеринга Microsoft (WARP) загружает процессор значительно сильнее, чем средство Mesa (llvmpipe), особенно при большом размере окна. Если WARP используется из-за отсутствия графического драйвера, MDM один раз предложит загрузить llvmpipe (около 66 МБ, из сборок Mesa для Windows на GitHub), а пункт <g1>Вид → Отрисовка с помощью → Загрузить программное средство рендеринга Mesa (llvmpipe)...</g1> доступен в любое время. Загрузка не начнется, пока вы не нажмете <g2>Загрузить</g2>; файл проверяется по подписанному списку проверенных сборок MDM, как и ffmpeg, и сохраняется в папке данных MDM (<x3/>). MDM будет использовать его при следующем запуске, и в меню <g4>Вид → Отрисовка с помощью</g4> будет указано <g5>Программное средство (llvmpipe)</g5>. Если оно не запускается или не отрисовывает, MDM запоминает это и снова использует WARP (<g6>Программное средство (llvmpipe) здесь не запустилось: используется WARP</g6>); будет предпринята попытка использовать более новую версию llvmpipe. Чтобы прекратить его использование, закройте MDM и удалите папку <x7/>."
   },
   "ffbc009bfa4aa85a": {
    "source": "Drag a link from your browser onto it. MDM adds it as if you had used <g1>Add URL</g1>.",
